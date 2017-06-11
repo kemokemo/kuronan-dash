@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/ebitenutil"
+	dash "github.com/kemokemo/go-kuronandash/lib"
 )
 
 func main() {
@@ -13,15 +13,14 @@ func main() {
 }
 
 func run() int {
-	err := ebiten.Run(update, 400, 300, 2, "Kuronan Dash!")
+	game := dash.Game{}
+	game.Init()
+	update := game.Update
+
+	err := ebiten.Run(update, 800, 600, 1, "Kuronan Dash!")
 	if err != nil {
 		log.Println("Failed to run.", err)
 		return 1
 	}
 	return 0
-}
-
-func update(screen *ebiten.Image) error {
-	ebitenutil.DebugPrint(screen, "My first implementation of -Kuronan Dash!- with golang.")
-	return nil
 }
