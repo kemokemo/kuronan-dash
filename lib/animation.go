@@ -2,52 +2,62 @@ package kuronandash
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
 )
 
-// Animation describes an animation
-type Animation struct {
-	ImagesPaths  []string
-	DurationStep int
-	DurationTime float64
-
+// StepAnimation is an animation.
+// This animates according to step number information.
+type StepAnimation struct {
+	ImagesPaths     []string
+	DurationSteps   int
+	once            sync.Once
 	frames          []*ebiten.Image
 	maxFrameNum     int
 	currentFrameNum int
-
-	deltaTotalSteps int
+	totalSteps      int
 }
 
-// Init loads asset images.
-func (a *Animation) Init() error {
-	if a.ImagesPaths == nil || len(a.ImagesPaths) == 0 {
-		err := fmt.Errorf("paths is empty, please set valid path info of images")
+// Init loads asset images and initializes private parameters.
+func (a *StepAnimation) Init() (err error) {
+	a.once.Do(func() {
+		if a.ImagesPaths == nil || len(a.ImagesPaths) == 0 {
+			err = fmt.Errorf("paths is empty, please set valid path info of images")
+			return
+		}
+		a.frames = []*ebiten.Image{}
+		var image *ebiten.Image
+		for _, path := range a.ImagesPaths {
+			image, _, err = ebitenutil.NewImageFromFile(path, ebiten.FilterNearest)
+			if err != nil {
+				return
+			}
+			a.frames = append(a.frames, image)
+		}
+		a.maxFrameNum = len(a.ImagesPaths)
+	})
+	if err != nil {
 		return err
 	}
-	a.frames = []*ebiten.Image{}
-	for _, path := range a.ImagesPaths {
-		image, _, err := ebitenutil.NewImageFromFile(path, ebiten.FilterNearest)
-		if err != nil {
-			return err
-		}
-		a.frames = append(a.frames, image)
-	}
-	a.maxFrameNum = len(a.ImagesPaths)
+
+	a.currentFrameNum = 0
+	a.totalSteps = 0
+
 	return nil
 }
 
 // GetCurrentFrame returns a current frame image. This function determines
 // the current frame based on the information on how far a character moved.
-// The deltaStepCount is the delta value of the step count number.
-// If deltaStepCount is grater than the DurationStep, this function will
-// return the next frame.
-func (a *Animation) GetCurrentFrame(deltaStepCount int) *ebiten.Image {
-	a.deltaTotalSteps += deltaStepCount
-	if a.deltaTotalSteps > a.DurationStep {
+// As steps variables, please set the number of steps since calling this
+// function last time. If the sum of steps is grater than the DurationSteps,
+// this function will return the next frame.
+func (a *StepAnimation) GetCurrentFrame(steps int) *ebiten.Image {
+	a.totalSteps += steps
+	if a.totalSteps > a.DurationSteps {
 		a.currentFrameNum++
-		a.deltaTotalSteps = 0
+		a.totalSteps = 0
 	}
 	if a.currentFrameNum < 0 || a.maxFrameNum-1 < a.currentFrameNum {
 		a.currentFrameNum = 0

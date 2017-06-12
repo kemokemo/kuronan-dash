@@ -12,16 +12,16 @@ type Position struct {
 type Character struct {
 	ImagesPaths []string
 
-	animation Animation
+	animation StepAnimation
 	stepCount int
 	position  Position
 }
 
 // Init loads asset files.
 func (c *Character) Init() error {
-	c.animation = Animation{
-		ImagesPaths:  c.ImagesPaths,
-		DurationStep: 5,
+	c.animation = StepAnimation{
+		ImagesPaths:   c.ImagesPaths,
+		DurationSteps: 5,
 	}
 	err := c.animation.Init()
 	if err != nil {
