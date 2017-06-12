@@ -11,10 +11,9 @@ type Position struct {
 // Character describes a charactor.
 type Character struct {
 	ImagesPaths []string
-
-	animation StepAnimation
-	stepCount int
-	position  Position
+	animation   StepAnimation
+	position    Position
+	moved       bool
 }
 
 // Init loads asset files.
@@ -37,21 +36,26 @@ func (c *Character) SetInitialPosition(pos Position) {
 
 // Move moves the charactor regarding the user input.
 func (c *Character) Move() {
+	c.moved = false
 	if ebiten.IsKeyPressed(ebiten.KeyLeft) || ebiten.GamepadAxis(0, 0) <= -0.5 {
 		c.position.X--
-		c.stepCount++
+		c.moved = true
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyRight) || ebiten.GamepadAxis(0, 0) >= 0.5 {
 		c.position.X++
-		c.stepCount++
+		c.moved = true
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyUp) || ebiten.GamepadAxis(0, 1) <= -0.5 {
 		c.position.Y--
-		c.stepCount++
+		c.moved = true
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyDown) || ebiten.GamepadAxis(0, 1) >= 0.5 {
 		c.position.Y++
-		c.stepCount++
+		c.moved = true
+	}
+
+	if c.moved {
+		c.animation.AddStep(1)
 	}
 }
 
@@ -59,11 +63,5 @@ func (c *Character) Move() {
 func (c *Character) Draw(screen *ebiten.Image) error {
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(float64(c.position.X), float64(c.position.Y))
-	return screen.DrawImage(c.animation.GetCurrentFrame(c.getDeltaStepCount()), op)
-}
-
-func (c *Character) getDeltaStepCount() int {
-	d := c.stepCount
-	c.stepCount = 0
-	return d
+	return screen.DrawImage(c.animation.GetCurrentFrame(), op)
 }
