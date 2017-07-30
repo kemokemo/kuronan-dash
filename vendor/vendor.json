@@ -1,0 +1,133 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "jOHp53XIam0AgWoPYdHNt/LsdiM=",
+			"path": "github.com/go-gl/gl/v2.1/gl",
+			"revision": "39ef8e959f4050148ec5a59816a93b9e65b4528f",
+			"revisionTime": "2017-06-20T20:25:32Z"
+		},
+		{
+			"checksumSHA1": "qUnd+AqNhk/Tes22iumqS2qH0HY=",
+			"path": "github.com/go-gl/glfw/v3.2/glfw",
+			"revision": "222b83c41c19cc975bfbf6f2611f3a97bde91a56",
+			"revisionTime": "2017-07-29T05:30:10Z"
+		},
+		{
+			"checksumSHA1": "yIkYzW7bzAD81zHyuCNmEj4+oxQ=",
+			"path": "github.com/gopherjs/gopherjs/js",
+			"revision": "2b1d432c8a82c9bff0b0baffaeb3ec6e92974112",
+			"revisionTime": "2017-07-02T15:34:43Z"
+		},
+		{
+			"checksumSHA1": "mb8Xs5orrRaS9ENsI9HjnYdRe8c=",
+			"path": "github.com/gopherjs/gopherjs/nosync",
+			"revision": "2b1d432c8a82c9bff0b0baffaeb3ec6e92974112",
+			"revisionTime": "2017-07-02T15:34:43Z"
+		},
+		{
+			"checksumSHA1": "BP73bXx2uEGZ9A2QDmfeKO2z9h0=",
+			"path": "github.com/gopherjs/webgl",
+			"revision": "a2d36020a9b2af0f7aefb23467ab48f3b501beec",
+			"revisionTime": "2015-02-22T22:16:19Z"
+		},
+		{
+			"checksumSHA1": "oEOU1hzRfHfyRd8KaGAZ2rUu38A=",
+			"path": "github.com/hajimehoshi/ebiten",
+			"revision": "807d03eb3b3e447af6e637275f9ea0826325a79b",
+			"revisionTime": "2017-07-30T11:26:40Z"
+		},
+		{
+			"checksumSHA1": "4YGZH3kY14Kn9FLvyXo85SDHuSA=",
+			"path": "github.com/hajimehoshi/ebiten/ebitenutil",
+			"revision": "807d03eb3b3e447af6e637275f9ea0826325a79b",
+			"revisionTime": "2017-07-30T11:26:40Z"
+		},
+		{
+			"checksumSHA1": "jxyv3kwlE9CQJNHXb4mjnUBoIuA=",
+			"path": "github.com/hajimehoshi/ebiten/ebitenutil/internal/assets",
+			"revision": "807d03eb3b3e447af6e637275f9ea0826325a79b",
+			"revisionTime": "2017-07-30T11:26:40Z"
+		},
+		{
+			"checksumSHA1": "saWBEpz2EVcPc2LqzQONf2lPYNw=",
+			"path": "github.com/hajimehoshi/ebiten/internal/affine",
+			"revision": "807d03eb3b3e447af6e637275f9ea0826325a79b",
+			"revisionTime": "2017-07-30T11:26:40Z"
+		},
+		{
+			"checksumSHA1": "E9FCoEUKH7Q2frVzG18CjuUur5M=",
+			"path": "github.com/hajimehoshi/ebiten/internal/clock",
+			"revision": "807d03eb3b3e447af6e637275f9ea0826325a79b",
+			"revisionTime": "2017-07-30T11:26:40Z"
+		},
+		{
+			"checksumSHA1": "aH8mi7rMMx9cre0Xys92vJ1eG+0=",
+			"path": "github.com/hajimehoshi/ebiten/internal/endian",
+			"revision": "807d03eb3b3e447af6e637275f9ea0826325a79b",
+			"revisionTime": "2017-07-30T11:26:40Z"
+		},
+		{
+			"checksumSHA1": "FoPU+d9hekIScwRN20k3DhHbu7Q=",
+			"path": "github.com/hajimehoshi/ebiten/internal/graphics",
+			"revision": "807d03eb3b3e447af6e637275f9ea0826325a79b",
+			"revisionTime": "2017-07-30T11:26:40Z"
+		},
+		{
+			"checksumSHA1": "shQOgA9vA99iSsk7xQ+0Mn365F0=",
+			"path": "github.com/hajimehoshi/ebiten/internal/jni",
+			"revision": "807d03eb3b3e447af6e637275f9ea0826325a79b",
+			"revisionTime": "2017-07-30T11:26:40Z"
+		},
+		{
+			"checksumSHA1": "VXVXkCO9Gos0XtvGvniWmtVFdaM=",
+			"path": "github.com/hajimehoshi/ebiten/internal/loop",
+			"revision": "807d03eb3b3e447af6e637275f9ea0826325a79b",
+			"revisionTime": "2017-07-30T11:26:40Z"
+		},
+		{
+			"checksumSHA1": "zMYme06pk6yDBugHLnoel6g+kqs=",
+			"path": "github.com/hajimehoshi/ebiten/internal/opengl",
+			"revision": "807d03eb3b3e447af6e637275f9ea0826325a79b",
+			"revisionTime": "2017-07-30T11:26:40Z"
+		},
+		{
+			"checksumSHA1": "PvBAnAhFXqVuFq3GPLqpZRBrZRM=",
+			"path": "github.com/hajimehoshi/ebiten/internal/restorable",
+			"revision": "807d03eb3b3e447af6e637275f9ea0826325a79b",
+			"revisionTime": "2017-07-30T11:26:40Z"
+		},
+		{
+			"checksumSHA1": "0KK3BWxyz1hDhWRYUb5+WtZ34S0=",
+			"path": "github.com/hajimehoshi/ebiten/internal/sync",
+			"revision": "807d03eb3b3e447af6e637275f9ea0826325a79b",
+			"revisionTime": "2017-07-30T11:26:40Z"
+		},
+		{
+			"checksumSHA1": "Hr5EIGsmSt+WTty3L6c0/2bSq8A=",
+			"path": "github.com/hajimehoshi/ebiten/internal/ui",
+			"revision": "807d03eb3b3e447af6e637275f9ea0826325a79b",
+			"revisionTime": "2017-07-30T11:26:40Z"
+		},
+		{
+			"checksumSHA1": "24abElgekhEA1ThUB3Iwc6ZbjAg=",
+			"path": "github.com/hajimehoshi/ebiten/internal/web",
+			"revision": "807d03eb3b3e447af6e637275f9ea0826325a79b",
+			"revisionTime": "2017-07-30T11:26:40Z"
+		},
+		{
+			"checksumSHA1": "7cpRHY1xUtaHcYktcx+25qRaQ5Y=",
+			"path": "golang.org/x/mobile/gl",
+			"revision": "683b305bdbdf5901d6d9b094e4948b51a37403a2",
+			"revisionTime": "2017-07-17T16:15:53Z"
+		},
+		{
+			"checksumSHA1": "Pki0iA65Dtsjh4gtabPkp/lOa2I=",
+			"path": "golang.org/x/sys/windows",
+			"revision": "0f826bdd13b500be0f1d4004938ad978fcc6031e",
+			"revisionTime": "2017-07-27T15:10:50Z"
+		}
+	],
+	"rootPath": "github.com/KemoKemo/go-kuronandash"
+}
