@@ -1,0 +1,26 @@
+# Build customization
+builds:
+  - main: ./
+    binary: kuronandash
+    goos:
+      - windows
+      - darwin
+      - linux
+      - freebsd
+    goarch:
+      - amd64
+# Archive customization
+archive:
+  format: tar.gz
+  format_overrides:
+    - goos: windows
+      format: zip
+  replacements:
+    amd64: 64bit
+    windows: Windows
+    darwin: macOS
+    linux: Linux
+    freebsd: FreeBSD
+  files:
+    - LICENSE
+    - README.md

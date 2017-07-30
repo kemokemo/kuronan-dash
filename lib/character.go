@@ -8,7 +8,7 @@ type Position struct {
 	Y int
 }
 
-// Character describes a charactor.
+// Character describes a character.
 type Character struct {
 	ImagesPaths []string
 	animation   StepAnimation
@@ -34,7 +34,7 @@ func (c *Character) SetInitialPosition(pos Position) {
 	c.position = pos
 }
 
-// Move moves the charactor regarding the user input.
+// Move moves the character regarding the user input.
 func (c *Character) Move() {
 	c.moved = false
 	if ebiten.IsKeyPressed(ebiten.KeyLeft) || ebiten.GamepadAxis(0, 0) <= -0.5 {
