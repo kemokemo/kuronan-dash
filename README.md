@@ -32,3 +32,6 @@
 ## すぺしゃるさんくす
 
 [hajimehoshi](https://github.com/hajimehoshi)さんが作っておられる素敵なGo言語の2Dゲームライブラリ[ebiten](https://github.com/hajimehoshi/ebiten)を使っています。
+この場をお借りしてお礼申し上げます。
+
+そして「[ねこむすめ道草日記](http://www.comic-ryu.jp/_nekomusume/)」の作者である[いけ先生](https://twitter.com/ikenokappa)に感謝申し上げます。
