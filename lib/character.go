@@ -8,25 +8,26 @@ type Position struct {
 	Y int
 }
 
-// Character describes a character.
-type Character struct {
-	ImagesPaths []string
-	animation   StepAnimation
-	position    Position
-	moved       bool
-}
-
-// Init loads asset files.
-func (c *Character) Init() error {
-	c.animation = StepAnimation{
-		ImagesPaths:   c.ImagesPaths,
-		DurationSteps: 5,
+// NewCharacter creates a new character instance.
+func NewCharacter(imagePaths []string) (*Character, error) {
+	c := &Character{
+		animation: StepAnimation{
+			ImagesPaths:   imagePaths,
+			DurationSteps: 5,
+		},
 	}
 	err := c.animation.Init()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return c, nil
+}
+
+// Character describes a character.
+type Character struct {
+	animation StepAnimation
+	position  Position
+	moved     bool
 }
 
 // SetInitialPosition sets the initial position for this character.

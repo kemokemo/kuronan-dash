@@ -4,8 +4,13 @@ import (
 	"log"
 	"os"
 
+	dash "github.com/KemoKemo/go-kuronandash/lib"
 	"github.com/hajimehoshi/ebiten"
-	dash "github.com/kemokemo/go-kuronandash/lib"
+)
+
+const (
+	exitOK = iota
+	exitFailed
 )
 
 func main() {
@@ -14,13 +19,22 @@ func main() {
 
 func run() int {
 	game := dash.Game{}
-	game.Init()
-	update := game.Update
+	err := game.Init()
+	if err != nil {
+		log.Println("Failed to initialize", err)
+		return exitFailed
+	}
+	defer func() {
+		e := game.Close()
+		if err != nil {
+			log.Println("Failed to close", e)
+		}
+	}()
 
-	err := ebiten.Run(update, 800, 600, 1, "Kuronan Dash!")
+	err = ebiten.Run(game.Update, 800, 600, 1, "Kuronan Dash!")
 	if err != nil {
 		log.Println("Failed to run.", err)
-		return 1
+		return exitFailed
 	}
-	return 0
+	return exitOK
 }
