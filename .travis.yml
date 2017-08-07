@@ -1,8 +1,9 @@
 language: go
-sudo: false
+sudo: true
 go:
   - tip
 before_install:
+  - apt install libgl1-mesa-dev xorg-dev
   - go get github.com/kardianos/govendor
   - go get github.com/mattn/goveralls
 script:

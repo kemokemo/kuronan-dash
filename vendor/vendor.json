@@ -9,10 +9,11 @@
 			"revisionTime": "2017-06-20T20:25:32Z"
 		},
 		{
-			"checksumSHA1": "qUnd+AqNhk/Tes22iumqS2qH0HY=",
+			"checksumSHA1": "rTkp+I/pqMI0XKFJNl0FZbkf+E4=",
 			"path": "github.com/go-gl/glfw/v3.2/glfw",
 			"revision": "222b83c41c19cc975bfbf6f2611f3a97bde91a56",
-			"revisionTime": "2017-07-29T05:30:10Z"
+			"revisionTime": "2017-07-29T05:30:10Z",
+			"tree": true
 		},
 		{
 			"checksumSHA1": "yIkYzW7bzAD81zHyuCNmEj4+oxQ=",
