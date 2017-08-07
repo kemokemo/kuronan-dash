@@ -3,7 +3,8 @@ sudo: true
 go:
   - tip
 before_install:
-  - sudo apt install libgl1-mesa-dev xorg-dev
+  - sudo apt-get -qq update
+  - sudo apt-get install libgl1-mesa-dev xorg-dev libasound2-dev
   - go get github.com/kardianos/govendor
   - go get github.com/mattn/goveralls
 script:
