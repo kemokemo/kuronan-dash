@@ -34,7 +34,7 @@ func (g *Game) Close() error {
 func (g *Game) Update(screen *ebiten.Image) error {
 	// First of all, all characters move.
 	g.character.Move()
-	err := g.jukeBox.Play("")
+	err := g.jukeBox.Play(g.getCurrentBGM())
 	if err != nil {
 		return err
 	}
@@ -47,6 +47,11 @@ func (g *Game) Update(screen *ebiten.Image) error {
 		return err
 	}
 	return nil
+}
+
+func (g *Game) getCurrentBGM() string {
+	// TODO: return a BGM name of the current game stage
+	return ""
 }
 
 func (g *Game) initCharacters() error {
