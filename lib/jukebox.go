@@ -1,6 +1,7 @@
 package kuronandash
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/hajimehoshi/ebiten/audio"
@@ -9,7 +10,9 @@ import (
 
 // JukeBox loads all music files and play any time you want.
 type JukeBox struct {
-	player *audio.Player
+	file         *os.File
+	audioContext *audio.Context
+	player       *audio.Player
 }
 
 // NewJukeBox creates a new JukeBox instance.
@@ -33,17 +36,27 @@ func NewJukeBox(musicPath string) (*JukeBox, error) {
 	}
 
 	return &JukeBox{
-		player: p,
+		file:         f,
+		audioContext: c,
+		player:       p,
 	}, nil
 }
 
 // Play plays the music file specified by the name arg.
 func (j *JukeBox) Play(name string) error {
 	// TODO: find the music file name
-	if j.player.IsPlaying() {
-		return nil
+	if !j.player.IsPlaying() {
+		err := j.player.Rewind()
+		if err != nil {
+			return err
+		}
+		return j.player.Play()
 	}
-	return j.player.Play()
+	err := j.audioContext.Update()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // Pause pauses music.
@@ -68,5 +81,17 @@ func (j *JukeBox) Stop() error {
 
 // Close closes all resources that JukeBox used.
 func (j *JukeBox) Close() error {
-	return j.player.Close()
+	var err error
+	e := j.player.Close()
+	if e != nil {
+		err = fmt.Errorf("%v %v", err, e)
+	}
+	e = j.file.Close()
+	if e != nil {
+		err = fmt.Errorf("%v %v", err, e)
+	}
+	if err != nil {
+		return err
+	}
+	return nil
 }
