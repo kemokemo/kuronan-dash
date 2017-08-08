@@ -10,13 +10,12 @@ import (
 
 // JukeBox loads all music files and play any time you want.
 type JukeBox struct {
-	file         *os.File
-	audioContext *audio.Context
-	player       *audio.Player
+	file   *os.File
+	player *audio.Player
 }
 
 // NewJukeBox creates a new JukeBox instance.
-func NewJukeBox(musicPath string) (*JukeBox, error) {
+func NewJukeBox(context *audio.Context, musicPath string) (*JukeBox, error) {
 	// TODO: save music file name
 	f, err := os.Open(musicPath)
 	if err != nil {
@@ -26,19 +25,14 @@ func NewJukeBox(musicPath string) (*JukeBox, error) {
 	if err != nil {
 		return nil, err
 	}
-	c, err := audio.NewContext(s.SampleRate())
-	if err != nil {
-		return nil, err
-	}
-	p, err := audio.NewPlayer(c, s)
+	p, err := audio.NewPlayer(context, s)
 	if err != nil {
 		return nil, err
 	}
 
 	return &JukeBox{
-		file:         f,
-		audioContext: c,
-		player:       p,
+		file:   f,
+		player: p,
 	}, nil
 }
 
@@ -51,10 +45,6 @@ func (j *JukeBox) Play(name string) error {
 			return err
 		}
 		return j.player.Play()
-	}
-	err := j.audioContext.Update()
-	if err != nil {
-		return err
 	}
 	return nil
 }
