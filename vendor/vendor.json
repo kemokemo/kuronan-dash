@@ -34,94 +34,124 @@
 			"revisionTime": "2015-02-22T22:16:19Z"
 		},
 		{
-			"checksumSHA1": "EQrlhZu3AcnrP9yM4TLBfcRSN+Q=",
+			"checksumSHA1": "4xqWhG4wtAx0Vky90Zn3rsbUWZ8=",
 			"path": "github.com/hajimehoshi/ebiten",
-			"revision": "14737df60f30ff085a82a56a6c3388250e4523ff",
-			"revisionTime": "2017-08-05T17:17:26Z"
+			"revision": "6b8ab59d1fa83c97ac1155d5d3d24478838a7234",
+			"revisionTime": "2017-08-07T17:06:24Z"
 		},
 		{
 			"checksumSHA1": "L7xjY+siZyvhGT0Z9wtkIjxbaBk=",
 			"path": "github.com/hajimehoshi/ebiten/audio",
-			"revision": "14737df60f30ff085a82a56a6c3388250e4523ff",
-			"revisionTime": "2017-08-05T17:17:26Z"
+			"revision": "6b8ab59d1fa83c97ac1155d5d3d24478838a7234",
+			"revisionTime": "2017-08-07T17:06:24Z"
+		},
+		{
+			"checksumSHA1": "jlZNrFIgjq6IN3o2QNwjchquPcI=",
+			"path": "github.com/hajimehoshi/ebiten/audio/internal/convert",
+			"revision": "6b8ab59d1fa83c97ac1155d5d3d24478838a7234",
+			"revisionTime": "2017-08-07T17:06:24Z"
+		},
+		{
+			"checksumSHA1": "ToEn4wonkG4S7Dee3vg2pPTctZg=",
+			"path": "github.com/hajimehoshi/ebiten/audio/wav",
+			"revision": "6b8ab59d1fa83c97ac1155d5d3d24478838a7234",
+			"revisionTime": "2017-08-07T17:06:24Z"
 		},
 		{
 			"checksumSHA1": "4YGZH3kY14Kn9FLvyXo85SDHuSA=",
 			"path": "github.com/hajimehoshi/ebiten/ebitenutil",
-			"revision": "14737df60f30ff085a82a56a6c3388250e4523ff",
-			"revisionTime": "2017-08-05T17:17:26Z"
+			"revision": "6b8ab59d1fa83c97ac1155d5d3d24478838a7234",
+			"revisionTime": "2017-08-07T17:06:24Z"
 		},
 		{
 			"checksumSHA1": "jxyv3kwlE9CQJNHXb4mjnUBoIuA=",
 			"path": "github.com/hajimehoshi/ebiten/ebitenutil/internal/assets",
-			"revision": "14737df60f30ff085a82a56a6c3388250e4523ff",
-			"revisionTime": "2017-08-05T17:17:26Z"
+			"revision": "6b8ab59d1fa83c97ac1155d5d3d24478838a7234",
+			"revisionTime": "2017-08-07T17:06:24Z"
 		},
 		{
 			"checksumSHA1": "saWBEpz2EVcPc2LqzQONf2lPYNw=",
 			"path": "github.com/hajimehoshi/ebiten/internal/affine",
-			"revision": "14737df60f30ff085a82a56a6c3388250e4523ff",
-			"revisionTime": "2017-08-05T17:17:26Z"
+			"revision": "6b8ab59d1fa83c97ac1155d5d3d24478838a7234",
+			"revisionTime": "2017-08-07T17:06:24Z"
 		},
 		{
 			"checksumSHA1": "dAVKCcTifhFn1QNbqzVq7Zrb7Yk=",
 			"path": "github.com/hajimehoshi/ebiten/internal/clock",
-			"revision": "14737df60f30ff085a82a56a6c3388250e4523ff",
-			"revisionTime": "2017-08-05T17:17:26Z"
+			"revision": "6b8ab59d1fa83c97ac1155d5d3d24478838a7234",
+			"revisionTime": "2017-08-07T17:06:24Z"
 		},
 		{
 			"checksumSHA1": "aH8mi7rMMx9cre0Xys92vJ1eG+0=",
 			"path": "github.com/hajimehoshi/ebiten/internal/endian",
-			"revision": "14737df60f30ff085a82a56a6c3388250e4523ff",
-			"revisionTime": "2017-08-05T17:17:26Z"
+			"revision": "6b8ab59d1fa83c97ac1155d5d3d24478838a7234",
+			"revisionTime": "2017-08-07T17:06:24Z"
 		},
 		{
-			"checksumSHA1": "FoPU+d9hekIScwRN20k3DhHbu7Q=",
+			"checksumSHA1": "UbOhktRj09/Jeo4CcJZ/1ALy6dg=",
 			"path": "github.com/hajimehoshi/ebiten/internal/graphics",
-			"revision": "14737df60f30ff085a82a56a6c3388250e4523ff",
-			"revisionTime": "2017-08-05T17:17:26Z"
+			"revision": "6b8ab59d1fa83c97ac1155d5d3d24478838a7234",
+			"revisionTime": "2017-08-07T17:06:24Z"
 		},
 		{
 			"checksumSHA1": "shQOgA9vA99iSsk7xQ+0Mn365F0=",
 			"path": "github.com/hajimehoshi/ebiten/internal/jni",
-			"revision": "14737df60f30ff085a82a56a6c3388250e4523ff",
-			"revisionTime": "2017-08-05T17:17:26Z"
+			"revision": "6b8ab59d1fa83c97ac1155d5d3d24478838a7234",
+			"revisionTime": "2017-08-07T17:06:24Z"
 		},
 		{
-			"checksumSHA1": "VXVXkCO9Gos0XtvGvniWmtVFdaM=",
-			"path": "github.com/hajimehoshi/ebiten/internal/loop",
-			"revision": "807d03eb3b3e447af6e637275f9ea0826325a79b",
-			"revisionTime": "2017-07-30T11:26:40Z"
+			"checksumSHA1": "AEY5kENv7GSCBvbMvONSmj7dHwE=",
+			"path": "github.com/hajimehoshi/ebiten/internal/math",
+			"revision": "6b8ab59d1fa83c97ac1155d5d3d24478838a7234",
+			"revisionTime": "2017-08-07T17:06:24Z"
 		},
 		{
 			"checksumSHA1": "zMYme06pk6yDBugHLnoel6g+kqs=",
 			"path": "github.com/hajimehoshi/ebiten/internal/opengl",
-			"revision": "14737df60f30ff085a82a56a6c3388250e4523ff",
-			"revisionTime": "2017-08-05T17:17:26Z"
+			"revision": "6b8ab59d1fa83c97ac1155d5d3d24478838a7234",
+			"revisionTime": "2017-08-07T17:06:24Z"
 		},
 		{
-			"checksumSHA1": "PvBAnAhFXqVuFq3GPLqpZRBrZRM=",
+			"checksumSHA1": "XreVNcEETYTkKx5LKRWth5tPteo=",
 			"path": "github.com/hajimehoshi/ebiten/internal/restorable",
-			"revision": "14737df60f30ff085a82a56a6c3388250e4523ff",
-			"revisionTime": "2017-08-05T17:17:26Z"
+			"revision": "6b8ab59d1fa83c97ac1155d5d3d24478838a7234",
+			"revisionTime": "2017-08-07T17:06:24Z"
 		},
 		{
 			"checksumSHA1": "0KK3BWxyz1hDhWRYUb5+WtZ34S0=",
 			"path": "github.com/hajimehoshi/ebiten/internal/sync",
-			"revision": "14737df60f30ff085a82a56a6c3388250e4523ff",
-			"revisionTime": "2017-08-05T17:17:26Z"
+			"revision": "6b8ab59d1fa83c97ac1155d5d3d24478838a7234",
+			"revisionTime": "2017-08-07T17:06:24Z"
 		},
 		{
 			"checksumSHA1": "HG71WIRVX8LSxheKbFvBMu+L1V8=",
 			"path": "github.com/hajimehoshi/ebiten/internal/ui",
-			"revision": "14737df60f30ff085a82a56a6c3388250e4523ff",
-			"revisionTime": "2017-08-05T17:17:26Z"
+			"revision": "6b8ab59d1fa83c97ac1155d5d3d24478838a7234",
+			"revisionTime": "2017-08-07T17:06:24Z"
 		},
 		{
 			"checksumSHA1": "24abElgekhEA1ThUB3Iwc6ZbjAg=",
 			"path": "github.com/hajimehoshi/ebiten/internal/web",
-			"revision": "14737df60f30ff085a82a56a6c3388250e4523ff",
-			"revisionTime": "2017-08-05T17:17:26Z"
+			"revision": "6b8ab59d1fa83c97ac1155d5d3d24478838a7234",
+			"revisionTime": "2017-08-07T17:06:24Z"
+		},
+		{
+			"checksumSHA1": "O63amrlRLhAf9FazCXofEKWJcAM=",
+			"path": "github.com/hajimehoshi/go-mp3",
+			"revision": "55f6462b50c8fd4c35f9c666d9757496cc2b2cb7",
+			"revisionTime": "2017-08-05T11:46:26Z"
+		},
+		{
+			"checksumSHA1": "GvLjlJarVnav3bBYcgdpiNACiBc=",
+			"path": "github.com/hajimehoshi/go-mp3/internal/bits",
+			"revision": "55f6462b50c8fd4c35f9c666d9757496cc2b2cb7",
+			"revisionTime": "2017-08-05T11:46:26Z"
+		},
+		{
+			"checksumSHA1": "pY2/aJdzLpBaRIIvjfE+LjQSCXA=",
+			"path": "github.com/hajimehoshi/go-mp3/internal/imdct",
+			"revision": "55f6462b50c8fd4c35f9c666d9757496cc2b2cb7",
+			"revisionTime": "2017-08-05T11:46:26Z"
 		},
 		{
 			"checksumSHA1": "8viklenoZFpuJJZr9QWJyaoYKic=",
@@ -138,20 +168,20 @@
 		{
 			"checksumSHA1": "7H62S41J8xPB0TOaw5Rk1p8y84w=",
 			"path": "golang.org/x/mobile/exp/audio/al",
-			"revision": "683b305bdbdf5901d6d9b094e4948b51a37403a2",
-			"revisionTime": "2017-07-17T16:15:53Z"
+			"revision": "202a52f8eee59fbd0c7471e7a019291bceae2adc",
+			"revisionTime": "2017-07-29T15:52:47Z"
 		},
 		{
 			"checksumSHA1": "i4AO+xJCcfSR2z5dF6cd8qaa8ag=",
 			"path": "golang.org/x/mobile/gl",
-			"revision": "683b305bdbdf5901d6d9b094e4948b51a37403a2",
-			"revisionTime": "2017-07-17T16:15:53Z"
+			"revision": "202a52f8eee59fbd0c7471e7a019291bceae2adc",
+			"revisionTime": "2017-07-29T15:52:47Z"
 		},
 		{
 			"checksumSHA1": "neZDaBaruQb+6CmmvY3wCeZuhJw=",
 			"path": "golang.org/x/mobile/internal/mobileinit",
-			"revision": "683b305bdbdf5901d6d9b094e4948b51a37403a2",
-			"revisionTime": "2017-07-17T16:15:53Z"
+			"revision": "202a52f8eee59fbd0c7471e7a019291bceae2adc",
+			"revisionTime": "2017-07-29T15:52:47Z"
 		},
 		{
 			"checksumSHA1": "LkAsnLUlAZSg3lRYk7BEyNfog3A=",
@@ -160,5 +190,5 @@
 			"revisionTime": "2017-08-03T09:04:06Z"
 		}
 	],
-	"rootPath": "github.com/KemoKemo/go-kuronandash"
+	"rootPath": "github.com/kemokemo/go-kuronandash"
 }
