@@ -4,21 +4,30 @@ import (
 	"log"
 
 	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/audio"
 )
+
+const sampleRate = 44100
 
 // Game controls all things in the screen.
 type Game struct {
+	context   *audio.Context
 	character *Character
 	jukeBox   *JukeBox
 }
 
 // Init loads resources.
 func (g *Game) Init() error {
-	err := g.initCharacters()
+	var err error
+	g.context, err = audio.NewContext(sampleRate)
 	if err != nil {
 		return err
 	}
-	g.jukeBox, err = NewJukeBox("assets/music/hasire_kuroneko.mp3")
+	err = g.initCharacters()
+	if err != nil {
+		return err
+	}
+	g.jukeBox, err = NewJukeBox(g.context, "assets/music/hasire_kuroneko.mp3")
 	if err != nil {
 		return err
 	}
@@ -34,7 +43,11 @@ func (g *Game) Close() error {
 func (g *Game) Update(screen *ebiten.Image) error {
 	// First of all, all characters move.
 	g.character.Move()
-	err := g.jukeBox.Play(g.getCurrentBGM())
+	err := g.context.Update()
+	if err != nil {
+		return err
+	}
+	err = g.jukeBox.Play(g.getCurrentBGM())
 	if err != nil {
 		return err
 	}
@@ -43,6 +56,26 @@ func (g *Game) Update(screen *ebiten.Image) error {
 	}
 	// If not in slow mode, perform various drawing.
 	err = g.character.Draw(screen)
+	if err != nil {
+		return err
+	}
+	// TODO: 衝突判定とSE再生
+	err = g.CheckCollision()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// CheckCollision check the collision between a character and other objects.
+func (g *Game) CheckCollision() error {
+	// TODO: 衝突判定の代わりにボタン入力
+	if ebiten.IsKeyPressed(ebiten.KeyJ) {
+		g.character.SetState(Ascending)
+	} else {
+		g.character.SetState(Dash)
+	}
+	err := g.character.PlaySe()
 	if err != nil {
 		return err
 	}
@@ -56,7 +89,7 @@ func (g *Game) getCurrentBGM() string {
 
 func (g *Game) initCharacters() error {
 	var err error
-	g.character, err = NewCharacter([]string{
+	g.character, err = NewCharacter(g.context, []string{
 		"assets/images/koma_00.png",
 		"assets/images/koma_01.png",
 		"assets/images/koma_02.png",
