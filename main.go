@@ -4,8 +4,8 @@ import (
 	"log"
 	"os"
 
-	dash "github.com/KemoKemo/go-kuronandash/lib"
 	"github.com/hajimehoshi/ebiten"
+	dash "github.com/kemokemo/go-kuronandash/lib"
 )
 
 const (
