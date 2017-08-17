@@ -68,10 +68,13 @@ func getFileNameWithoutExt(path string) string {
 	return filepath.Base(path[:len(path)-len(filepath.Ext(path))])
 }
 
-// NowPlaying returns the name of the currently selected disc.
-// If disc is not selected, "-" is returned.
+// NowPlaying returns the name of the currently playing music.
+// If disc is not selected or not playing, "-" is returned.
 func (j *JukeBox) NowPlaying() string {
 	if j.current == nil {
+		return "-"
+	}
+	if !j.current.player.IsPlaying() {
 		return "-"
 	}
 	return j.current.name
@@ -148,10 +151,6 @@ func (j *JukeBox) Close() error {
 	var e error
 	for i := range j.discs {
 		e = j.discs[i].player.Close()
-		if e != nil {
-			err = fmt.Errorf("%v %v", err, e)
-		}
-		e = j.discs[i].file.Close()
 		if e != nil {
 			err = fmt.Errorf("%v %v", err, e)
 		}
