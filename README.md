@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/KemoKemo/go-kuronandash.svg?branch=master)](https://travis-ci.org/KemoKemo/go-kuronandash) [![Coverage Status](https://coveralls.io/repos/github/KemoKemo/go-kuronandash/badge.svg?branch=master)](https://coveralls.io/github/KemoKemo/go-kuronandash?branch=master) [![Go Report Card](https://goreportcard.com/badge/github.com/KemoKemo/go-kuronandash)](https://goreportcard.com/report/github.com/KemoKemo/go-kuronandash) [![Powered By: GoReleaser](https://img.shields.io/badge/powered%20by-goreleaser-green.svg?style=flat-square)](https://github.com/goreleaser)
+[![Build Status](https://travis-ci.org/kemokemo/kuronan-dash.svg?branch=master)](https://travis-ci.org/kemokemo/kuronan-dash) [![Coverage Status](https://coveralls.io/repos/github/kemokemo/kuronan-dash/badge.svg?branch=master)](https://coveralls.io/github/kemokemo/kuronan-dash?branch=master) [![Go Report Card](https://goreportcard.com/badge/github.com/kemokemo/kuronan-dash)](https://goreportcard.com/report/github.com/kemokemo/kuronan-dash) [![Powered By: GoReleaser](https://img.shields.io/badge/powered%20by-goreleaser-green.svg?style=flat-square)](https://github.com/goreleaser)
 
 # 黒菜んダッシュ
 
@@ -23,11 +23,11 @@
 
 ## つくってる人
 
-[KemoKemo](https://github.com/KemoKemo)
+[kemokemo](https://github.com/kemokemo)
 
 ## らいせんす
 
-ソースコードもassetsディレクトリ以下に入っているキャラクターのドット絵や音楽なども、ぜ～んぶ[Apache License Version 2.0](https://github.com/KemoKemo/go-kuronandash/blob/master/LICENSE)です。
+ソースコードもassetsディレクトリ以下に入っているキャラクターのドット絵や音楽なども、ぜ～んぶ[Apache License Version 2.0](https://github.com/kemokemo/kuronan-dash/blob/master/LICENSE)です。
 
 ## すぺしゃるさんくす
 
