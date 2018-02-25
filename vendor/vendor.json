@@ -18,14 +18,14 @@
 		{
 			"checksumSHA1": "yIkYzW7bzAD81zHyuCNmEj4+oxQ=",
 			"path": "github.com/gopherjs/gopherjs/js",
-			"revision": "296de816d4fe28b61803072c3f89360e9d1823ff",
-			"revisionTime": "2018-02-02T21:09:47Z"
+			"revision": "3926a9f66452f7a8c8d9c0e4e3074383f9aff5cd",
+			"revisionTime": "2018-02-14T23:11:23Z"
 		},
 		{
 			"checksumSHA1": "ii87/tHqQ4bY4Z+HcbYlZmNhOiM=",
 			"path": "github.com/gopherjs/gopherjs/nosync",
-			"revision": "296de816d4fe28b61803072c3f89360e9d1823ff",
-			"revisionTime": "2018-02-02T21:09:47Z"
+			"revision": "3926a9f66452f7a8c8d9c0e4e3074383f9aff5cd",
+			"revisionTime": "2018-02-14T23:11:23Z"
 		},
 		{
 			"checksumSHA1": "As5aJAU4HiNNwCaSwgKJcnSGeM8=",
@@ -34,208 +34,254 @@
 			"revisionTime": "2017-12-29T18:53:27Z"
 		},
 		{
-			"checksumSHA1": "CWejz0BzeZ5VoekZch7kRJ+QFqs=",
+			"checksumSHA1": "8i/U7sUmkJ4gI+VrzqghtibM1Dw=",
 			"path": "github.com/hajimehoshi/ebiten",
-			"revision": "e3023889acdd9f3ee1292bc93410e7f0230e1c0d",
-			"revisionTime": "2018-02-03T15:22:38Z"
+			"revision": "e462c7e9168a41b4b4d7f11ab998b1d0e4736415",
+			"revisionTime": "2018-02-03T14:43:04Z",
+			"version": "=v1.6.0",
+			"versionExact": "v1.6.0"
 		},
 		{
 			"checksumSHA1": "NEEFKiD43rRessRMJ0GcKmbLn88=",
 			"path": "github.com/hajimehoshi/ebiten/audio",
-			"revision": "e3023889acdd9f3ee1292bc93410e7f0230e1c0d",
-			"revisionTime": "2018-02-03T15:22:38Z"
+			"revision": "e462c7e9168a41b4b4d7f11ab998b1d0e4736415",
+			"revisionTime": "2018-02-03T14:43:04Z",
+			"version": "=v1.6.0",
+			"versionExact": "v1.6.0"
 		},
 		{
 			"checksumSHA1": "bAVKcGvAHS/CK4GujyFnoolCe/4=",
 			"path": "github.com/hajimehoshi/ebiten/audio/internal/convert",
-			"revision": "e3023889acdd9f3ee1292bc93410e7f0230e1c0d",
-			"revisionTime": "2018-02-03T15:22:38Z"
+			"revision": "e462c7e9168a41b4b4d7f11ab998b1d0e4736415",
+			"revisionTime": "2018-02-03T14:43:04Z",
+			"version": "=v1.6.0",
+			"versionExact": "v1.6.0"
 		},
 		{
 			"checksumSHA1": "RTKKgkpStYc06f3V7jAYc7U0arc=",
 			"path": "github.com/hajimehoshi/ebiten/audio/wav",
-			"revision": "e3023889acdd9f3ee1292bc93410e7f0230e1c0d",
-			"revisionTime": "2018-02-03T15:22:38Z"
+			"revision": "e462c7e9168a41b4b4d7f11ab998b1d0e4736415",
+			"revisionTime": "2018-02-03T14:43:04Z",
+			"version": "=v1.6.0",
+			"versionExact": "v1.6.0"
 		},
 		{
 			"checksumSHA1": "DfI8dTu2ei+K7O6DX0E9Pb7FjZY=",
 			"path": "github.com/hajimehoshi/ebiten/ebitenutil",
-			"revision": "e3023889acdd9f3ee1292bc93410e7f0230e1c0d",
-			"revisionTime": "2018-02-03T15:22:38Z"
+			"revision": "e462c7e9168a41b4b4d7f11ab998b1d0e4736415",
+			"revisionTime": "2018-02-03T14:43:04Z",
+			"version": "=v1.6.0",
+			"versionExact": "v1.6.0"
 		},
 		{
 			"checksumSHA1": "jxyv3kwlE9CQJNHXb4mjnUBoIuA=",
 			"path": "github.com/hajimehoshi/ebiten/ebitenutil/internal/assets",
-			"revision": "e3023889acdd9f3ee1292bc93410e7f0230e1c0d",
-			"revisionTime": "2018-02-03T15:22:38Z"
+			"revision": "e462c7e9168a41b4b4d7f11ab998b1d0e4736415",
+			"revisionTime": "2018-02-03T14:43:04Z",
+			"version": "=v1.6.0",
+			"versionExact": "v1.6.0"
 		},
 		{
 			"checksumSHA1": "LohZzmWFPE97Sf4I/wVtyd9XZVo=",
 			"path": "github.com/hajimehoshi/ebiten/internal/affine",
-			"revision": "e3023889acdd9f3ee1292bc93410e7f0230e1c0d",
-			"revisionTime": "2018-02-03T15:22:38Z"
+			"revision": "e462c7e9168a41b4b4d7f11ab998b1d0e4736415",
+			"revisionTime": "2018-02-03T14:43:04Z",
+			"version": "=v1.6.0",
+			"versionExact": "v1.6.0"
 		},
 		{
 			"checksumSHA1": "DOIhB3/pWlLBNQUm95v+Rjf9A6A=",
 			"path": "github.com/hajimehoshi/ebiten/internal/audiobinding",
-			"revision": "e3023889acdd9f3ee1292bc93410e7f0230e1c0d",
-			"revisionTime": "2018-02-03T15:22:38Z"
+			"revision": "e462c7e9168a41b4b4d7f11ab998b1d0e4736415",
+			"revisionTime": "2018-02-03T14:43:04Z",
+			"version": "=v1.6.0",
+			"versionExact": "v1.6.0"
 		},
 		{
 			"checksumSHA1": "jCzMVhgM18s+eVzJLj+xMVYOw0o=",
 			"path": "github.com/hajimehoshi/ebiten/internal/clock",
-			"revision": "e3023889acdd9f3ee1292bc93410e7f0230e1c0d",
-			"revisionTime": "2018-02-03T15:22:38Z"
+			"revision": "e462c7e9168a41b4b4d7f11ab998b1d0e4736415",
+			"revisionTime": "2018-02-03T14:43:04Z",
+			"version": "=v1.6.0",
+			"versionExact": "v1.6.0"
 		},
 		{
 			"checksumSHA1": "60vU9V+sU71x/5g0xT/AEZ9q1fw=",
 			"path": "github.com/hajimehoshi/ebiten/internal/devicescale",
-			"revision": "e3023889acdd9f3ee1292bc93410e7f0230e1c0d",
-			"revisionTime": "2018-02-03T15:22:38Z"
+			"revision": "e462c7e9168a41b4b4d7f11ab998b1d0e4736415",
+			"revisionTime": "2018-02-03T14:43:04Z",
+			"version": "=v1.6.0",
+			"versionExact": "v1.6.0"
 		},
 		{
 			"checksumSHA1": "aH8mi7rMMx9cre0Xys92vJ1eG+0=",
 			"path": "github.com/hajimehoshi/ebiten/internal/endian",
-			"revision": "e3023889acdd9f3ee1292bc93410e7f0230e1c0d",
-			"revisionTime": "2018-02-03T15:22:38Z"
+			"revision": "e462c7e9168a41b4b4d7f11ab998b1d0e4736415",
+			"revisionTime": "2018-02-03T14:43:04Z",
+			"version": "=v1.6.0",
+			"versionExact": "v1.6.0"
 		},
 		{
 			"checksumSHA1": "K+oVkMIgSAW9q3BpTf8eYh6wlag=",
 			"path": "github.com/hajimehoshi/ebiten/internal/graphics",
-			"revision": "e3023889acdd9f3ee1292bc93410e7f0230e1c0d",
-			"revisionTime": "2018-02-03T15:22:38Z"
+			"revision": "e462c7e9168a41b4b4d7f11ab998b1d0e4736415",
+			"revisionTime": "2018-02-03T14:43:04Z",
+			"version": "=v1.6.0",
+			"versionExact": "v1.6.0"
+		},
+		{
+			"checksumSHA1": "qJPiDMKHDNeDE5VvqcmDVaU+04A=",
+			"path": "github.com/hajimehoshi/ebiten/internal/hooks",
+			"revision": "c7a733fb1654a4af46ae264157438a073eec2b25",
+			"revisionTime": "2018-02-24T18:12:33Z",
+			"version": "=v1.6.0",
+			"versionExact": "v1.6.0"
 		},
 		{
 			"checksumSHA1": "pI+Hv4oWe6dj0Va0WwWvBUXWxOc=",
 			"path": "github.com/hajimehoshi/ebiten/internal/jni",
-			"revision": "e3023889acdd9f3ee1292bc93410e7f0230e1c0d",
-			"revisionTime": "2018-02-03T15:22:38Z"
+			"revision": "e462c7e9168a41b4b4d7f11ab998b1d0e4736415",
+			"revisionTime": "2018-02-03T14:43:04Z",
+			"version": "=v1.6.0",
+			"versionExact": "v1.6.0"
 		},
 		{
 			"checksumSHA1": "8xhcN7+wnFhS6Mr6ZlMjgu/qrrw=",
 			"path": "github.com/hajimehoshi/ebiten/internal/math",
-			"revision": "e3023889acdd9f3ee1292bc93410e7f0230e1c0d",
-			"revisionTime": "2018-02-03T15:22:38Z"
+			"revision": "e462c7e9168a41b4b4d7f11ab998b1d0e4736415",
+			"revisionTime": "2018-02-03T14:43:04Z",
+			"version": "=v1.6.0",
+			"versionExact": "v1.6.0"
 		},
 		{
 			"checksumSHA1": "9zWJDHMdMwPMsRuVG5PNZvXhkRI=",
 			"path": "github.com/hajimehoshi/ebiten/internal/opengl",
-			"revision": "e3023889acdd9f3ee1292bc93410e7f0230e1c0d",
-			"revisionTime": "2018-02-03T15:22:38Z"
+			"revision": "e462c7e9168a41b4b4d7f11ab998b1d0e4736415",
+			"revisionTime": "2018-02-03T14:43:04Z",
+			"version": "=v1.6.0",
+			"versionExact": "v1.6.0"
 		},
 		{
 			"checksumSHA1": "KaYn2GR/PkKDF6yqvXsvUJ+CvyE=",
 			"path": "github.com/hajimehoshi/ebiten/internal/restorable",
-			"revision": "e3023889acdd9f3ee1292bc93410e7f0230e1c0d",
-			"revisionTime": "2018-02-03T15:22:38Z"
+			"revision": "e462c7e9168a41b4b4d7f11ab998b1d0e4736415",
+			"revisionTime": "2018-02-03T14:43:04Z",
+			"version": "=v1.6.0",
+			"versionExact": "v1.6.0"
 		},
 		{
 			"checksumSHA1": "0KK3BWxyz1hDhWRYUb5+WtZ34S0=",
 			"path": "github.com/hajimehoshi/ebiten/internal/sync",
-			"revision": "e3023889acdd9f3ee1292bc93410e7f0230e1c0d",
-			"revisionTime": "2018-02-03T15:22:38Z"
+			"revision": "e462c7e9168a41b4b4d7f11ab998b1d0e4736415",
+			"revisionTime": "2018-02-03T14:43:04Z",
+			"version": "=v1.6.0",
+			"versionExact": "v1.6.0"
 		},
 		{
-			"checksumSHA1": "pudhbhudNjTil3+nyo+UeAHheHc=",
+			"checksumSHA1": "eQd/9gdy7PhTHw+mRRgfqTvJ/N4=",
 			"path": "github.com/hajimehoshi/ebiten/internal/ui",
-			"revision": "e3023889acdd9f3ee1292bc93410e7f0230e1c0d",
-			"revisionTime": "2018-02-03T15:22:38Z"
+			"revision": "e462c7e9168a41b4b4d7f11ab998b1d0e4736415",
+			"revisionTime": "2018-02-03T14:43:04Z",
+			"version": "=v1.6.0",
+			"versionExact": "v1.6.0"
 		},
 		{
 			"checksumSHA1": "vaIsRSUtwP1prKqrOM607tIXgJU=",
 			"path": "github.com/hajimehoshi/ebiten/internal/web",
-			"revision": "e3023889acdd9f3ee1292bc93410e7f0230e1c0d",
-			"revisionTime": "2018-02-03T15:22:38Z"
+			"revision": "e462c7e9168a41b4b4d7f11ab998b1d0e4736415",
+			"revisionTime": "2018-02-03T14:43:04Z",
+			"version": "=v1.6.0",
+			"versionExact": "v1.6.0"
 		},
 		{
 			"checksumSHA1": "rm5EcebmWPwUgtflYREObZ9T1wo=",
 			"path": "github.com/hajimehoshi/go-mp3",
-			"revision": "a843108de7dee367a459b0f5e9989edef201daf5",
-			"revisionTime": "2018-01-23T16:05:10Z"
+			"revision": "3c185f92b8dbceefa913b64cae634ba47f452769",
+			"revisionTime": "2018-02-07T14:47:44Z"
 		},
 		{
 			"checksumSHA1": "pRBh7DBfIBcYsZpL2RexGq2//6I=",
 			"path": "github.com/hajimehoshi/go-mp3/internal/bits",
-			"revision": "a843108de7dee367a459b0f5e9989edef201daf5",
-			"revisionTime": "2018-01-23T16:05:10Z"
+			"revision": "3c185f92b8dbceefa913b64cae634ba47f452769",
+			"revisionTime": "2018-02-07T14:47:44Z"
 		},
 		{
 			"checksumSHA1": "tYeu6lN+uVaRZQFtR1dgtMn8QLY=",
 			"path": "github.com/hajimehoshi/go-mp3/internal/consts",
-			"revision": "a843108de7dee367a459b0f5e9989edef201daf5",
-			"revisionTime": "2018-01-23T16:05:10Z"
+			"revision": "3c185f92b8dbceefa913b64cae634ba47f452769",
+			"revisionTime": "2018-02-07T14:47:44Z"
 		},
 		{
-			"checksumSHA1": "meR31R04DZyv6FfTgQNlOK/B1PE=",
+			"checksumSHA1": "07AiGstRboF35ki73jnv2s+QtmY=",
 			"path": "github.com/hajimehoshi/go-mp3/internal/frame",
-			"revision": "a843108de7dee367a459b0f5e9989edef201daf5",
-			"revisionTime": "2018-01-23T16:05:10Z"
+			"revision": "3c185f92b8dbceefa913b64cae634ba47f452769",
+			"revisionTime": "2018-02-07T14:47:44Z"
 		},
 		{
 			"checksumSHA1": "4MTqzAA4cgYQfVRLHr8+WGpz/ek=",
 			"path": "github.com/hajimehoshi/go-mp3/internal/frameheader",
-			"revision": "a843108de7dee367a459b0f5e9989edef201daf5",
-			"revisionTime": "2018-01-23T16:05:10Z"
+			"revision": "3c185f92b8dbceefa913b64cae634ba47f452769",
+			"revisionTime": "2018-02-07T14:47:44Z"
 		},
 		{
 			"checksumSHA1": "Lan9Jw6Gnwo9kqGUmVWOaxuYsgg=",
 			"path": "github.com/hajimehoshi/go-mp3/internal/huffman",
-			"revision": "a843108de7dee367a459b0f5e9989edef201daf5",
-			"revisionTime": "2018-01-23T16:05:10Z"
+			"revision": "3c185f92b8dbceefa913b64cae634ba47f452769",
+			"revisionTime": "2018-02-07T14:47:44Z"
 		},
 		{
 			"checksumSHA1": "7PpRRua2RAeVcfiXxuYO3LwPEZ4=",
 			"path": "github.com/hajimehoshi/go-mp3/internal/imdct",
-			"revision": "a843108de7dee367a459b0f5e9989edef201daf5",
-			"revisionTime": "2018-01-23T16:05:10Z"
+			"revision": "3c185f92b8dbceefa913b64cae634ba47f452769",
+			"revisionTime": "2018-02-07T14:47:44Z"
 		},
 		{
-			"checksumSHA1": "9KEj4qAHD16R/a66qzXWhMP/Au8=",
+			"checksumSHA1": "SrycOipo78Z26JC9yorfyo5kDTk=",
 			"path": "github.com/hajimehoshi/go-mp3/internal/maindata",
-			"revision": "a843108de7dee367a459b0f5e9989edef201daf5",
-			"revisionTime": "2018-01-23T16:05:10Z"
+			"revision": "3c185f92b8dbceefa913b64cae634ba47f452769",
+			"revisionTime": "2018-02-07T14:47:44Z"
 		},
 		{
 			"checksumSHA1": "NNlpoDZ5ls6rY9oBjRXgzRyooeI=",
 			"path": "github.com/hajimehoshi/go-mp3/internal/sideinfo",
-			"revision": "a843108de7dee367a459b0f5e9989edef201daf5",
-			"revisionTime": "2018-01-23T16:05:10Z"
+			"revision": "3c185f92b8dbceefa913b64cae634ba47f452769",
+			"revisionTime": "2018-02-07T14:47:44Z"
 		},
 		{
-			"checksumSHA1": "+IvLeBJCDiFeOZBBddOX6+Mwj0Q=",
+			"checksumSHA1": "Pg8J78/JHI4ZKnPcAz5wjPGzFlc=",
 			"path": "github.com/hajimehoshi/oto",
-			"revision": "3680d211ad669453474fc5622a8cc4d346accedb",
-			"revisionTime": "2017-12-30T12:39:09Z"
+			"revision": "e2f7012830c68205e59a6663c6e2398f6f778629",
+			"revisionTime": "2018-01-29T02:51:18Z"
 		},
 		{
 			"checksumSHA1": "JlJLZFe9TP0fFvcEOXK4k5/NdwE=",
 			"path": "github.com/hajimehoshi/oto/internal/jni",
-			"revision": "3680d211ad669453474fc5622a8cc4d346accedb",
-			"revisionTime": "2017-12-30T12:39:09Z"
+			"revision": "e2f7012830c68205e59a6663c6e2398f6f778629",
+			"revisionTime": "2018-01-29T02:51:18Z"
 		},
 		{
 			"checksumSHA1": "7H62S41J8xPB0TOaw5Rk1p8y84w=",
 			"path": "golang.org/x/mobile/exp/audio/al",
-			"revision": "202a52f8eee59fbd0c7471e7a019291bceae2adc",
-			"revisionTime": "2017-07-29T15:52:47Z"
+			"revision": "8a8a989f4807eb8c387ee9d4ccf11aee9c6aaca3",
+			"revisionTime": "2018-02-23T14:45:26Z"
 		},
 		{
-			"checksumSHA1": "d5lwd7SWVcIPIReyTZl/Eb3qIR8=",
+			"checksumSHA1": "lWGA4yFGeP/GjpA1n3VVW9v7gbE=",
 			"path": "golang.org/x/mobile/gl",
-			"revision": "5704e182c7003d4b7e94c23373f3fad4e5ceb25a",
-			"revisionTime": "2018-01-21T12:13:19Z"
+			"revision": "8a8a989f4807eb8c387ee9d4ccf11aee9c6aaca3",
+			"revisionTime": "2018-02-23T14:45:26Z"
 		},
 		{
-			"checksumSHA1": "neZDaBaruQb+6CmmvY3wCeZuhJw=",
+			"checksumSHA1": "Nb5PAImV0j6MLVITGv+t49HGkgk=",
 			"path": "golang.org/x/mobile/internal/mobileinit",
-			"revision": "202a52f8eee59fbd0c7471e7a019291bceae2adc",
-			"revisionTime": "2017-07-29T15:52:47Z"
+			"revision": "8a8a989f4807eb8c387ee9d4ccf11aee9c6aaca3",
+			"revisionTime": "2018-02-23T14:45:26Z"
 		},
 		{
-			"checksumSHA1": "tSUO/Ma1BMDU/HU93X52jLkod7M=",
+			"checksumSHA1": "eQq+ZoTWPjyizS9XalhZwfGjQao=",
 			"path": "golang.org/x/sys/windows",
-			"revision": "0dd5e194bbf5eb84a39666eb4c98a4d007e4203a",
-			"revisionTime": "2017-11-16T07:26:13Z"
+			"revision": "f6cff0780e542efa0c8e864dc8fa522808f6a598",
+			"revisionTime": "2018-02-20T20:26:15Z"
 		}
 	],
 	"rootPath": "github.com/kemokemo/kuronan-dash"
