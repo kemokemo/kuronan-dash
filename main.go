@@ -31,7 +31,7 @@ func run() int {
 		}
 	}()
 
-	err = ebiten.Run(game.Update, 800, 600, 1, "Kuronan Dash!")
+	err = ebiten.Run(game.Update, dash.ScreenWidth, dash.ScreenHeight, 1, "Kuronan Dash!")
 	if err != nil {
 		log.Println("Failed to run.", err)
 		return exitFailed
