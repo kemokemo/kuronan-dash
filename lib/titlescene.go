@@ -69,7 +69,7 @@ func (s *TitleScene) Draw(r *ebiten.Image) {
 
 	s.drawTitleBackground(r)
 	text.Draw(r, "黒菜んダッシュ", mplusbitmap.Gothic12r, 10, 32, color.Black)
-	text.Draw(r, "Press SPACE to start", mplusbitmap.Gothic12r, 10, ScreenHeight-48, color.Black)
+	text.Draw(r, "Spaceを押して始めよう!", mplusbitmap.Gothic12r, 10, ScreenHeight-48, color.Black)
 }
 
 func (s *TitleScene) drawTitleBackground(r *ebiten.Image) {

@@ -4,18 +4,22 @@ package kuronandash
 
 import (
 	"fmt"
+	"image/color"
 	"log"
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
+	"github.com/hajimehoshi/ebiten/text"
+	mplusbitmap "github.com/hajimehoshi/go-mplusbitmap"
 )
 
 type gameState int
 
 const (
-	normal gameState = iota
+	beforeRun gameState = iota
 	running
-	slow
+	pause
+	gameover
 )
 
 // GameScene is the scene for the game.
@@ -28,7 +32,7 @@ type GameScene struct {
 // NewGameScene creates the new GameScene.
 func NewGameScene() *GameScene {
 	return &GameScene{
-		state: normal,
+		state: beforeRun,
 	}
 }
 
@@ -36,6 +40,7 @@ func NewGameScene() *GameScene {
 func (s *GameScene) SetResources(j *JukeBox, c *Character) {
 	s.jukeBox = j
 	s.character = c
+	s.character.SetInitialPosition(Position{X: 10, Y: 50})
 	err := s.jukeBox.SelectDisc("hashire_kurona")
 	if err != nil {
 		log.Printf("Failed to select disc:%v", err)
@@ -44,7 +49,7 @@ func (s *GameScene) SetResources(j *JukeBox, c *Character) {
 
 // Update updates the status of this scene.
 func (s *GameScene) Update(state *GameState) error {
-	s.updateStatus()
+	s.updateStatus(state)
 	return nil
 }
 
@@ -55,12 +60,18 @@ func (s *GameScene) Draw(screen *ebiten.Image) {
 		log.Printf("Failed to play with JukeBox:%v", err)
 		return
 	}
+	ebitenutil.DebugPrint(screen, fmt.Sprintf("Now Playing: %s", s.jukeBox.NowPlaying()))
 	err = s.character.Draw(screen)
 	if err != nil {
 		log.Printf("Failed to draw character:%v", err)
 		return
 	}
-	ebitenutil.DebugPrint(screen, fmt.Sprintf("Now Playing: %s", s.jukeBox.NowPlaying()))
+
+	if s.state == gameover {
+		text.Draw(screen, "ゲームオーバー: Spaceを押してタイトルへ", mplusbitmap.Gothic12r, ScreenWidth/2-100, ScreenHeight/2, color.White)
+		return
+	}
+
 	// TODO: 衝突判定とSE再生
 	err = s.checkCollision()
 	if err != nil {
@@ -69,35 +80,21 @@ func (s *GameScene) Draw(screen *ebiten.Image) {
 	}
 }
 
-func (s *GameScene) updateStatus() error {
-	s.character.Move()
-
-	// TODO: ボタン入力で代用
-	// TODO: state変わったら曲を更新する
-	if ebiten.IsKeyPressed(ebiten.Key0) {
-		s.state = normal
+func (s *GameScene) updateStatus(state *GameState) error {
+	// TODO: とりあえずゲームオーバーの練習
+	if s.state == gameover {
+		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
+			state.SceneManager.GoTo(&TitleScene{})
+			return nil
+		}
 		return nil
-	} else if ebiten.IsKeyPressed(ebiten.Key1) {
-		if s.state != slow {
-			s.state = slow
-			err := s.jukeBox.SelectDisc("shibugaki_no_kuroneko")
-			if err != nil {
-				return err
-			}
-			return nil
-		}
-	} else if ebiten.IsKeyPressed(ebiten.Key2) {
-		if s.state != running {
-			s.state = running
-			err := s.jukeBox.SelectDisc("hashire_kurona")
-			if err != nil {
-				return err
-			}
-			return nil
-		}
-	} else {
-		// nothig
 	}
+	if s.character.position.X+50 > ScreenWidth-50 && s.state != gameover {
+		s.state = gameover
+		return nil
+	}
+
+	s.character.Move()
 	return nil
 }
 
