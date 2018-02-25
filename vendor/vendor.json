@@ -16,6 +16,18 @@
 			"tree": true
 		},
 		{
+			"checksumSHA1": "aJ/kX/eCUlrCJBZ26Hwh/RXzAIw=",
+			"path": "github.com/golang/freetype/raster",
+			"revision": "e2365dfdc4a05e4b8299a783240d4a7d5a65d4e4",
+			"revisionTime": "2017-06-09T00:35:04Z"
+		},
+		{
+			"checksumSHA1": "I3u9Uh9thka1gsgch6QEiPkaAr0=",
+			"path": "github.com/golang/freetype/truetype",
+			"revision": "e2365dfdc4a05e4b8299a783240d4a7d5a65d4e4",
+			"revisionTime": "2017-06-09T00:35:04Z"
+		},
+		{
 			"checksumSHA1": "yIkYzW7bzAD81zHyuCNmEj4+oxQ=",
 			"path": "github.com/gopherjs/gopherjs/js",
 			"revision": "3926a9f66452f7a8c8d9c0e4e3074383f9aff5cd",
@@ -130,14 +142,6 @@
 			"versionExact": "v1.6.0"
 		},
 		{
-			"checksumSHA1": "qJPiDMKHDNeDE5VvqcmDVaU+04A=",
-			"path": "github.com/hajimehoshi/ebiten/internal/hooks",
-			"revision": "c7a733fb1654a4af46ae264157438a073eec2b25",
-			"revisionTime": "2018-02-24T18:12:33Z",
-			"version": "=v1.6.0",
-			"versionExact": "v1.6.0"
-		},
-		{
 			"checksumSHA1": "pI+Hv4oWe6dj0Va0WwWvBUXWxOc=",
 			"path": "github.com/hajimehoshi/ebiten/internal/jni",
 			"revision": "e462c7e9168a41b4b4d7f11ab998b1d0e4736415",
@@ -188,6 +192,14 @@
 		{
 			"checksumSHA1": "vaIsRSUtwP1prKqrOM607tIXgJU=",
 			"path": "github.com/hajimehoshi/ebiten/internal/web",
+			"revision": "e462c7e9168a41b4b4d7f11ab998b1d0e4736415",
+			"revisionTime": "2018-02-03T14:43:04Z",
+			"version": "=v1.6.0",
+			"versionExact": "v1.6.0"
+		},
+		{
+			"checksumSHA1": "XtDH6YkKw2KapJmCwA2tbj4YEYk=",
+			"path": "github.com/hajimehoshi/ebiten/text",
 			"revision": "e462c7e9168a41b4b4d7f11ab998b1d0e4736415",
 			"revisionTime": "2018-02-03T14:43:04Z",
 			"version": "=v1.6.0",
@@ -260,20 +272,20 @@
 			"revisionTime": "2018-01-29T02:51:18Z"
 		},
 		{
-			"checksumSHA1": "7H62S41J8xPB0TOaw5Rk1p8y84w=",
-			"path": "golang.org/x/mobile/exp/audio/al",
-			"revision": "8a8a989f4807eb8c387ee9d4ccf11aee9c6aaca3",
-			"revisionTime": "2018-02-23T14:45:26Z"
+			"checksumSHA1": "+U1IB5N4LDS74y4fXjARb4/S4IE=",
+			"path": "golang.org/x/image/font",
+			"revision": "12117c17ca67ffa1ce22e9409f3b0b0a93ac08c7",
+			"revisionTime": "2017-12-12T19:22:48Z"
+		},
+		{
+			"checksumSHA1": "euzvwlMLxyD0hwc+raoVsDLv6j4=",
+			"path": "golang.org/x/image/math/fixed",
+			"revision": "12117c17ca67ffa1ce22e9409f3b0b0a93ac08c7",
+			"revisionTime": "2017-12-12T19:22:48Z"
 		},
 		{
 			"checksumSHA1": "lWGA4yFGeP/GjpA1n3VVW9v7gbE=",
 			"path": "golang.org/x/mobile/gl",
-			"revision": "8a8a989f4807eb8c387ee9d4ccf11aee9c6aaca3",
-			"revisionTime": "2018-02-23T14:45:26Z"
-		},
-		{
-			"checksumSHA1": "Nb5PAImV0j6MLVITGv+t49HGkgk=",
-			"path": "golang.org/x/mobile/internal/mobileinit",
 			"revision": "8a8a989f4807eb8c387ee9d4ccf11aee9c6aaca3",
 			"revisionTime": "2018-02-23T14:45:26Z"
 		},
