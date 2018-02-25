@@ -4,7 +4,6 @@ package kuronandash
 
 import (
 	"fmt"
-	_ "image/jpeg"
 	"log"
 
 	"github.com/hajimehoshi/ebiten"
@@ -19,18 +18,21 @@ const (
 	slow
 )
 
+// GameScene is the scene for the game.
 type GameScene struct {
 	state     gameState
 	character *Character
 	jukeBox   *JukeBox
 }
 
+// NewGameScene creates the new GameScene.
 func NewGameScene() *GameScene {
 	return &GameScene{
 		state: normal,
 	}
 }
 
+// SetResources sets the resources like music, character images and so on.
 func (s *GameScene) SetResources(j *JukeBox, c *Character) {
 	s.jukeBox = j
 	s.character = c
@@ -40,11 +42,13 @@ func (s *GameScene) SetResources(j *JukeBox, c *Character) {
 	}
 }
 
+// Update updates the status of this scene.
 func (s *GameScene) Update(state *GameState) error {
 	s.updateStatus()
 	return nil
 }
 
+// Draw draws background and characters. This function play music too.
 func (s *GameScene) Draw(screen *ebiten.Image) {
 	err := s.jukeBox.Play()
 	if err != nil {
