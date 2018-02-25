@@ -16,18 +16,6 @@
 			"tree": true
 		},
 		{
-			"checksumSHA1": "aJ/kX/eCUlrCJBZ26Hwh/RXzAIw=",
-			"path": "github.com/golang/freetype/raster",
-			"revision": "e2365dfdc4a05e4b8299a783240d4a7d5a65d4e4",
-			"revisionTime": "2017-06-09T00:35:04Z"
-		},
-		{
-			"checksumSHA1": "I3u9Uh9thka1gsgch6QEiPkaAr0=",
-			"path": "github.com/golang/freetype/truetype",
-			"revision": "e2365dfdc4a05e4b8299a783240d4a7d5a65d4e4",
-			"revisionTime": "2017-06-09T00:35:04Z"
-		},
-		{
 			"checksumSHA1": "yIkYzW7bzAD81zHyuCNmEj4+oxQ=",
 			"path": "github.com/gopherjs/gopherjs/js",
 			"revision": "3926a9f66452f7a8c8d9c0e4e3074383f9aff5cd",
@@ -258,6 +246,12 @@
 			"path": "github.com/hajimehoshi/go-mp3/internal/sideinfo",
 			"revision": "3c185f92b8dbceefa913b64cae634ba47f452769",
 			"revisionTime": "2018-02-07T14:47:44Z"
+		},
+		{
+			"checksumSHA1": "tm3hJiMRQVaHxDPvZgx2eimAnVU=",
+			"path": "github.com/hajimehoshi/go-mplusbitmap",
+			"revision": "bc9dd1c4d8ce3873ae4c3a0631b2437977c2ec4a",
+			"revisionTime": "2018-02-10T19:23:13Z"
 		},
 		{
 			"checksumSHA1": "Pg8J78/JHI4ZKnPcAz5wjPGzFlc=",
