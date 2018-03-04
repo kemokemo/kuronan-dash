@@ -5,21 +5,22 @@ import (
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/audio"
+	"github.com/kemokemo/kuronan-dash/lib/assetsutil"
+	objects "github.com/kemokemo/kuronan-dash/lib/objects"
+	scenes "github.com/kemokemo/kuronan-dash/lib/scenes"
 )
-
-const sampleRate = 44100
 
 // Game controls all things in the screen.
 type Game struct {
-	sceneManager *SceneManager
-	input        Input
-	character    *Character
-	jukeBox      *JukeBox
+	sceneManager *scenes.SceneManager
+	input        assetsutil.Input
+	character    *objects.Character
+	jukeBox      *assetsutil.JukeBox
 }
 
 // Init loads resources.
 func (g *Game) Init() error {
-	context, err := audio.NewContext(sampleRate)
+	context, err := audio.NewContext(assetsutil.SampleRate)
 	if err != nil {
 		return err
 	}
@@ -37,12 +38,12 @@ func (g *Game) Init() error {
 }
 
 func (g *Game) loadsMusic(context *audio.Context) error {
-	g.jukeBox = NewJukeBox(context)
-	err := g.jukeBox.InsertDiscs([]RequestCard{
-		RequestCard{
+	g.jukeBox = assetsutil.NewJukeBox(context)
+	err := g.jukeBox.InsertDiscs([]assetsutil.RequestCard{
+		assetsutil.RequestCard{
 			FilePath: "assets/music/shibugaki_no_kuroneko.mp3",
 		},
-		RequestCard{
+		assetsutil.RequestCard{
 			FilePath: "assets/music/hashire_kurona.mp3",
 		},
 	})
@@ -58,7 +59,7 @@ func (g *Game) loadsMusic(context *audio.Context) error {
 
 func (g *Game) loadsCharacters(context *audio.Context) error {
 	var err error
-	g.character, err = NewCharacter(context, []string{
+	g.character, err = objects.NewCharacter(context, []string{
 		"assets/images/character/koma_00.png",
 		"assets/images/character/koma_01.png",
 		"assets/images/character/koma_02.png",
@@ -68,7 +69,7 @@ func (g *Game) loadsCharacters(context *audio.Context) error {
 		log.Println("Failed to load assets.", err)
 		return err
 	}
-	g.character.SetInitialPosition(Position{X: 10, Y: 10})
+	g.character.SetInitialPosition(objects.Position{X: 10, Y: 10})
 	return nil
 }
 
@@ -80,9 +81,9 @@ func (g *Game) Close() error {
 // Update is an implements to draw screens.
 func (g *Game) Update(screen *ebiten.Image) error {
 	if g.sceneManager == nil {
-		g.sceneManager = &SceneManager{}
+		g.sceneManager = &scenes.SceneManager{}
 		g.sceneManager.SetResources(g.jukeBox, g.character)
-		g.sceneManager.GoTo(&TitleScene{})
+		g.sceneManager.GoTo(&scenes.TitleScene{})
 	}
 
 	g.input.Update()

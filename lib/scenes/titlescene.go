@@ -1,6 +1,6 @@
 // Copy from github.com/hajimehoshi/ebiten/example/blocks
 
-package kuronandash
+package scenes
 
 import (
 	"image/color"
@@ -10,6 +10,8 @@ import (
 	"github.com/hajimehoshi/ebiten/ebitenutil"
 	"github.com/hajimehoshi/ebiten/text"
 	mplusbitmap "github.com/hajimehoshi/go-mplusbitmap"
+	"github.com/kemokemo/kuronan-dash/lib/assetsutil"
+	"github.com/kemokemo/kuronan-dash/lib/objects"
 )
 
 var imageBackground *ebiten.Image
@@ -25,20 +27,11 @@ func init() {
 
 // TitleScene is the scene for title.
 type TitleScene struct {
-	jukeBox *JukeBox
-}
-
-func anyGamepadAbstractButtonPressed(i *Input) bool {
-	for _, b := range virtualGamepadButtons {
-		if i.gamepadConfig.IsButtonPressed(b) {
-			return true
-		}
-	}
-	return false
+	jukeBox *assetsutil.JukeBox
 }
 
 // SetResources sets the resources like music, character images and so on.
-func (s *TitleScene) SetResources(j *JukeBox, c *Character) {
+func (s *TitleScene) SetResources(j *assetsutil.JukeBox, c *objects.Character) {
 	s.jukeBox = j
 	err := s.jukeBox.SelectDisc("shibugaki_no_kuroneko")
 	if err != nil {
@@ -52,7 +45,7 @@ func (s *TitleScene) Update(state *GameState) error {
 		state.SceneManager.GoTo(NewGameScene())
 		return nil
 	}
-	if anyGamepadAbstractButtonPressed(state.Input) {
+	if assetsutil.AnyGamepadAbstractButtonPressed(state.Input) {
 		state.SceneManager.GoTo(NewGameScene())
 		return nil
 	}

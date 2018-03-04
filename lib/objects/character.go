@@ -1,8 +1,9 @@
-package kuronandash
+package objects
 
 import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/audio"
+	assetsutil "github.com/kemokemo/kuronan-dash/lib/assetsutil"
 )
 
 // Position describes the position by x and y.
@@ -30,7 +31,7 @@ const (
 // NewCharacter creates a new character instance.
 func NewCharacter(context *audio.Context, imagePaths []string) (*Character, error) {
 	c := &Character{
-		animation: StepAnimation{
+		animation: assetsutil.StepAnimation{
 			ImagesPaths:   imagePaths,
 			DurationSteps: 5,
 		},
@@ -39,7 +40,7 @@ func NewCharacter(context *audio.Context, imagePaths []string) (*Character, erro
 	if err != nil {
 		return nil, err
 	}
-	c.jumpSe, err = NewSePlayer(context, "assets/se/jump.wav")
+	c.jumpSe, err = assetsutil.NewSePlayer(context, "assets/se/jump.wav")
 	if err != nil {
 		return nil, err
 	}
@@ -48,35 +49,35 @@ func NewCharacter(context *audio.Context, imagePaths []string) (*Character, erro
 
 // Character describes a character.
 type Character struct {
-	animation StepAnimation
-	position  Position
+	animation assetsutil.StepAnimation
+	Position  Position
 	moved     bool
 	status    Status
-	jumpSe    *SePlayer
+	jumpSe    *assetsutil.SePlayer
 }
 
 // SetInitialPosition sets the initial position for this character.
 func (c *Character) SetInitialPosition(pos Position) {
-	c.position = pos
+	c.Position = pos
 }
 
 // Move moves the character regarding the user input.
 func (c *Character) Move() {
 	c.moved = false
 	if ebiten.IsKeyPressed(ebiten.KeyLeft) || ebiten.GamepadAxis(0, 0) <= -0.5 {
-		c.position.X--
+		c.Position.X--
 		c.moved = true
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyRight) || ebiten.GamepadAxis(0, 0) >= 0.5 {
-		c.position.X++
+		c.Position.X++
 		c.moved = true
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyUp) || ebiten.GamepadAxis(0, 1) <= -0.5 {
-		c.position.Y--
+		c.Position.Y--
 		c.moved = true
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyDown) || ebiten.GamepadAxis(0, 1) >= 0.5 {
-		c.position.Y++
+		c.Position.Y++
 		c.moved = true
 	}
 
@@ -88,7 +89,7 @@ func (c *Character) Move() {
 // Draw draws the character image.
 func (c *Character) Draw(screen *ebiten.Image) error {
 	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(float64(c.position.X), float64(c.position.Y))
+	op.GeoM.Translate(float64(c.Position.X), float64(c.Position.Y))
 	return screen.DrawImage(c.animation.GetCurrentFrame(), op)
 }
 

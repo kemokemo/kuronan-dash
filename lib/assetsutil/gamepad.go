@@ -1,6 +1,6 @@
 // Copy from github.com/hajimehoshi/ebiten/example/blocks
 
-package kuronandash
+package assetsutil
 
 import (
 	"fmt"
@@ -72,6 +72,16 @@ func (c *gamepadConfig) initializeIfNeeded() {
 	}
 }
 
+// AnyGamepadAbstractButtonPressed returns the specified button was pressed or not.
+func AnyGamepadAbstractButtonPressed(i *Input) bool {
+	for _, b := range virtualGamepadButtons {
+		if i.gamepadConfig.IsButtonPressed(b) {
+			return true
+		}
+	}
+	return false
+}
+
 func (c *gamepadConfig) Reset() {
 	c.buttons = nil
 	c.axes = nil
@@ -134,15 +144,14 @@ func (c *gamepadConfig) IsButtonPressed(b virtualGamepadButton) bool {
 	}
 
 	a, ok := c.axes[b]
-	if ok {
-		v := ebiten.GamepadAxis(0, a.id)
-		if a.positive {
-			return axisThreshold <= v && v <= 1.0
-		} else {
-			return -1.0 <= v && v <= -axisThreshold
-		}
+	if !ok {
+		return false
 	}
-	return false
+	v := ebiten.GamepadAxis(0, a.id)
+	if a.positive {
+		return axisThreshold <= v && v <= 1.0
+	}
+	return -1.0 <= v && v <= -axisThreshold
 }
 
 // Name returns the pysical button's name for the given virtual button.
@@ -155,13 +164,11 @@ func (c *gamepadConfig) ButtonName(b virtualGamepadButton) string {
 	}
 
 	a, ok := c.axes[b]
-	if ok {
-		if a.positive {
-			return fmt.Sprintf("Axis %d+", a.id)
-		} else {
-			return fmt.Sprintf("Axis %d-", a.id)
-		}
+	if !ok {
+		return ""
 	}
-
-	return ""
+	if a.positive {
+		return fmt.Sprintf("Axis %d+", a.id)
+	}
+	return fmt.Sprintf("Axis %d-", a.id)
 }

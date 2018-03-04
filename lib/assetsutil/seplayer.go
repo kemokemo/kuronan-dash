@@ -1,4 +1,4 @@
-package kuronandash
+package assetsutil
 
 import (
 	"os"

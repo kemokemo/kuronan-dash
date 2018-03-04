@@ -1,6 +1,6 @@
 // Copy from github.com/hajimehoshi/ebiten/example/blocks
 
-package kuronandash
+package scenes
 
 import (
 	"fmt"
@@ -11,6 +11,8 @@ import (
 	"github.com/hajimehoshi/ebiten/ebitenutil"
 	"github.com/hajimehoshi/ebiten/text"
 	mplusbitmap "github.com/hajimehoshi/go-mplusbitmap"
+	assetsutil "github.com/kemokemo/kuronan-dash/lib/assetsutil"
+	objects "github.com/kemokemo/kuronan-dash/lib/objects"
 )
 
 type gameState int
@@ -25,8 +27,8 @@ const (
 // GameScene is the scene for the game.
 type GameScene struct {
 	state     gameState
-	character *Character
-	jukeBox   *JukeBox
+	character *objects.Character
+	jukeBox   *assetsutil.JukeBox
 }
 
 // NewGameScene creates the new GameScene.
@@ -37,10 +39,10 @@ func NewGameScene() *GameScene {
 }
 
 // SetResources sets the resources like music, character images and so on.
-func (s *GameScene) SetResources(j *JukeBox, c *Character) {
+func (s *GameScene) SetResources(j *assetsutil.JukeBox, c *objects.Character) {
 	s.jukeBox = j
 	s.character = c
-	s.character.SetInitialPosition(Position{X: 10, Y: 50})
+	s.character.SetInitialPosition(objects.Position{X: 10, Y: 50})
 	err := s.jukeBox.SelectDisc("hashire_kurona")
 	if err != nil {
 		log.Printf("Failed to select disc:%v", err)
@@ -89,7 +91,7 @@ func (s *GameScene) updateStatus(state *GameState) error {
 		}
 		return nil
 	}
-	if s.character.position.X+50 > ScreenWidth-50 && s.state != gameover {
+	if s.character.Position.X+50 > ScreenWidth-50 && s.state != gameover {
 		s.state = gameover
 		return nil
 	}
@@ -101,9 +103,9 @@ func (s *GameScene) updateStatus(state *GameState) error {
 func (s *GameScene) checkCollision() error {
 	// TODO: 衝突判定の代わりにボタン入力
 	if ebiten.IsKeyPressed(ebiten.KeyJ) {
-		s.character.SetState(Ascending)
+		s.character.SetState(objects.Ascending)
 	} else {
-		s.character.SetState(Dash)
+		s.character.SetState(objects.Dash)
 	}
 	err := s.character.PlaySe()
 	if err != nil {

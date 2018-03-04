@@ -1,6 +1,6 @@
 // Copy from github.com/hajimehoshi/ebiten/example/blocks
 
-package kuronandash
+package assetsutil
 
 import (
 	"github.com/hajimehoshi/ebiten"
@@ -35,6 +35,7 @@ func (i *Input) stateForVirtualGamepadButton(b virtualGamepadButton) int {
 	return i.virtualGamepadButtonStates[b]
 }
 
+// Update updates the key state.
 func (i *Input) Update() {
 	if i.keyStates == nil {
 		i.keyStates = map[ebiten.Key]int{}
@@ -68,6 +69,7 @@ func (i *Input) Update() {
 	}
 }
 
+// IsRotateRightJustPressed check the right rotate was pressed or not.
 func (i *Input) IsRotateRightJustPressed() bool {
 	if i.StateForKey(ebiten.KeySpace) == 1 || i.StateForKey(ebiten.KeyX) == 1 {
 		return true
@@ -75,6 +77,7 @@ func (i *Input) IsRotateRightJustPressed() bool {
 	return i.stateForVirtualGamepadButton(virtualGamepadButtonButtonB) == 1
 }
 
+// IsRotateLeftJustPressed check the left rotate was pressed or not.
 func (i *Input) IsRotateLeftJustPressed() bool {
 	if i.StateForKey(ebiten.KeyZ) == 1 {
 		return true
@@ -82,6 +85,7 @@ func (i *Input) IsRotateLeftJustPressed() bool {
 	return i.stateForVirtualGamepadButton(virtualGamepadButtonButtonA) == 1
 }
 
+// StateForLeft returns the count of the left button was pressed.
 func (i *Input) StateForLeft() int {
 	v := i.StateForKey(ebiten.KeyLeft)
 	if 0 < v {
@@ -90,6 +94,7 @@ func (i *Input) StateForLeft() int {
 	return i.stateForVirtualGamepadButton(virtualGamepadButtonLeft)
 }
 
+// StateForRight returns the count of the right button was pressed.
 func (i *Input) StateForRight() int {
 	v := i.StateForKey(ebiten.KeyRight)
 	if 0 < v {
@@ -98,6 +103,7 @@ func (i *Input) StateForRight() int {
 	return i.stateForVirtualGamepadButton(virtualGamepadButtonRight)
 }
 
+// StateForDown returns the count of the down button was pressed.
 func (i *Input) StateForDown() int {
 	v := i.StateForKey(ebiten.KeyDown)
 	if 0 < v {
