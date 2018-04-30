@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/kemokemo/kuronan-dash.svg?branch=master)](https://travis-ci.org/kemokemo/kuronan-dash) [![Coverage Status](https://coveralls.io/repos/github/kemokemo/kuronan-dash/badge.svg?branch=master)](https://coveralls.io/github/kemokemo/kuronan-dash?branch=master) [![Go Report Card](https://goreportcard.com/badge/github.com/kemokemo/kuronan-dash)](https://goreportcard.com/report/github.com/kemokemo/kuronan-dash) [![Powered By: GoReleaser](https://img.shields.io/badge/powered%20by-goreleaser-green.svg?style=flat-square)](https://github.com/goreleaser)
+[![Build Status](https://travis-ci.org/kemokemo/kuronan-dash.svg?branch=master)](https://travis-ci.org/kemokemo/kuronan-dash) [![Go Report Card](https://goreportcard.com/badge/github.com/kemokemo/kuronan-dash)](https://goreportcard.com/report/github.com/kemokemo/kuronan-dash) [![Powered By: GoReleaser](https://img.shields.io/badge/powered%20by-goreleaser-green.svg?style=flat-square)](https://github.com/goreleaser)
 
-# 黒菜んダッシュ
+# 黒菜んダッシュ :dash:
 
 月刊COMICリュウで人気連載中のコミック、「[ねこむすめ道草日記](http://www.comic-ryu.jp/_nekomusume/)」の同人ゲームです。
 
@@ -9,7 +9,7 @@
 
 ## どんなゲーム？
 
-こんな特徴をもったゲームを作ろうとしています。
+こんな特徴をもったゲームを作ろうとしています。:blush:
 
 * それぞれ個性をもったキャラを選択できる
   * もちろん登場キャラクターは「ねこむすめ道草日記」の子たち
@@ -23,12 +23,13 @@
 
 ## つくってる人
 
-[kemokemo](https://github.com/kemokemo)
+:cat: [kemokemo](https://github.com/kemokemo)
 
 ## らいせんす
 
-ソースコードもassetsディレクトリ以下に入っているキャラクターのドット絵や音楽なども、  
-ぜ～んぶ[Apache License Version 2.0](https://github.com/kemokemo/kuronan-dash/blob/master/LICENSE)です。
+:orange_book: [Apache License Version 2.0](https://github.com/kemokemo/kuronan-dash/blob/master/LICENSE)
+
+ソースコードだけでなく、assetsディレクトリ以下の画像や音楽、効果音なども上記ライセンスです。
 
 ## すぺしゃるさんくす
 
