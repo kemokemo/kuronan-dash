@@ -1,27 +1,21 @@
-package assetsutil
+package music
 
 import (
 	"path/filepath"
 	"reflect"
 	"testing"
-
-	"github.com/hajimehoshi/ebiten/audio"
 )
 
 func TestNewJukeBox(t *testing.T) {
-	type args struct {
-		con *audio.Context
-	}
 	tests := []struct {
 		name string
-		args args
 		want *JukeBox
 	}{
-		{name: "normal-01", args: args{con: testContext}, want: &JukeBox{context: testContext, discs: make(map[string]*disc)}},
+		{name: "normal-01", want: &JukeBox{discs: make(map[string]*disc)}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewJukeBox(tt.args.con); !reflect.DeepEqual(got, tt.want) {
+			if got := NewJukeBox(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewJukeBox() = %v, want %v", got, tt.want)
 			}
 		})
@@ -51,7 +45,7 @@ func Test_getFileNameWithoutExt(t *testing.T) {
 }
 
 func TestInsertDiscs(t *testing.T) {
-	juke := NewJukeBox(testContext)
+	juke := NewJukeBox()
 	type args struct {
 		cards []RequestCard
 	}
@@ -120,7 +114,7 @@ func TestInsertDiscs(t *testing.T) {
 }
 
 func TestNowPlaying(t *testing.T) {
-	juke := NewJukeBox(testContext)
+	juke := NewJukeBox()
 	err := juke.InsertDiscs([]RequestCard{
 		RequestCard{MusicName: "stage01", FilePath: "./TestData/music/sample01.mp3"},
 	})
@@ -139,7 +133,7 @@ func TestNowPlaying(t *testing.T) {
 		return
 	}
 
-	notPlaying := NewJukeBox(testContext)
+	notPlaying := NewJukeBox()
 	err = notPlaying.InsertDiscs([]RequestCard{
 		RequestCard{MusicName: "stage02", FilePath: "./TestData/music/sample02.mp3"},
 	})
@@ -153,7 +147,7 @@ func TestNowPlaying(t *testing.T) {
 		return
 	}
 
-	notSelected := NewJukeBox(testContext)
+	notSelected := NewJukeBox()
 	err = notSelected.InsertDiscs([]RequestCard{
 		RequestCard{MusicName: "sample", FilePath: "./TestData/music/sample02.mp3"},
 	})
@@ -181,7 +175,7 @@ func TestNowPlaying(t *testing.T) {
 }
 
 func TestSelectDisc(t *testing.T) {
-	juke := NewJukeBox(testContext)
+	juke := NewJukeBox()
 	err := juke.InsertDiscs([]RequestCard{
 		RequestCard{MusicName: "stage01", FilePath: "./TestData/music/sample01.mp3"},
 		RequestCard{MusicName: "stage02", FilePath: "./TestData/music/sample02.mp3"},
@@ -214,7 +208,7 @@ func TestSelectDisc(t *testing.T) {
 }
 
 func TestPlay(t *testing.T) {
-	juke := NewJukeBox(testContext)
+	juke := NewJukeBox()
 	err := juke.InsertDiscs([]RequestCard{
 		RequestCard{MusicName: "stage01", FilePath: "./TestData/music/sample01.mp3"},
 		RequestCard{MusicName: "stage02", FilePath: "./TestData/music/sample02.mp3"},
@@ -268,7 +262,7 @@ func TestPlay(t *testing.T) {
 }
 
 func TestClose(t *testing.T) {
-	juke := NewJukeBox(testContext)
+	juke := NewJukeBox()
 	err := juke.InsertDiscs([]RequestCard{
 		RequestCard{MusicName: "stage01", FilePath: "./TestData/music/sample01.mp3"},
 		RequestCard{MusicName: "stage02", FilePath: "./TestData/music/sample02.mp3"},

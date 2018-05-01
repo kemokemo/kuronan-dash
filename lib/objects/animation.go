@@ -1,4 +1,4 @@
-package assetsutil
+package objects
 
 import (
 	"sync"

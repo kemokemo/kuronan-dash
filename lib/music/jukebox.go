@@ -1,4 +1,4 @@
-package assetsutil
+package music
 
 import (
 	"fmt"
@@ -17,7 +17,6 @@ type RequestCard struct {
 
 // JukeBox loads all music files and play any time you want.
 type JukeBox struct {
-	context *audio.Context
 	current *disc
 	discs   map[string]*disc
 }
@@ -29,10 +28,9 @@ type disc struct {
 }
 
 // NewJukeBox creates a new JukeBox instance.
-func NewJukeBox(con *audio.Context) *JukeBox {
+func NewJukeBox() *JukeBox {
 	return &JukeBox{
-		context: con,
-		discs:   make(map[string]*disc),
+		discs: make(map[string]*disc),
 	}
 }
 
@@ -48,7 +46,7 @@ func (j *JukeBox) InsertDiscs(cards []RequestCard) error {
 		if err != nil {
 			return err
 		}
-		p, err := audio.NewPlayer(j.context, s)
+		p, err := audio.NewPlayer(audioContext, s)
 		if err != nil {
 			return err
 		}
@@ -110,7 +108,7 @@ func (j *JukeBox) Play() error {
 	if err != nil {
 		return err
 	}
-	err = j.context.Update()
+	err = audioContext.Update()
 	if err != nil {
 		return err
 	}

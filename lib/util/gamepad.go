@@ -1,6 +1,6 @@
 // Copy from github.com/hajimehoshi/ebiten/example/blocks
 
-package assetsutil
+package util
 
 import (
 	"fmt"

@@ -10,10 +10,11 @@ import (
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/text"
-	mplusbitmap "github.com/hajimehoshi/go-mplusbitmap"
+	mplus "github.com/hajimehoshi/go-mplusbitmap"
 	"github.com/kemokemo/kuronan-dash/assets/images"
-	"github.com/kemokemo/kuronan-dash/lib/assetsutil"
+	"github.com/kemokemo/kuronan-dash/lib/music"
 	"github.com/kemokemo/kuronan-dash/lib/objects"
+	"github.com/kemokemo/kuronan-dash/lib/util"
 )
 
 var imageBackground *ebiten.Image
@@ -33,11 +34,11 @@ func init() {
 
 // TitleScene is the scene for title.
 type TitleScene struct {
-	jukeBox *assetsutil.JukeBox
+	jukeBox *music.JukeBox
 }
 
 // SetResources sets the resources like music, character images and so on.
-func (s *TitleScene) SetResources(j *assetsutil.JukeBox, c *objects.Character) {
+func (s *TitleScene) SetResources(j *music.JukeBox, c *objects.Character) {
 	s.jukeBox = j
 	err := s.jukeBox.SelectDisc("shibugaki_no_kuroneko")
 	if err != nil {
@@ -51,7 +52,7 @@ func (s *TitleScene) Update(state *GameState) error {
 		state.SceneManager.GoTo(NewGameScene())
 		return nil
 	}
-	if assetsutil.AnyGamepadAbstractButtonPressed(state.Input) {
+	if util.AnyGamepadAbstractButtonPressed(state.Input) {
 		state.SceneManager.GoTo(NewGameScene())
 		return nil
 	}
@@ -67,8 +68,8 @@ func (s *TitleScene) Draw(r *ebiten.Image) {
 	}
 
 	s.drawTitleBackground(r)
-	text.Draw(r, "黒菜んダッシュ", mplusbitmap.Gothic12r, 10, 32, color.Black)
-	text.Draw(r, "Spaceを押して始めよう!", mplusbitmap.Gothic12r, 10, ScreenHeight-48, color.Black)
+	text.Draw(r, "黒菜んダッシュ", mplus.Gothic12r, 10, 32, color.Black)
+	text.Draw(r, "Spaceを押して始めよう!", mplus.Gothic12r, 10, ScreenHeight-48, color.Black)
 }
 
 func (s *TitleScene) drawTitleBackground(r *ebiten.Image) {

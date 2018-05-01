@@ -10,9 +10,9 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
 	"github.com/hajimehoshi/ebiten/text"
-	mplusbitmap "github.com/hajimehoshi/go-mplusbitmap"
-	assetsutil "github.com/kemokemo/kuronan-dash/lib/assetsutil"
-	objects "github.com/kemokemo/kuronan-dash/lib/objects"
+	mplus "github.com/hajimehoshi/go-mplusbitmap"
+	"github.com/kemokemo/kuronan-dash/lib/music"
+	"github.com/kemokemo/kuronan-dash/lib/objects"
 )
 
 type gameState int
@@ -28,7 +28,7 @@ const (
 type GameScene struct {
 	state     gameState
 	character *objects.Character
-	jukeBox   *assetsutil.JukeBox
+	jukeBox   *music.JukeBox
 }
 
 // NewGameScene creates the new GameScene.
@@ -39,7 +39,7 @@ func NewGameScene() *GameScene {
 }
 
 // SetResources sets the resources like music, character images and so on.
-func (s *GameScene) SetResources(j *assetsutil.JukeBox, c *objects.Character) {
+func (s *GameScene) SetResources(j *music.JukeBox, c *objects.Character) {
 	s.jukeBox = j
 	s.character = c
 	s.character.SetInitialPosition(objects.Position{X: 10, Y: 50})
@@ -70,7 +70,7 @@ func (s *GameScene) Draw(screen *ebiten.Image) {
 	}
 
 	if s.state == gameover {
-		text.Draw(screen, "ゲームオーバー: Spaceを押してタイトルへ", mplusbitmap.Gothic12r, ScreenWidth/2-100, ScreenHeight/2, color.White)
+		text.Draw(screen, "ゲームオーバー: Spaceを押してタイトルへ", mplus.Gothic12r, ScreenWidth/2-100, ScreenHeight/2, color.White)
 		return
 	}
 

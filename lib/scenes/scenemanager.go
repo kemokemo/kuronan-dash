@@ -4,8 +4,9 @@ package scenes
 
 import (
 	"github.com/hajimehoshi/ebiten"
-	"github.com/kemokemo/kuronan-dash/lib/assetsutil"
+	"github.com/kemokemo/kuronan-dash/lib/music"
 	"github.com/kemokemo/kuronan-dash/lib/objects"
+	"github.com/kemokemo/kuronan-dash/lib/util"
 )
 
 const (
@@ -27,7 +28,7 @@ func init() {
 
 // Scene is interface for the all scenes.
 type Scene interface {
-	SetResources(j *assetsutil.JukeBox, c *objects.Character)
+	SetResources(j *music.JukeBox, c *objects.Character)
 	Update(state *GameState) error
 	Draw(screen *ebiten.Image)
 }
@@ -40,23 +41,23 @@ type SceneManager struct {
 	next            Scene
 	transitionCount int
 	character       *objects.Character
-	jukeBox         *assetsutil.JukeBox
+	jukeBox         *music.JukeBox
 }
 
 // GameState describe the state of this game.
 type GameState struct {
 	SceneManager *SceneManager
-	Input        *assetsutil.Input
+	Input        *util.Input
 }
 
 // SetResources sets the resources like music, character images and so on.
-func (s *SceneManager) SetResources(j *assetsutil.JukeBox, c *objects.Character) {
+func (s *SceneManager) SetResources(j *music.JukeBox, c *objects.Character) {
 	s.jukeBox = j
 	s.character = c
 }
 
 // Update updates the status of this scene.
-func (s *SceneManager) Update(input *assetsutil.Input) error {
+func (s *SceneManager) Update(input *util.Input) error {
 	if s.transitionCount == 0 {
 		return s.current.Update(&GameState{
 			SceneManager: s,

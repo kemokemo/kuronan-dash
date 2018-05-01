@@ -2,47 +2,42 @@ package kuronandash
 
 import (
 	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/audio"
-	"github.com/kemokemo/kuronan-dash/lib/assetsutil"
-	objects "github.com/kemokemo/kuronan-dash/lib/objects"
-	scenes "github.com/kemokemo/kuronan-dash/lib/scenes"
+	"github.com/kemokemo/kuronan-dash/lib/music"
+	"github.com/kemokemo/kuronan-dash/lib/objects"
+	"github.com/kemokemo/kuronan-dash/lib/scenes"
+	"github.com/kemokemo/kuronan-dash/lib/util"
 )
 
 // Game controls all things in the screen.
 type Game struct {
 	sceneManager *scenes.SceneManager
-	input        assetsutil.Input
+	input        util.Input
 	charaManager *objects.CharacterManager
 	character    *objects.Character
-	jukeBox      *assetsutil.JukeBox
+	jukeBox      *music.JukeBox
 }
 
 // Init loads resources.
 func (g *Game) Init() error {
-	context, err := audio.NewContext(assetsutil.SampleRate)
+	err := g.loadsMusic()
 	if err != nil {
 		return err
 	}
 
-	err = g.loadsMusic(context)
-	if err != nil {
-		return err
-	}
-
-	err = g.loadsCharacters(context)
+	err = g.loadsCharacters()
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (g *Game) loadsMusic(context *audio.Context) error {
-	g.jukeBox = assetsutil.NewJukeBox(context)
-	err := g.jukeBox.InsertDiscs([]assetsutil.RequestCard{
-		assetsutil.RequestCard{
+func (g *Game) loadsMusic() error {
+	g.jukeBox = music.NewJukeBox()
+	err := g.jukeBox.InsertDiscs([]music.RequestCard{
+		music.RequestCard{
 			FilePath: "_assets/music/shibugaki_no_kuroneko.mp3",
 		},
-		assetsutil.RequestCard{
+		music.RequestCard{
 			FilePath: "_assets/music/hashire_kurona.mp3",
 		},
 	})
@@ -56,9 +51,9 @@ func (g *Game) loadsMusic(context *audio.Context) error {
 	return nil
 }
 
-func (g *Game) loadsCharacters(context *audio.Context) error {
+func (g *Game) loadsCharacters() error {
 	var err error
-	g.charaManager, err = objects.NewCharacterManager(context)
+	g.charaManager, err = objects.NewCharacterManager()
 	if err != nil {
 		return err
 	}

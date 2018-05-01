@@ -2,8 +2,7 @@ package objects
 
 import (
 	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/audio"
-	assetsutil "github.com/kemokemo/kuronan-dash/lib/assetsutil"
+	"github.com/kemokemo/kuronan-dash/lib/music"
 )
 
 // Position describes the position by x and y.
@@ -13,13 +12,13 @@ type Position struct {
 }
 
 // NewCharacter creates a new character instance.
-func NewCharacter(context *audio.Context, cType CharacterType) (*Character, error) {
+func NewCharacter(cType CharacterType) (*Character, error) {
 	frames, err := getAnimationFrames(cType)
 	if err != nil {
 		return nil, err
 	}
 	c := &Character{
-		animation: assetsutil.StepAnimation{
+		animation: StepAnimation{
 			Frames:        frames,
 			DurationSteps: 5,
 		},
@@ -28,7 +27,7 @@ func NewCharacter(context *audio.Context, cType CharacterType) (*Character, erro
 	if err != nil {
 		return nil, err
 	}
-	c.jumpSe, err = assetsutil.NewSePlayer(context, "_assets/se/jump.wav")
+	c.jumpSe, err = music.NewSePlayer("_assets/se/jump.wav")
 	if err != nil {
 		return nil, err
 	}
@@ -37,11 +36,11 @@ func NewCharacter(context *audio.Context, cType CharacterType) (*Character, erro
 
 // Character describes a character.
 type Character struct {
-	animation assetsutil.StepAnimation
+	animation StepAnimation
 	Position  Position
 	moved     bool
 	state     CharacterState
-	jumpSe    *assetsutil.SePlayer
+	jumpSe    *music.SePlayer
 }
 
 // SetInitialPosition sets the initial position for this character.

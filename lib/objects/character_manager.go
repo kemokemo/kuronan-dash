@@ -2,8 +2,6 @@ package objects
 
 import (
 	"fmt"
-
-	"github.com/hajimehoshi/ebiten/audio"
 )
 
 // CharacterManager manages the characters.
@@ -14,14 +12,14 @@ type CharacterManager struct {
 }
 
 // NewCharacterManager returns the new created CharacterManager.
-func NewCharacterManager(context *audio.Context) (*CharacterManager, error) {
+func NewCharacterManager() (*CharacterManager, error) {
 	cm := CharacterManager{}
 	cm.charaMap = make(map[CharacterType]*Character)
 	cm.infoMap = make(map[CharacterType]CharacterInfo)
 	cm.selected = kurona
 
 	for _, cType := range CharacterTypeList {
-		c, err := NewCharacter(context, cType)
+		c, err := NewCharacter(cType)
 		if err != nil {
 			return &cm, err
 		}

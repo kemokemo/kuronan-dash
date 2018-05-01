@@ -1,4 +1,4 @@
-package assetsutil
+package music
 
 import (
 	"os"
@@ -14,16 +14,16 @@ type SePlayer struct {
 }
 
 // NewSePlayer returns a SePlayer.
-func NewSePlayer(context *audio.Context, soundPath string) (*SePlayer, error) {
+func NewSePlayer(soundPath string) (*SePlayer, error) {
 	f, err := os.Open(soundPath)
 	if err != nil {
 		return nil, err
 	}
-	s, err := wav.Decode(context, f)
+	s, err := wav.Decode(audioContext, f)
 	if err != nil {
 		return nil, err
 	}
-	p, err := audio.NewPlayer(context, s)
+	p, err := audio.NewPlayer(audioContext, s)
 	if err != nil {
 		return nil, err
 	}
