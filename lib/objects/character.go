@@ -12,27 +12,11 @@ type Position struct {
 	Y int
 }
 
-// Status describes the status of a character.
-type Status int
-
-const (
-	// Stop describes a character is stopping
-	Stop Status = iota
-	// Walk describes a character is walking
-	Walk
-	// Dash is Dash!
-	Dash
-	// Ascending describes a character is jumping
-	Ascending
-	// Descending describes a character is descending
-	Descending
-)
-
 // NewCharacter creates a new character instance.
-func NewCharacter(context *audio.Context, imagePaths []string) (*Character, error) {
+func NewCharacter(context *audio.Context, cType CharacterType) (*Character, error) {
 	c := &Character{
 		animation: assetsutil.StepAnimation{
-			ImagesPaths:   imagePaths,
+			ImagesPaths:   getAnimationImages(cType),
 			DurationSteps: 5,
 		},
 	}
@@ -52,7 +36,7 @@ type Character struct {
 	animation assetsutil.StepAnimation
 	Position  Position
 	moved     bool
-	status    Status
+	state     CharacterState
 	jumpSe    *assetsutil.SePlayer
 }
 
@@ -94,14 +78,14 @@ func (c *Character) Draw(screen *ebiten.Image) error {
 }
 
 // SetState sets the status for this character.
-func (c *Character) SetState(status Status) {
-	c.status = status
+func (c *Character) SetState(state CharacterState) {
+	c.state = state
 }
 
 // PlaySe plays a sound effect according to the status of this character.
 func (c *Character) PlaySe() error {
 	// TODO: ステータスに応じたSEを再生
-	if c.status == Ascending {
+	if c.state == Ascending {
 		// TODO: このままだとジャンプ中SE再生し続けるので対策が必要
 		return c.jumpSe.Play()
 	}

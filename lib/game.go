@@ -1,8 +1,6 @@
 package kuronandash
 
 import (
-	"log"
-
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/audio"
 	"github.com/kemokemo/kuronan-dash/lib/assetsutil"
@@ -14,6 +12,7 @@ import (
 type Game struct {
 	sceneManager *scenes.SceneManager
 	input        assetsutil.Input
+	charaManager *objects.CharacterManager
 	character    *objects.Character
 	jukeBox      *assetsutil.JukeBox
 }
@@ -59,16 +58,11 @@ func (g *Game) loadsMusic(context *audio.Context) error {
 
 func (g *Game) loadsCharacters(context *audio.Context) error {
 	var err error
-	g.character, err = objects.NewCharacter(context, []string{
-		"assets/images/character/koma_00.png",
-		"assets/images/character/koma_01.png",
-		"assets/images/character/koma_02.png",
-		"assets/images/character/koma_03.png",
-	})
+	g.charaManager, err = objects.NewCharacterManager(context)
 	if err != nil {
-		log.Println("Failed to load assets.", err)
 		return err
 	}
+	g.character = g.charaManager.GetSelectedCharacter()
 	g.character.SetInitialPosition(objects.Position{X: 10, Y: 10})
 	return nil
 }
