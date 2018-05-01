@@ -21,8 +21,8 @@ var (
 )
 
 func init() {
-	transitionFrom, _ = ebiten.NewImage(ScreenWidth, ScreenHeight, ebiten.FilterNearest)
-	transitionTo, _ = ebiten.NewImage(ScreenWidth, ScreenHeight, ebiten.FilterNearest)
+	transitionFrom, _ = ebiten.NewImage(ScreenWidth, ScreenHeight, ebiten.FilterDefault)
+	transitionTo, _ = ebiten.NewImage(ScreenWidth, ScreenHeight, ebiten.FilterDefault)
 }
 
 // Scene is interface for the all scenes.

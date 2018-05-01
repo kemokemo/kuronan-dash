@@ -14,17 +14,21 @@ type Position struct {
 
 // NewCharacter creates a new character instance.
 func NewCharacter(context *audio.Context, cType CharacterType) (*Character, error) {
-	c := &Character{
-		animation: assetsutil.StepAnimation{
-			ImagesPaths:   getAnimationImages(cType),
-			DurationSteps: 5,
-		},
-	}
-	err := c.animation.Init()
+	frames, err := getAnimationFrames(cType)
 	if err != nil {
 		return nil, err
 	}
-	c.jumpSe, err = assetsutil.NewSePlayer(context, "assets/se/jump.wav")
+	c := &Character{
+		animation: assetsutil.StepAnimation{
+			Frames:        frames,
+			DurationSteps: 5,
+		},
+	}
+	err = c.animation.Init()
+	if err != nil {
+		return nil, err
+	}
+	c.jumpSe, err = assetsutil.NewSePlayer(context, "_assets/se/jump.wav")
 	if err != nil {
 		return nil, err
 	}

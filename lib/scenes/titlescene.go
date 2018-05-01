@@ -3,13 +3,15 @@
 package scenes
 
 import (
+	"bytes"
+	"image"
 	"image/color"
 	"log"
 
 	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/ebitenutil"
 	"github.com/hajimehoshi/ebiten/text"
 	mplusbitmap "github.com/hajimehoshi/go-mplusbitmap"
+	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/lib/assetsutil"
 	"github.com/kemokemo/kuronan-dash/lib/objects"
 )
@@ -18,9 +20,13 @@ var imageBackground *ebiten.Image
 
 func init() {
 	var err error
-	imageBackground, _, err = ebitenutil.NewImageFromFile("assets/images/title/background.png", ebiten.FilterNearest)
+	img, _, err := image.Decode(bytes.NewReader(images.Title_bg_png))
 	if err != nil {
-		log.Printf("Failed to load the background image:%v", err)
+		log.Printf("Failed to load the 'Title_bg_png':%v", err)
+	}
+	imageBackground, err = ebiten.NewImageFromImage(img, ebiten.FilterDefault)
+	if err != nil {
+		log.Printf("Failed to create a new image from 'Title_bg_png':%v", err)
 		return
 	}
 }

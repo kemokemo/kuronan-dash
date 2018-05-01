@@ -1,25 +1,49 @@
 package objects
 
 import (
+	"bytes"
+	"image"
+
+	_ "image/png"
+
 	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/ebitenutil"
+	"github.com/kemokemo/kuronan-dash/assets/images"
 )
 
 func getMainImage(cType CharacterType) (*ebiten.Image, error) {
 	// TODO: return unique *ebiten.Image regarding the cType
-	image, _, err := ebitenutil.NewImageFromFile("assets/images/character/koma_taiki.png", ebiten.FilterNearest)
+	img, _, err := image.Decode(bytes.NewReader(images.Koma_taiki_png))
 	if err != nil {
 		return nil, err
 	}
-	return image, nil
+	mainImage, err := ebiten.NewImageFromImage(img, ebiten.FilterDefault)
+	if err != nil {
+		return nil, err
+	}
+	return mainImage, nil
 }
 
-func getAnimationImages(cType CharacterType) []string {
-	// TODO: return unique []string regarding the cType
-	return []string{
-		"assets/images/character/koma_00.png",
-		"assets/images/character/koma_01.png",
-		"assets/images/character/koma_02.png",
-		"assets/images/character/koma_03.png",
+func getAnimationFrames(cType CharacterType) ([]*ebiten.Image, error) {
+	// TODO: return unique []*ebiten.Image regarding the cType
+	frames := []*ebiten.Image{}
+	readers := []*bytes.Reader{
+		bytes.NewReader(images.Koma_00_png),
+		bytes.NewReader(images.Koma_01_png),
+		bytes.NewReader(images.Koma_02_png),
+		bytes.NewReader(images.Koma_03_png),
 	}
+
+	for index := range readers {
+		img, _, err := image.Decode(readers[index])
+		if err != nil {
+			return nil, err
+		}
+		frame, err := ebiten.NewImageFromImage(img, ebiten.FilterDefault)
+		if err != nil {
+			return nil, err
+		}
+		frames = append(frames, frame)
+	}
+
+	return frames, nil
 }

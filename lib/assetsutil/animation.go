@@ -1,21 +1,18 @@
 package assetsutil
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
 	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/ebitenutil"
 )
 
 // StepAnimation is an animation.
 // This animates according to the number of steps.
 type StepAnimation struct {
-	ImagesPaths     []string
+	Frames          []*ebiten.Image
 	DurationSteps   int
 	once            sync.Once
-	frames          []*ebiten.Image
 	maxFrameNum     int
 	currentFrameNum int
 	walkedSteps     int
@@ -26,8 +23,7 @@ type StepAnimation struct {
 // first time to load the images.
 func (s *StepAnimation) Init() (err error) {
 	s.once.Do(func() {
-		s.frames, err = loadImages(s.ImagesPaths)
-		s.maxFrameNum = len(s.ImagesPaths)
+		s.maxFrameNum = len(s.Frames)
 	})
 	if err != nil {
 		return err
@@ -35,22 +31,6 @@ func (s *StepAnimation) Init() (err error) {
 	s.currentFrameNum = 0
 	s.walkedSteps = 0
 	return nil
-}
-
-func loadImages(paths []string) ([]*ebiten.Image, error) {
-	if paths == nil || len(paths) == 0 {
-		err := fmt.Errorf("paths is empty, please set valid path info of images")
-		return nil, err
-	}
-	frames := []*ebiten.Image{}
-	for _, path := range paths {
-		image, _, err := ebitenutil.NewImageFromFile(path, ebiten.FilterNearest)
-		if err != nil {
-			return nil, err
-		}
-		frames = append(frames, image)
-	}
-	return frames, nil
 }
 
 // AddStep adds steps information. If your character moved, please
@@ -71,16 +51,16 @@ func (s *StepAnimation) GetCurrentFrame() *ebiten.Image {
 	if s.currentFrameNum < 0 || s.maxFrameNum-1 < s.currentFrameNum {
 		s.currentFrameNum = 0
 	}
-	return s.frames[s.currentFrameNum]
+	return s.Frames[s.currentFrameNum]
 }
 
 // TimeAnimation is an animation.
 // This animates according to elapsed time.
 type TimeAnimation struct {
+	Frames          []*ebiten.Image
 	ImagesPaths     []string
 	DurationSecond  float64
 	once            sync.Once
-	frames          []*ebiten.Image
 	maxFrameNum     int
 	currentFrameNum int
 	switchedTime    time.Time
@@ -90,8 +70,7 @@ type TimeAnimation struct {
 // Init loads asset images and initializes private parameters.
 func (t *TimeAnimation) Init() (err error) {
 	t.once.Do(func() {
-		t.frames, err = loadImages(t.ImagesPaths)
-		t.maxFrameNum = len(t.ImagesPaths)
+		t.maxFrameNum = len(t.Frames)
 	})
 	if err != nil {
 		return err
@@ -115,5 +94,5 @@ func (t *TimeAnimation) GetCurrentFrame() *ebiten.Image {
 	if t.currentFrameNum < 0 || t.maxFrameNum-1 < t.currentFrameNum {
 		t.currentFrameNum = 0
 	}
-	return t.frames[t.currentFrameNum]
+	return t.Frames[t.currentFrameNum]
 }

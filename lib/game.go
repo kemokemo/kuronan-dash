@@ -40,10 +40,10 @@ func (g *Game) loadsMusic(context *audio.Context) error {
 	g.jukeBox = assetsutil.NewJukeBox(context)
 	err := g.jukeBox.InsertDiscs([]assetsutil.RequestCard{
 		assetsutil.RequestCard{
-			FilePath: "assets/music/shibugaki_no_kuroneko.mp3",
+			FilePath: "_assets/music/shibugaki_no_kuroneko.mp3",
 		},
 		assetsutil.RequestCard{
-			FilePath: "assets/music/hashire_kurona.mp3",
+			FilePath: "_assets/music/hashire_kurona.mp3",
 		},
 	})
 	if err != nil {
