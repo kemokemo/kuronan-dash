@@ -37,7 +37,7 @@ func NewCharacter(ct CharacterType) (*Character, error) {
 	if err != nil {
 		return nil, err
 	}
-	c.jumpSe, err = music.NewSePlayer("_assets/se/jump.wav")
+	c.jumpSe, err = music.NewSePlayer(music.Se_Jump)
 	if err != nil {
 		return nil, err
 	}

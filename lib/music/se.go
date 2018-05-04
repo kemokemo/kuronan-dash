@@ -1,38 +1,24 @@
 package music
 
 import (
-	"os"
-
 	"github.com/hajimehoshi/ebiten/audio"
-	"github.com/hajimehoshi/ebiten/audio/wav"
 )
 
 // SePlayer is a player to play a sound effect.
 type SePlayer struct {
-	file   *os.File
+	name   string
 	player *audio.Player
 }
 
 // NewSePlayer returns a SePlayer.
 // Please call the Close method when you no longer use this instance.
-func NewSePlayer(soundPath string) (*SePlayer, error) {
-	f, err := os.Open(soundPath)
-	if err != nil {
-		return nil, err
+func NewSePlayer(st SeType) (*SePlayer, error) {
+	s := SePlayer{
+		name: getSeName(st),
 	}
-	s, err := wav.Decode(audioContext, f)
-	if err != nil {
-		return nil, err
-	}
-	p, err := audio.NewPlayer(audioContext, s)
-	if err != nil {
-		return nil, err
-	}
-
-	return &SePlayer{
-		file:   f,
-		player: p,
-	}, nil
+	var err error
+	s.player, err = getSePlayer(st)
+	return &s, err
 }
 
 // Play plays a sound effect

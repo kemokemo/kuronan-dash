@@ -18,6 +18,6 @@ func newDisc(dt DiscType) (*disc, error) {
 		name: getMusicName(dt),
 	}
 	var err error
-	d.player, err = getPlayer(dt)
+	d.player, err = getMusicPlayer(dt)
 	return &d, err
 }

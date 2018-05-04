@@ -8,8 +8,8 @@ import (
 	"github.com/kemokemo/kuronan-dash/assets/audios"
 )
 
-func getPlayer(dt DiscType) (*audio.Player, error) {
-	b, err := getByteData(dt)
+func getMusicPlayer(dt DiscType) (*audio.Player, error) {
+	b, err := getMusicByteData(dt)
 	if err != nil {
 		return nil, err
 	}
@@ -20,7 +20,7 @@ func getPlayer(dt DiscType) (*audio.Player, error) {
 	return audio.NewPlayer(audioContext, s)
 }
 
-func getByteData(dt DiscType) ([]byte, error) {
+func getMusicByteData(dt DiscType) ([]byte, error) {
 	switch dt {
 	case Title:
 		return audios.Hashire_kurona_mp3, nil
