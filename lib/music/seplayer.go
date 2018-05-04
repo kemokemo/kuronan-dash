@@ -14,6 +14,7 @@ type SePlayer struct {
 }
 
 // NewSePlayer returns a SePlayer.
+// Please call the Close method when you no longer use this instance.
 func NewSePlayer(soundPath string) (*SePlayer, error) {
 	f, err := os.Open(soundPath)
 	if err != nil {
@@ -44,4 +45,9 @@ func (s *SePlayer) Play() error {
 		return s.player.Play()
 	}
 	return nil
+}
+
+// Close closes the inner resources.
+func (s *SePlayer) Close() error {
+	return s.player.Close()
 }

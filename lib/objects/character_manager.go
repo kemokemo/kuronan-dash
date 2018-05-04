@@ -12,11 +12,12 @@ type CharacterManager struct {
 }
 
 // NewCharacterManager returns the new created CharacterManager.
+// Please call the Close method when you no longer use this instance.
 func NewCharacterManager() (*CharacterManager, error) {
 	cm := CharacterManager{}
 	cm.charaMap = make(map[CharacterType]*Character)
 	cm.infoMap = make(map[CharacterType]CharacterInfo)
-	cm.selected = kurona
+	cm.selected = Kurona
 
 	for _, cType := range CharacterTypeList {
 		c, err := NewCharacter(cType)
@@ -58,4 +59,16 @@ func (cm *CharacterManager) SelectCharacter(ct CharacterType) error {
 // GetSelectedCharacter returns the selected character.
 func (cm *CharacterManager) GetSelectedCharacter() *Character {
 	return cm.charaMap[cm.selected]
+}
+
+// Close closes inner resources.
+func (cm *CharacterManager) Close() error {
+	var err, e error
+	for i := range cm.charaMap {
+		e = cm.charaMap[i].Close()
+		if e != nil {
+			err = fmt.Errorf("%v %v", err, e)
+		}
+	}
+	return err
 }

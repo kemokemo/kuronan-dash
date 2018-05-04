@@ -4,10 +4,13 @@ package objects
 type CharacterType int
 
 const (
-	kurona CharacterType = iota
-	koma
-	shishimaru
+	// Kurona is 黒菜さん
+	Kurona CharacterType = iota
+	// Koma is 独楽ちゃん
+	Koma
+	// Shishimaru is 獅子丸きゅん
+	Shishimaru
 )
 
 // CharacterTypeList is the list of all CharacterType items.
-var CharacterTypeList = []CharacterType{kurona, koma, shishimaru}
+var CharacterTypeList = []CharacterType{Kurona, Koma, Shishimaru}

@@ -8,7 +8,6 @@ import (
 	"log"
 
 	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/ebitenutil"
 	"github.com/hajimehoshi/ebiten/text"
 	mplus "github.com/hajimehoshi/go-mplusbitmap"
 	"github.com/kemokemo/kuronan-dash/lib/music"
@@ -32,18 +31,19 @@ type GameScene struct {
 }
 
 // NewGameScene creates the new GameScene.
-func NewGameScene() *GameScene {
+func NewGameScene(cm *objects.CharacterManager) *GameScene {
 	return &GameScene{
-		state: beforeRun,
+		state:     beforeRun,
+		character: cm.GetSelectedCharacter(),
 	}
 }
 
 // SetResources sets the resources like music, character images and so on.
-func (s *GameScene) SetResources(j *music.JukeBox, c *objects.Character) {
+func (s *GameScene) SetResources(j *music.JukeBox, cm *objects.CharacterManager) {
 	s.jukeBox = j
-	s.character = c
+	s.character = cm.GetSelectedCharacter()
 	s.character.SetInitialPosition(objects.Position{X: 10, Y: 50})
-	err := s.jukeBox.SelectDisc("hashire_kurona")
+	err := s.jukeBox.SelectDisc(music.Stage01)
 	if err != nil {
 		log.Printf("Failed to select disc:%v", err)
 	}
@@ -62,7 +62,8 @@ func (s *GameScene) Draw(screen *ebiten.Image) {
 		log.Printf("Failed to play with JukeBox:%v", err)
 		return
 	}
-	ebitenutil.DebugPrint(screen, fmt.Sprintf("Now Playing: %s", s.jukeBox.NowPlaying()))
+	text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.jukeBox.NowPlayingName()),
+		mplus.Gothic12r, 12, 15, color.White)
 	err = s.character.Draw(screen)
 	if err != nil {
 		log.Printf("Failed to draw character:%v", err)

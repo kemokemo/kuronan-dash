@@ -26,13 +26,6 @@ func init() {
 	transitionTo, _ = ebiten.NewImage(ScreenWidth, ScreenHeight, ebiten.FilterDefault)
 }
 
-// Scene is interface for the all scenes.
-type Scene interface {
-	SetResources(j *music.JukeBox, c *objects.Character)
-	Update(state *GameState) error
-	Draw(screen *ebiten.Image)
-}
-
 const transitionMaxCount = 20
 
 // SceneManager manages all scenes.
@@ -40,7 +33,7 @@ type SceneManager struct {
 	current         Scene
 	next            Scene
 	transitionCount int
-	character       *objects.Character
+	charaManager    *objects.CharacterManager
 	jukeBox         *music.JukeBox
 }
 
@@ -51,9 +44,9 @@ type GameState struct {
 }
 
 // SetResources sets the resources like music, character images and so on.
-func (s *SceneManager) SetResources(j *music.JukeBox, c *objects.Character) {
+func (s *SceneManager) SetResources(j *music.JukeBox, cm *objects.CharacterManager) {
 	s.jukeBox = j
-	s.character = c
+	s.charaManager = cm
 }
 
 // Update updates the status of this scene.
@@ -99,7 +92,7 @@ func (s *SceneManager) Draw(r *ebiten.Image) {
 // GoTo sets resources to the new scene and change the current scene
 // to the new scene.
 func (s *SceneManager) GoTo(scene Scene) {
-	scene.SetResources(s.jukeBox, s.character)
+	scene.SetResources(s.jukeBox, s.charaManager)
 	if s.current == nil {
 		s.current = scene
 	} else {

@@ -11,9 +11,19 @@ type Position struct {
 	Y int
 }
 
+// Character describes a character.
+type Character struct {
+	animation StepAnimation
+	Position  Position
+	moved     bool
+	state     CharacterState
+	jumpSe    *music.SePlayer
+}
+
 // NewCharacter creates a new character instance.
-func NewCharacter(cType CharacterType) (*Character, error) {
-	frames, err := getAnimationFrames(cType)
+// Please call the Close method when you no longer use this instance.
+func NewCharacter(ct CharacterType) (*Character, error) {
+	frames, err := getAnimationFrames(ct)
 	if err != nil {
 		return nil, err
 	}
@@ -32,15 +42,6 @@ func NewCharacter(cType CharacterType) (*Character, error) {
 		return nil, err
 	}
 	return c, nil
-}
-
-// Character describes a character.
-type Character struct {
-	animation StepAnimation
-	Position  Position
-	moved     bool
-	state     CharacterState
-	jumpSe    *music.SePlayer
 }
 
 // SetInitialPosition sets the initial position for this character.
@@ -93,4 +94,9 @@ func (c *Character) PlaySe() error {
 		return c.jumpSe.Play()
 	}
 	return nil
+}
+
+// Close closes the inner resources.
+func (c *Character) Close() error {
+	return c.jumpSe.Close()
 }

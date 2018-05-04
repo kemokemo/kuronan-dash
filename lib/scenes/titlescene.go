@@ -35,12 +35,14 @@ func init() {
 // TitleScene is the scene for title.
 type TitleScene struct {
 	jukeBox *music.JukeBox
+	cm      *objects.CharacterManager
 }
 
 // SetResources sets the resources like music, character images and so on.
-func (s *TitleScene) SetResources(j *music.JukeBox, c *objects.Character) {
+func (s *TitleScene) SetResources(j *music.JukeBox, cm *objects.CharacterManager) {
 	s.jukeBox = j
-	err := s.jukeBox.SelectDisc("shibugaki_no_kuroneko")
+	s.cm = cm
+	err := s.jukeBox.SelectDisc(music.Title)
 	if err != nil {
 		log.Printf("Failed to select disc:%v", err)
 	}
@@ -49,11 +51,11 @@ func (s *TitleScene) SetResources(j *music.JukeBox, c *objects.Character) {
 // Update updates the status of this scene.
 func (s *TitleScene) Update(state *GameState) error {
 	if state.Input.StateForKey(ebiten.KeySpace) == 1 {
-		state.SceneManager.GoTo(NewGameScene())
+		state.SceneManager.GoTo(NewGameScene(s.cm))
 		return nil
 	}
 	if util.AnyGamepadAbstractButtonPressed(state.Input) {
-		state.SceneManager.GoTo(NewGameScene())
+		state.SceneManager.GoTo(NewGameScene(s.cm))
 		return nil
 	}
 	return nil

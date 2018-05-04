@@ -1,6 +1,8 @@
 package kuronandash
 
 import (
+	"fmt"
+
 	"github.com/hajimehoshi/ebiten"
 	"github.com/kemokemo/kuronan-dash/lib/music"
 	"github.com/kemokemo/kuronan-dash/lib/objects"
@@ -19,32 +21,17 @@ type Game struct {
 
 // Init loads resources.
 func (g *Game) Init() error {
-	err := g.loadsMusic()
+	var err error
+	g.jukeBox, err = music.NewJukeBox()
+	if err != nil {
+		return err
+	}
+	err = g.jukeBox.SelectDisc(music.Title)
 	if err != nil {
 		return err
 	}
 
 	err = g.loadsCharacters()
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (g *Game) loadsMusic() error {
-	g.jukeBox = music.NewJukeBox()
-	err := g.jukeBox.InsertDiscs([]music.RequestCard{
-		music.RequestCard{
-			FilePath: "_assets/music/shibugaki_no_kuroneko.mp3",
-		},
-		music.RequestCard{
-			FilePath: "_assets/music/hashire_kurona.mp3",
-		},
-	})
-	if err != nil {
-		return err
-	}
-	err = g.jukeBox.SelectDisc("shibugaki_no_kuroneko")
 	if err != nil {
 		return err
 	}
@@ -62,16 +49,25 @@ func (g *Game) loadsCharacters() error {
 	return nil
 }
 
-// Close closes own resources.
+// Close closes inner resources.
 func (g *Game) Close() error {
-	return g.jukeBox.Close()
+	var err, e error
+	e = g.jukeBox.Close()
+	if e != nil {
+		err = fmt.Errorf("%v %v", err, e)
+	}
+	e = g.charaManager.Close()
+	if e != nil {
+		err = fmt.Errorf("%v %v", err, e)
+	}
+	return err
 }
 
 // Update is an implements to draw screens.
 func (g *Game) Update(screen *ebiten.Image) error {
 	if g.sceneManager == nil {
 		g.sceneManager = &scenes.SceneManager{}
-		g.sceneManager.SetResources(g.jukeBox, g.character)
+		g.sceneManager.SetResources(g.jukeBox, g.charaManager)
 		g.sceneManager.GoTo(&scenes.TitleScene{})
 	}
 

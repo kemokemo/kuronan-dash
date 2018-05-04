@@ -2,109 +2,69 @@ package music
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
-
-	"github.com/hajimehoshi/ebiten/audio"
-	mp3 "github.com/hajimehoshi/go-mp3"
 )
-
-// RequestCard is used to insert discs.
-type RequestCard struct {
-	MusicName string
-	FilePath  string
-}
 
 // JukeBox loads all music files and play any time you want.
 type JukeBox struct {
-	current *disc
-	discs   map[string]*disc
-}
-
-type disc struct {
-	name   string
-	file   *os.File
-	player *audio.Player
+	cd      *disc
+	discMap map[DiscType]*disc
 }
 
 // NewJukeBox creates a new JukeBox instance.
-func NewJukeBox() *JukeBox {
-	return &JukeBox{
-		discs: make(map[string]*disc),
+// Please call the Close method when you no longer use this instance.
+func NewJukeBox() (*JukeBox, error) {
+	jb := JukeBox{
+		discMap: make(map[DiscType]*disc),
 	}
-}
-
-// InsertDiscs loads music files specified by the arguments.
-// If the MusicName of the RequestCard is "", name it from the file name.
-func (j *JukeBox) InsertDiscs(cards []RequestCard) error {
-	for _, card := range cards {
-		f, err := os.Open(card.FilePath)
-		if err != nil {
-			return err
+	var err, e error
+	for _, dt := range DiscTypeList {
+		jb.discMap[dt], e = newDisc(dt)
+		if e != nil {
+			err = fmt.Errorf("%v %v", err, e)
 		}
-		s, err := mp3.NewDecoder(f)
-		if err != nil {
-			return err
-		}
-		p, err := audio.NewPlayer(audioContext, s)
-		if err != nil {
-			return err
-		}
-		if card.MusicName == "" {
-			card.MusicName = getFileNameWithoutExt(card.FilePath)
-		}
-		d := j.discs[card.MusicName]
-		if d != nil {
-			return fmt.Errorf("music '%s' is duplicated", card.MusicName)
-		}
-		j.discs[card.MusicName] = &disc{name: card.MusicName, file: f, player: p}
 	}
-	return nil
+	return &jb, err
 }
 
-func getFileNameWithoutExt(path string) string {
-	return filepath.Base(path[:len(path)-len(filepath.Ext(path))])
-}
-
-// NowPlaying returns the name of the currently playing music.
+// NowPlayingName returns the name of the currently playing music.
 // If disc is not selected or not playing, "-" is returned.
-func (j *JukeBox) NowPlaying() string {
-	if j.current == nil {
-		return "-"
+func (j *JukeBox) NowPlayingName() string {
+	if j.cd == nil {
+		return "nil"
 	}
-	if !j.current.player.IsPlaying() {
-		return "-"
+	if !j.cd.player.IsPlaying() {
+		return "(Not playing..)"
 	}
-	return j.current.name
+	return j.cd.name
 }
 
-// SelectDisc selects one disc with the name specified by the argument.
-func (j *JukeBox) SelectDisc(name string) error {
-	disc := j.discs[name]
-	if disc == nil {
-		return fmt.Errorf("disc '%s' is not inserted in this JukeBox", name)
+// SelectDisc selects one disc by args.
+func (j *JukeBox) SelectDisc(dt DiscType) error {
+	disc, exist := j.discMap[dt]
+	if !exist {
+		return fmt.Errorf("disc '%v' is not loaded in this JukeBox", dt)
 	}
 
-	if j.current != nil && j.current.player.IsPlaying() {
-		err := j.current.player.Pause()
+	if j.cd != nil && j.cd.player.IsPlaying() {
+		err := j.cd.player.Pause()
 		if err != nil {
 			return err
 		}
 	}
-	j.current = disc
+	j.cd = disc
 	return nil
 }
 
 // Play plays a preselected disc.
 func (j *JukeBox) Play() error {
-	if j.current == nil {
+	if j.cd == nil {
 		return fmt.Errorf("disc is not selected, please select disc with 'SelectDisc' method")
 	}
 
-	if j.current.player.IsPlaying() {
+	if j.cd.player.IsPlaying() {
 		return nil
 	}
-	err := j.current.player.Rewind()
+	err := j.cd.player.Rewind()
 	if err != nil {
 		return err
 	}
@@ -112,49 +72,45 @@ func (j *JukeBox) Play() error {
 	if err != nil {
 		return err
 	}
-	return j.current.player.Play()
+	return j.cd.player.Play()
 }
 
 // Pause pauses music.
 func (j *JukeBox) Pause() error {
-	if j.current == nil {
+	if j.cd == nil {
 		return fmt.Errorf("disc is not selected, please select disc with 'SelectDisc' method")
 	}
 
-	if !j.current.player.IsPlaying() {
+	if !j.cd.player.IsPlaying() {
 		return nil
 	}
-	return j.current.player.Pause()
+	return j.cd.player.Pause()
 }
 
-// Stop stops music.
+// Stop stops music. (pause and rewind)
 func (j *JukeBox) Stop() error {
-	if j.current == nil {
+	if j.cd == nil {
 		return fmt.Errorf("disc is not selected, please select disc with 'SelectDisc' method")
 	}
 
-	if !j.current.player.IsPlaying() {
+	if !j.cd.player.IsPlaying() {
 		return nil
 	}
-	err := j.current.player.Pause()
+	err := j.cd.player.Pause()
 	if err != nil {
 		return err
 	}
-	return j.current.player.Rewind()
+	return j.cd.player.Rewind()
 }
 
-// Close closes all resources that JukeBox used.
+// Close closes inner resources.
 func (j *JukeBox) Close() error {
-	var err error
-	var e error
-	for i := range j.discs {
-		e = j.discs[i].player.Close()
+	var err, e error
+	for i := range j.discMap {
+		e = j.discMap[i].close()
 		if e != nil {
 			err = fmt.Errorf("%v %v", err, e)
 		}
 	}
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
