@@ -61,19 +61,19 @@ func (s *GameScene) Draw(screen *ebiten.Image) {
 		log.Printf("Failed to play with JukeBox:%v", err)
 		return
 	}
-	text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.jb.NowPlayingName()),
-		mplus.Gothic12r, 12, 15, color.White)
+
 	err = s.chara.Draw(screen)
 	if err != nil {
 		log.Printf("Failed to draw character:%v", err)
 		return
 	}
+	text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.jb.NowPlayingName()),
+		mplus.Gothic12r, 12, 15, color.White)
 
 	if s.state == gameover {
 		text.Draw(screen, "ゲームオーバー: Spaceを押してタイトルへ", mplus.Gothic12r, ScreenWidth/2-100, ScreenHeight/2, color.White)
 		return
 	}
-
 	// TODO: 衝突判定とSE再生
 	err = s.checkCollision()
 	if err != nil {
