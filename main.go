@@ -19,20 +19,20 @@ func main() {
 }
 
 func run() int {
-	game := dash.Game{}
-	err := game.Init()
+	game, err := dash.NewGame()
 	if err != nil {
-		log.Println("Failed to initialize", err)
+		log.Println("Failed to create a new game", err)
 		return exitFailed
 	}
 	defer func() {
 		e := game.Close()
-		if err != nil {
+		if e != nil {
 			log.Println("Failed to close", e)
 		}
 	}()
 
-	err = ebiten.Run(game.Update, scenes.ScreenWidth, scenes.ScreenHeight, 1, "Kuronan Dash!")
+	err = ebiten.Run(game.Update, scenes.ScreenWidth, scenes.ScreenHeight,
+		1, "Kuronan Dash!")
 	if err != nil {
 		log.Println("Failed to run.", err)
 		return exitFailed

@@ -22,6 +22,9 @@ func NewJukeBox() (*JukeBox, error) {
 		if e != nil {
 			err = fmt.Errorf("%v %v", err, e)
 		}
+		if dt == Title {
+			jb.cd = jb.discMap[dt]
+		}
 	}
 	return &jb, err
 }
