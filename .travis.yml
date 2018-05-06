@@ -1,14 +1,9 @@
 language: go
 sudo: true
 go:
-  - tip
+  - "1.10"
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install libgl1-mesa-dev xorg-dev libasound2-dev
-  - go get github.com/kardianos/govendor
-  - go get github.com/mattn/goveralls
-script:
-  - govendor sync
-  - $HOME/gopath/bin/goveralls -service=travis-ci
 after_success:
   - test -n "$TRAVIS_TAG" && curl -sL https://git.io/goreleaser | bash
