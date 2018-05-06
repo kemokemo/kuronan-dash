@@ -15,38 +15,23 @@ type Game struct {
 	sceneManager *scenes.SceneManager
 	input        util.Input
 	charaManager *objects.CharacterManager
-	character    *objects.Character
 	jukeBox      *music.JukeBox
 }
 
-// Init loads resources.
-func (g *Game) Init() error {
+// NewGame returns a new game instance.
+// Please call the Close method when you no longer use this instance.
+func NewGame() (*Game, error) {
+	g := Game{}
 	var err error
 	g.jukeBox, err = music.NewJukeBox()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	err = g.jukeBox.SelectDisc(music.Title)
-	if err != nil {
-		return err
-	}
-
-	err = g.loadsCharacters()
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (g *Game) loadsCharacters() error {
-	var err error
 	g.charaManager, err = objects.NewCharacterManager()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	g.character = g.charaManager.GetSelectedCharacter()
-	g.character.SetInitialPosition(objects.Position{X: 10, Y: 10})
-	return nil
+	return &g, nil
 }
 
 // Close closes inner resources.

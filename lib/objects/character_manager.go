@@ -7,7 +7,7 @@ import (
 // CharacterManager manages the characters.
 type CharacterManager struct {
 	charaMap map[CharacterType]*Character
-	infoMap  map[CharacterType]CharacterInfo
+	infoMap  map[CharacterType]*CharacterInfo
 	selected CharacterType
 }
 
@@ -16,7 +16,7 @@ type CharacterManager struct {
 func NewCharacterManager() (*CharacterManager, error) {
 	cm := CharacterManager{}
 	cm.charaMap = make(map[CharacterType]*Character)
-	cm.infoMap = make(map[CharacterType]CharacterInfo)
+	cm.infoMap = make(map[CharacterType]*CharacterInfo)
 	cm.selected = Kurona
 
 	for _, cType := range CharacterTypeList {
@@ -32,19 +32,19 @@ func NewCharacterManager() (*CharacterManager, error) {
 		if err != nil {
 			return &cm, err
 		}
-		cm.infoMap[cType] = ci
+		cm.infoMap[cType] = &ci
 	}
 
 	return &cm, nil
 }
 
-// GetCharacterInfo returns the info of the available characters.
-func (cm *CharacterManager) GetCharacterInfo() []CharacterInfo {
-	infos := make([]CharacterInfo, 0, len(cm.infoMap))
+// GetCharacterInfoMap returns the character info map of the available characters.
+func (cm *CharacterManager) GetCharacterInfoMap() map[CharacterType]*CharacterInfo {
+	infoMap := make(map[CharacterType]*CharacterInfo, len(cm.infoMap))
 	for cType := range cm.infoMap {
-		infos = append(infos, cm.infoMap[cType])
+		infoMap[cType] = cm.infoMap[cType]
 	}
-	return infos
+	return infoMap
 }
 
 // SelectCharacter selects a character regarding the argument.

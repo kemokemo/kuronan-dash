@@ -25,25 +25,24 @@ const (
 
 // GameScene is the scene for the game.
 type GameScene struct {
-	state     gameState
-	character *objects.Character
-	jukeBox   *music.JukeBox
+	state gameState
+	chara *objects.Character
+	jb    *music.JukeBox
 }
 
 // NewGameScene creates the new GameScene.
-func NewGameScene(cm *objects.CharacterManager) *GameScene {
+func NewGameScene() *GameScene {
 	return &GameScene{
-		state:     beforeRun,
-		character: cm.GetSelectedCharacter(),
+		state: beforeRun,
 	}
 }
 
 // SetResources sets the resources like music, character images and so on.
 func (s *GameScene) SetResources(j *music.JukeBox, cm *objects.CharacterManager) {
-	s.jukeBox = j
-	s.character = cm.GetSelectedCharacter()
-	s.character.SetInitialPosition(objects.Position{X: 10, Y: 50})
-	err := s.jukeBox.SelectDisc(music.Stage01)
+	s.jb = j
+	s.chara = cm.GetSelectedCharacter()
+	s.chara.SetInitialPosition(objects.Position{X: 10, Y: 50})
+	err := s.jb.SelectDisc(music.Stage01)
 	if err != nil {
 		log.Printf("Failed to select disc:%v", err)
 	}
@@ -57,24 +56,24 @@ func (s *GameScene) Update(state *GameState) error {
 
 // Draw draws background and characters. This function play music too.
 func (s *GameScene) Draw(screen *ebiten.Image) {
-	err := s.jukeBox.Play()
+	err := s.jb.Play()
 	if err != nil {
 		log.Printf("Failed to play with JukeBox:%v", err)
 		return
 	}
-	text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.jukeBox.NowPlayingName()),
-		mplus.Gothic12r, 12, 15, color.White)
-	err = s.character.Draw(screen)
+
+	err = s.chara.Draw(screen)
 	if err != nil {
 		log.Printf("Failed to draw character:%v", err)
 		return
 	}
+	text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.jb.NowPlayingName()),
+		mplus.Gothic12r, 12, 15, color.White)
 
 	if s.state == gameover {
 		text.Draw(screen, "ゲームオーバー: Spaceを押してタイトルへ", mplus.Gothic12r, ScreenWidth/2-100, ScreenHeight/2, color.White)
 		return
 	}
-
 	// TODO: 衝突判定とSE再生
 	err = s.checkCollision()
 	if err != nil {
@@ -92,23 +91,23 @@ func (s *GameScene) updateStatus(state *GameState) error {
 		}
 		return nil
 	}
-	if s.character.Position.X+50 > ScreenWidth-50 && s.state != gameover {
+	if s.chara.Position.X+50 > ScreenWidth-50 && s.state != gameover {
 		s.state = gameover
 		return nil
 	}
 
-	s.character.Move()
+	s.chara.Move()
 	return nil
 }
 
 func (s *GameScene) checkCollision() error {
 	// TODO: 衝突判定の代わりにボタン入力
 	if ebiten.IsKeyPressed(ebiten.KeyJ) {
-		s.character.SetState(objects.Ascending)
+		s.chara.SetState(objects.Ascending)
 	} else {
-		s.character.SetState(objects.Dash)
+		s.chara.SetState(objects.Dash)
 	}
-	err := s.character.PlaySe()
+	err := s.chara.PlaySe()
 	if err != nil {
 		return err
 	}
