@@ -19,7 +19,7 @@ var DiscTypeList = []DiscType{
 func getMusicName(dt DiscType) string {
 	switch dt {
 	case Title:
-		return "渋柿の黒猫"
+		return "渋垣の黒猫"
 	case Stage01:
 		return "走れ！黒菜！"
 	default:

@@ -1,8 +1,6 @@
 package objects
 
 import (
-	"fmt"
-
 	"github.com/hajimehoshi/ebiten"
 )
 
@@ -14,16 +12,18 @@ type CharacterInfo struct {
 	Description string
 }
 
+// CharacterInfoMap is the map of all CharacterInfo items.
+var CharacterInfoMap map[CharacterType]*CharacterInfo
+
 // NewCharacterInfo returns a new CharacterInfo regarding args.
-func NewCharacterInfo(cType CharacterType) (CharacterInfo, error) {
+func NewCharacterInfo(ct CharacterType) (CharacterInfo, error) {
+	var err error
 	ci := CharacterInfo{}
-	ci.Type = cType
-	// TODO: create the MainImage and Description regarding the cType
-	img, err := getMainImage(cType)
+	ci.Type = ct
+	ci.MainImage, err = getMainImage(ct)
 	if err != nil {
 		return ci, err
 	}
-	ci.MainImage = img
-	ci.Description = fmt.Sprintf("キャラクター番号: %v", cType)
+	ci.Description = getCharacterDescription(ct)
 	return ci, nil
 }
