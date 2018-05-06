@@ -40,13 +40,8 @@
 
 ## びるど方法
 
-依存パッケージ管理のために `govendor` ツールを使っています。  
-以下のようにしてビルドします。
-
 ```sh
 $ go get -d github.com/kemokemo/kuronan-dash
-$ go get -u github.com/kardianos/govendor
 $ cd $GOPATH/src/github.com/kemokemo/kuronan-dash
-$ govendor sync
 $ go build
 ```
