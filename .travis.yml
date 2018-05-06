@@ -4,6 +4,6 @@ go:
   - "1.10"
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install libgl1-mesa-dev xorg-dev libasound2-dev
+  - sudo apt-get install libglu1-mesa-dev libgles2-mesa-dev libxrandr-dev libxcursor-dev libxinerama-dev libxi-dev libasound2-dev xorg-dev
 after_success:
   - test -n "$TRAVIS_TAG" && curl -sL https://git.io/goreleaser | bash
