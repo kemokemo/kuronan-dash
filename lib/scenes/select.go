@@ -55,9 +55,12 @@ func (s *SelectScene) SetResources(j *music.JukeBox, cm *objects.CharacterManage
 
 	s.winMap = make(map[objects.CharacterType]*ui.FrameWindow, len(s.infoMap))
 	for cType := range s.infoMap {
-		win := ui.NewFrameWindow(
+		win, err := ui.NewFrameWindow(
 			windowMargin+(windowWidth+windowSpacing)*int(cType),
 			windowMargin*2, windowWidth, windowHeight, frameWidth)
+		if err != nil {
+			log.Println("failed to create a new frame window", err)
+		}
 		win.SetColors(
 			color.RGBA{64, 64, 64, 255},
 			color.RGBA{192, 192, 192, 255},
