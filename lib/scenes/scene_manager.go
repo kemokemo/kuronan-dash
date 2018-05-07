@@ -14,24 +14,17 @@ const (
 	ScreenWidth = 800
 	// ScreenHeight is the heigt of scenes.
 	ScreenHeight = 480
+
+	transitionMaxCount = 20
 )
-
-var (
-	transitionFrom *ebiten.Image
-	transitionTo   *ebiten.Image
-)
-
-func init() {
-	transitionFrom, _ = ebiten.NewImage(ScreenWidth, ScreenHeight, ebiten.FilterDefault)
-	transitionTo, _ = ebiten.NewImage(ScreenWidth, ScreenHeight, ebiten.FilterDefault)
-}
-
-const transitionMaxCount = 20
 
 // SceneManager manages all scenes.
 type SceneManager struct {
 	current         Scene
 	next            Scene
+	transitionFrom  *ebiten.Image
+	transitionTo    *ebiten.Image
+	op              *ebiten.DrawImageOptions
 	transitionCount int
 	charaManager    *objects.CharacterManager
 	jukeBox         *music.JukeBox
@@ -41,6 +34,22 @@ type SceneManager struct {
 type GameState struct {
 	SceneManager *SceneManager
 	Input        *util.Input
+}
+
+// NewSceneManager returns a new SceneManager.
+func NewSceneManager() (*SceneManager, error) {
+	sm := &SceneManager{}
+	var err error
+	sm.transitionFrom, err = ebiten.NewImage(ScreenWidth, ScreenHeight, ebiten.FilterDefault)
+	if err != nil {
+		return nil, err
+	}
+	sm.transitionTo, err = ebiten.NewImage(ScreenWidth, ScreenHeight, ebiten.FilterDefault)
+	if err != nil {
+		return nil, err
+	}
+	sm.op = &ebiten.DrawImageOptions{}
+	return sm, nil
 }
 
 // SetResources sets the resources like music, character images and so on.
@@ -57,12 +66,10 @@ func (s *SceneManager) Update(input *util.Input) error {
 			Input:        input,
 		})
 	}
-
 	s.transitionCount--
 	if s.transitionCount > 0 {
 		return nil
 	}
-
 	s.current = s.next
 	s.next = nil
 	return nil
@@ -75,18 +82,15 @@ func (s *SceneManager) Draw(r *ebiten.Image) {
 		return
 	}
 
-	transitionFrom.Clear()
-	s.current.Draw(transitionFrom)
-
-	transitionTo.Clear()
-	s.next.Draw(transitionTo)
-
-	r.DrawImage(transitionFrom, nil)
+	s.transitionFrom.Clear()
+	s.current.Draw(s.transitionFrom)
+	s.transitionTo.Clear()
+	s.next.Draw(s.transitionTo)
+	r.DrawImage(s.transitionFrom, nil)
 
 	alpha := 1 - float64(s.transitionCount)/float64(transitionMaxCount)
-	op := &ebiten.DrawImageOptions{}
-	op.ColorM.Scale(1, 1, 1, alpha)
-	r.DrawImage(transitionTo, op)
+	s.op.ColorM.Scale(1, 1, 1, alpha)
+	r.DrawImage(s.transitionTo, s.op)
 }
 
 // GoTo sets resources to the new scene and change the current scene

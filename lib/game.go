@@ -31,6 +31,13 @@ func NewGame() (*Game, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	g.sceneManager, err = scenes.NewSceneManager()
+	if err != nil {
+		return nil, err
+	}
+	g.sceneManager.SetResources(g.jukeBox, g.charaManager)
+	g.sceneManager.GoTo(&scenes.TitleScene{})
 	return &g, nil
 }
 
@@ -50,12 +57,6 @@ func (g *Game) Close() error {
 
 // Update is an implements to draw screens.
 func (g *Game) Update(screen *ebiten.Image) error {
-	if g.sceneManager == nil {
-		g.sceneManager = &scenes.SceneManager{}
-		g.sceneManager.SetResources(g.jukeBox, g.charaManager)
-		g.sceneManager.GoTo(&scenes.TitleScene{})
-	}
-
 	g.input.Update()
 	if err := g.sceneManager.Update(&g.input); err != nil {
 		return err

@@ -13,8 +13,8 @@ type Position struct {
 
 // Character describes a character.
 type Character struct {
-	animation StepAnimation
 	Position  Position
+	animation StepAnimation
 	moved     bool
 	state     CharacterState
 	jumpSe    *music.SePlayer
