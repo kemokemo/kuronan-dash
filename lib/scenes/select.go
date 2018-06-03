@@ -16,7 +16,8 @@ import (
 
 const (
 	frameWidth    = 2
-	margin        = 5
+	margin        = 20
+	scale         = 2
 	windowSpacing = 15
 	windowMargin  = 20
 )
@@ -108,9 +109,9 @@ func (s *SelectScene) Draw(r *ebiten.Image) {
 		}
 		s.winMap[cType].DrawWindow(r)
 
-		rect := s.winMap[cType].GetWindowRect()
 		op := &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(float64(rect.Min.X+margin), float64(rect.Min.Y+margin))
+		op.GeoM.Scale(scale, scale) // important: you have to scale before translating.
+		op.GeoM.Translate(s.takeCenterPosition(cType))
 		err := r.DrawImage(s.infoMap[cType].MainImage, op)
 		if err != nil {
 			log.Println(err)
@@ -118,6 +119,14 @@ func (s *SelectScene) Draw(r *ebiten.Image) {
 	}
 	text.Draw(r, "← → のカーソルキーでキャラクターを選んでSpaceキーを押してね！",
 		mplus.Gothic12r, windowMargin, windowMargin, color.White)
+}
+
+func (s *SelectScene) takeCenterPosition(cType objects.CharacterType) (x, y float64) {
+	rect := s.winMap[cType].GetWindowRect()
+	width, _ := s.infoMap[cType].MainImage.Size()
+	x = float64((rect.Max.X-rect.Min.X)/2 + rect.Min.X - (width*scale)/2)
+	y = float64(rect.Min.Y + margin)
+	return x, y
 }
 
 func (s *SelectScene) checkSelectorChanged() {
