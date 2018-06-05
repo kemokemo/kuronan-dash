@@ -23,9 +23,9 @@ func getMusicPlayer(dt DiscType) (*audio.Player, error) {
 func getMusicByteData(dt DiscType) ([]byte, error) {
 	switch dt {
 	case Title:
-		return audios.Hashire_kurona_mp3, nil
-	case Stage01:
 		return audios.Shibugaki_no_kuroneko_mp3, nil
+	case Stage01:
+		return audios.Hashire_kurona_mp3, nil
 	default:
 		return nil, fmt.Errorf("unknown disc type %v", dt)
 	}
