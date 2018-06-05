@@ -1,4 +1,6 @@
 # Build customization
+git:
+  short_hash: true
 builds:
   - main: ./
     binary: kuronandash
