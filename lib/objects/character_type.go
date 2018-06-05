@@ -20,7 +20,7 @@ var CharacterTypeList = []CharacterType{Kurona, Koma, Shishimaru}
 func getCharacterDescription(ct CharacterType) string {
 	switch ct {
 	case Kurona:
-		return "本作の主人公。いつも元気いっぱい。渋垣のアイドル。"
+		return "本作の主人公。いつも元気いっぱいな渋垣のアイドル。"
 	case Koma:
 		return "黒菜の親友でライバル。実直な性格で特技は鉄拳制裁。可愛い。"
 	case Shishimaru:
