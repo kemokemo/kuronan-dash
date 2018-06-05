@@ -3,37 +3,61 @@ package ui
 import (
 	"image"
 	"image/color"
+	"log"
 
 	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/ebitenutil"
 )
 
 // FrameWindow is a struct to draw a window with frame.
 type FrameWindow struct {
-	rect            image.Rectangle
-	width           int
-	heigt           int
-	innerColor      color.RGBA
-	frameWidth      int
-	frameDarkColor  color.RGBA
-	frameLightColor color.RGBA
-	counter         int
-	enableBlink     bool
+	frameImg     *ebiten.Image
+	innerImg     *ebiten.Image
+	innerOp      *ebiten.DrawImageOptions
+	frameDarkOp  *ebiten.DrawImageOptions
+	frameLightOp *ebiten.DrawImageOptions
+	rect         image.Rectangle
+	counter      int
+	enableBlink  bool
 }
 
 // NewFrameWindow returns a FrameWindow.
 //
 // The width and height are used for the inner region excluding the frame.
 // If 0 is set to the frameWidth, the frame will not be drawn.
-func NewFrameWindow(x, y, width, heigt, frameWidth int) *FrameWindow {
-	return &FrameWindow{
+func NewFrameWindow(x, y, width, height, frameWidth int) (*FrameWindow, error) {
+	fw := FrameWindow{
 		rect: image.Rectangle{
 			Min: image.Point{X: x, Y: y},
-			Max: image.Point{X: x + width, Y: y + heigt},
+			Max: image.Point{X: x + width, Y: y + height},
 		},
-		width: width, heigt: heigt,
-		frameWidth: frameWidth,
 	}
+	var err error
+	fw.innerImg, err = ebiten.NewImage(width, height, ebiten.FilterDefault)
+	if err != nil {
+		return nil, err
+	}
+	err = fw.innerImg.Fill(color.White)
+	if err != nil {
+		return nil, err
+	}
+	fw.innerOp = &ebiten.DrawImageOptions{}
+	fw.innerOp.GeoM.Translate(float64(x), float64(y))
+
+	if frameWidth > 0 {
+		fw.frameImg, err = ebiten.NewImage(width+frameWidth*2, height+frameWidth*2, ebiten.FilterDefault)
+		if err != nil {
+			return nil, err
+		}
+		err = fw.frameImg.Fill(color.White)
+		if err != nil {
+			return nil, err
+		}
+		fw.frameDarkOp = &ebiten.DrawImageOptions{}
+		fw.frameDarkOp.GeoM.Translate(float64(x-frameWidth), float64(y-frameWidth))
+		fw.frameLightOp = &ebiten.DrawImageOptions{}
+		fw.frameLightOp.GeoM.Translate(float64(x-frameWidth), float64(y-frameWidth))
+	}
+	return &fw, nil
 }
 
 // GetWindowRect returns the rectangle of this window.
@@ -45,9 +69,13 @@ func (w *FrameWindow) GetWindowRect() image.Rectangle {
 // normal color.
 // If you need to blink the frame, please use the SetBlinkFrame method.
 func (w *FrameWindow) SetColors(inner, frameDark, frameLight color.RGBA) {
-	w.innerColor = inner
-	w.frameDarkColor = frameDark
-	w.frameLightColor = frameLight
+	w.innerOp.ColorM.Scale(colorScale(inner))
+	if w.frameDarkOp != nil {
+		w.frameDarkOp.ColorM.Scale(colorScale(frameDark))
+	}
+	if w.frameLightOp != nil {
+		w.frameLightOp.ColorM.Scale(colorScale(frameLight))
+	}
 }
 
 // SetBlink sets the flag to blink the frame.
@@ -57,33 +85,47 @@ func (w *FrameWindow) SetBlink(enableBlink bool) {
 
 // DrawWindow draws this window.
 func (w *FrameWindow) DrawWindow(screen *ebiten.Image) {
-	if w.frameWidth > 0 {
-		ebitenutil.DrawRect(screen,
-			float64(w.rect.Min.X-w.frameWidth), float64(w.rect.Min.Y-w.frameWidth),
-			float64(w.width+w.frameWidth*2), float64(w.heigt+w.frameWidth*2),
-			w.getFrameColor())
+	var err error
+	if w.frameImg != nil {
+		err = screen.DrawImage(w.frameImg, w.getFrameOp())
+		if err != nil {
+			log.Println("failed to draw the frame image", err)
+		}
 	}
-	ebitenutil.DrawRect(screen,
-		float64(w.rect.Min.X), float64(w.rect.Min.Y),
-		float64(w.width), float64(w.heigt),
-		w.innerColor)
+	err = screen.DrawImage(w.innerImg, w.innerOp)
+	if err != nil {
+		log.Println("failed to draw the inner image", err)
+	}
 }
 
-func (w *FrameWindow) getFrameColor() color.RGBA {
+func (w *FrameWindow) getFrameOp() *ebiten.DrawImageOptions {
 	if !w.enableBlink {
-		return w.frameDarkColor
+		return w.frameDarkOp
 	}
 
 	w.counter++
 	switch {
 	case w.counter <= 30:
-		return w.frameDarkColor
+		return w.frameDarkOp
 	case 30 < w.counter && w.counter <= 60:
-		return w.frameLightColor
+		return w.frameLightOp
 	case 60 < w.counter:
 		w.counter = 0
-		return w.frameDarkColor
+		return w.frameDarkOp
 	default:
-		return w.frameDarkColor
+		return w.frameDarkOp
 	}
+}
+
+func colorScale(clr color.Color) (rf, gf, bf, af float64) {
+	r, g, b, a := clr.RGBA()
+	if a == 0 {
+		return 0, 0, 0, 0
+	}
+
+	rf = float64(r) / float64(a)
+	gf = float64(g) / float64(a)
+	bf = float64(b) / float64(a)
+	af = float64(a) / 0xffff
+	return
 }

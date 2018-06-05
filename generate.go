@@ -16,7 +16,7 @@ package main
 //go:generate file2byteslice -package=images -input=./_assets/images/koma_03.png -output=./assets/images/koma_03.go -var=Koma_03_png
 
 // TODO: 獅子丸の待機画像も作りたい
-//go:generate file2byteslice -package=images -input=./_assets/images/shishimaru_00.png -output=./assets/images/shishimaru_taiki.go -var=Shishimaru_taiki_png
+//go:generate file2byteslice -package=images -input=./_assets/images/shishimaru_taiki.png -output=./assets/images/shishimaru_taiki.go -var=Shishimaru_taiki_png
 //go:generate file2byteslice -package=images -input=./_assets/images/shishimaru_00.png -output=./assets/images/shishimaru_00.go -var=Shishimaru_00_png
 //go:generate file2byteslice -package=images -input=./_assets/images/shishimaru_01.png -output=./assets/images/shishimaru_01.go -var=Shishimaru_01_png
 //go:generate file2byteslice -package=images -input=./_assets/images/shishimaru_02.png -output=./assets/images/shishimaru_02.go -var=Shishimaru_02_png
