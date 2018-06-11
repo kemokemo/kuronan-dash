@@ -76,6 +76,8 @@ func getBytesReaderOfAnimation(ct CharacterType) []*bytes.Reader {
 			bytes.NewReader(images.Shishimaru_01_png),
 			bytes.NewReader(images.Shishimaru_02_png),
 			bytes.NewReader(images.Shishimaru_03_png),
+			bytes.NewReader(images.Shishimaru_04_png),
+			bytes.NewReader(images.Shishimaru_05_png),
 		}
 	default:
 		return nil

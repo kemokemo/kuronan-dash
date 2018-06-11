@@ -15,12 +15,13 @@ package main
 //go:generate file2byteslice -package=images -input=./_assets/images/koma_02.png -output=./assets/images/koma_02.go -var=Koma_02_png
 //go:generate file2byteslice -package=images -input=./_assets/images/koma_03.png -output=./assets/images/koma_03.go -var=Koma_03_png
 
-// TODO: 獅子丸の待機画像も作りたい
 //go:generate file2byteslice -package=images -input=./_assets/images/shishimaru_taiki.png -output=./assets/images/shishimaru_taiki.go -var=Shishimaru_taiki_png
 //go:generate file2byteslice -package=images -input=./_assets/images/shishimaru_00.png -output=./assets/images/shishimaru_00.go -var=Shishimaru_00_png
 //go:generate file2byteslice -package=images -input=./_assets/images/shishimaru_01.png -output=./assets/images/shishimaru_01.go -var=Shishimaru_01_png
 //go:generate file2byteslice -package=images -input=./_assets/images/shishimaru_02.png -output=./assets/images/shishimaru_02.go -var=Shishimaru_02_png
 //go:generate file2byteslice -package=images -input=./_assets/images/shishimaru_03.png -output=./assets/images/shishimaru_03.go -var=Shishimaru_03_png
+//go:generate file2byteslice -package=images -input=./_assets/images/shishimaru_04.png -output=./assets/images/shishimaru_04.go -var=Shishimaru_04_png
+//go:generate file2byteslice -package=images -input=./_assets/images/shishimaru_05.png -output=./assets/images/shishimaru_05.go -var=Shishimaru_05_png
 
 /* package audios */
 //go:generate file2byteslice -package=audios -input=./_assets/audios/hashire_kurona.mp3 -output=./assets/audios/hashire_kurona.go -var=Hashire_kurona_mp3
