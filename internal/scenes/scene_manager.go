@@ -4,9 +4,9 @@ package scenes
 
 import (
 	"github.com/hajimehoshi/ebiten"
-	"github.com/kemokemo/kuronan-dash/lib/music"
-	"github.com/kemokemo/kuronan-dash/lib/objects"
-	"github.com/kemokemo/kuronan-dash/lib/util"
+	"github.com/kemokemo/kuronan-dash/internal/music"
+	"github.com/kemokemo/kuronan-dash/internal/objects"
+	"github.com/kemokemo/kuronan-dash/internal/util"
 )
 
 const (

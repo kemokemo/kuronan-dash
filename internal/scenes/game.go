@@ -10,8 +10,8 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/text"
 	mplus "github.com/hajimehoshi/go-mplusbitmap"
-	"github.com/kemokemo/kuronan-dash/lib/music"
-	"github.com/kemokemo/kuronan-dash/lib/objects"
+	"github.com/kemokemo/kuronan-dash/internal/music"
+	"github.com/kemokemo/kuronan-dash/internal/objects"
 )
 
 type gameState int
