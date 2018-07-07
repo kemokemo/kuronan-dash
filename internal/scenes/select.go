@@ -161,7 +161,8 @@ func (s *SelectScene) drawBackground(screen *ebiten.Image) {
 	for j := 0; j < repeat; j++ {
 		for i := 0; i < repeat; i++ {
 			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(float64(w*i), float64(h*j))
+			screenWidth, _ := screen.Size()
+			op.GeoM.Translate(float64(screenWidth)-float64(w*(i+1)), float64(h*j))
 			op.GeoM.Translate(offsetX, offsetY)
 			screen.DrawImage(selectBG, op)
 		}
