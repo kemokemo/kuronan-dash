@@ -29,9 +29,10 @@ const (
 )
 
 var (
-	windowWidth  int
-	windowHeight int
-	selectBG     *ebiten.Image
+	windowWidth    int
+	windowHeight   int
+	selectBG       *ebiten.Image
+	selectViewPort *viewport
 )
 
 func init() {
@@ -45,6 +46,9 @@ func init() {
 		log.Printf("Failed to create a new image from 'Select_bg_png':%v", err)
 		return
 	}
+	selectViewPort = &viewport{}
+	w, h := selectBG.Size()
+	selectViewPort.SetSize(w, h)
 }
 
 // SelectScene is the scene to select the player character.
@@ -98,6 +102,12 @@ func (s *SelectScene) SetResources(j *music.JukeBox, cm *objects.CharacterManage
 
 // Update updates the status of this scene.
 func (s *SelectScene) Update(state *GameState) error {
+	selectViewPort.Move()
+
+	if ebiten.IsRunningSlowly() {
+		return nil
+	}
+
 	s.checkSelectorChanged()
 
 	if state.Input.StateForKey(ebiten.KeySpace) == 1 {
@@ -123,8 +133,7 @@ func (s *SelectScene) Draw(r *ebiten.Image) {
 		return
 	}
 
-	op := &ebiten.DrawImageOptions{}
-	r.DrawImage(selectBG, op)
+	s.drawBackground(r)
 	text.Draw(r, "← → のカーソルキーでキャラクターを選んでSpaceキーを押してね！",
 		mplus.Gothic12r, windowMargin, windowMargin, color.Black)
 
@@ -139,6 +148,23 @@ func (s *SelectScene) Draw(r *ebiten.Image) {
 		s.drawMainImage(r, cType)
 
 		s.drawMessage(r, cType)
+	}
+}
+
+func (s *SelectScene) drawBackground(screen *ebiten.Image) {
+	x16, y16 := selectViewPort.Position()
+	offsetX, offsetY := float64(-x16)/16, float64(-y16)/16
+
+	// Draw bgImage on the screen repeatedly.
+	const repeat = 3
+	w, h := selectBG.Size()
+	for j := 0; j < repeat; j++ {
+		for i := 0; i < repeat; i++ {
+			op := &ebiten.DrawImageOptions{}
+			op.GeoM.Translate(float64(w*i), float64(h*j))
+			op.GeoM.Translate(offsetX, offsetY)
+			screen.DrawImage(selectBG, op)
+		}
 	}
 }
 
