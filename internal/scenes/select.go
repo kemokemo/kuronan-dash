@@ -1,6 +1,7 @@
 package scenes
 
 import (
+	"bytes"
 	"image"
 	"image/color"
 	"log"
@@ -9,6 +10,7 @@ import (
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"github.com/hajimehoshi/ebiten/text"
 	mplus "github.com/hajimehoshi/go-mplusbitmap"
+	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/internal/music"
 	"github.com/kemokemo/kuronan-dash/internal/objects"
 	"github.com/kemokemo/kuronan-dash/internal/ui"
@@ -29,7 +31,21 @@ const (
 var (
 	windowWidth  int
 	windowHeight int
+	selectBG     *ebiten.Image
 )
+
+func init() {
+	var err error
+	img, _, err := image.Decode(bytes.NewReader(images.Select_bg_png))
+	if err != nil {
+		log.Printf("Failed to load the 'Select_bg_png':%v", err)
+	}
+	selectBG, err = ebiten.NewImageFromImage(img, ebiten.FilterDefault)
+	if err != nil {
+		log.Printf("Failed to create a new image from 'Select_bg_png':%v", err)
+		return
+	}
+}
 
 // SelectScene is the scene to select the player character.
 type SelectScene struct {
@@ -107,6 +123,11 @@ func (s *SelectScene) Draw(r *ebiten.Image) {
 		return
 	}
 
+	op := &ebiten.DrawImageOptions{}
+	r.DrawImage(selectBG, op)
+	text.Draw(r, "← → のカーソルキーでキャラクターを選んでSpaceキーを押してね！",
+		mplus.Gothic12r, windowMargin, windowMargin, color.Black)
+
 	for cType := range s.winMap {
 		if cType == s.selector {
 			s.winMap[cType].SetBlink(true)
@@ -119,8 +140,6 @@ func (s *SelectScene) Draw(r *ebiten.Image) {
 
 		s.drawMessage(r, cType)
 	}
-	text.Draw(r, "← → のカーソルキーでキャラクターを選んでSpaceキーを押してね！",
-		mplus.Gothic12r, windowMargin, windowMargin, color.White)
 }
 
 func (s *SelectScene) takeHorizontalCenterPosition(cType objects.CharacterType) (x, y float64) {
