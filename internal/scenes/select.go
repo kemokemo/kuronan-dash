@@ -1,6 +1,7 @@
 package scenes
 
 import (
+	"bytes"
 	"image"
 	"image/color"
 	"log"
@@ -9,6 +10,7 @@ import (
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"github.com/hajimehoshi/ebiten/text"
 	mplus "github.com/hajimehoshi/go-mplusbitmap"
+	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/internal/music"
 	"github.com/kemokemo/kuronan-dash/internal/objects"
 	"github.com/kemokemo/kuronan-dash/internal/ui"
@@ -27,9 +29,27 @@ const (
 )
 
 var (
-	windowWidth  int
-	windowHeight int
+	windowWidth    int
+	windowHeight   int
+	selectBG       *ebiten.Image
+	selectViewPort *viewport
 )
+
+func init() {
+	var err error
+	img, _, err := image.Decode(bytes.NewReader(images.Select_bg_png))
+	if err != nil {
+		log.Printf("Failed to load the 'Select_bg_png':%v", err)
+	}
+	selectBG, err = ebiten.NewImageFromImage(img, ebiten.FilterDefault)
+	if err != nil {
+		log.Printf("Failed to create a new image from 'Select_bg_png':%v", err)
+		return
+	}
+	selectViewPort = &viewport{}
+	w, h := selectBG.Size()
+	selectViewPort.SetSize(w, h)
+}
 
 // SelectScene is the scene to select the player character.
 type SelectScene struct {
@@ -82,6 +102,12 @@ func (s *SelectScene) SetResources(j *music.JukeBox, cm *objects.CharacterManage
 
 // Update updates the status of this scene.
 func (s *SelectScene) Update(state *GameState) error {
+	selectViewPort.Move()
+
+	if ebiten.IsRunningSlowly() {
+		return nil
+	}
+
 	s.checkSelectorChanged()
 
 	if state.Input.StateForKey(ebiten.KeySpace) == 1 {
@@ -107,6 +133,10 @@ func (s *SelectScene) Draw(r *ebiten.Image) {
 		return
 	}
 
+	s.drawBackground(r)
+	text.Draw(r, "← → のカーソルキーでキャラクターを選んでSpaceキーを押してね！",
+		mplus.Gothic12r, windowMargin, windowMargin, color.Black)
+
 	for cType := range s.winMap {
 		if cType == s.selector {
 			s.winMap[cType].SetBlink(true)
@@ -119,8 +149,24 @@ func (s *SelectScene) Draw(r *ebiten.Image) {
 
 		s.drawMessage(r, cType)
 	}
-	text.Draw(r, "← → のカーソルキーでキャラクターを選んでSpaceキーを押してね！",
-		mplus.Gothic12r, windowMargin, windowMargin, color.White)
+}
+
+func (s *SelectScene) drawBackground(screen *ebiten.Image) {
+	x16, y16 := selectViewPort.Position()
+	offsetX, offsetY := float64(-x16)/16, float64(-y16)/16
+
+	// Draw bgImage on the screen repeatedly.
+	const repeat = 3
+	w, h := selectBG.Size()
+	for j := 0; j < repeat; j++ {
+		for i := 0; i < repeat; i++ {
+			op := &ebiten.DrawImageOptions{}
+			screenWidth, _ := screen.Size()
+			op.GeoM.Translate(float64(screenWidth)-float64(w*(i+1)), float64(h*j))
+			op.GeoM.Translate(offsetX, offsetY)
+			screen.DrawImage(selectBG, op)
+		}
+	}
 }
 
 func (s *SelectScene) takeHorizontalCenterPosition(cType objects.CharacterType) (x, y float64) {
