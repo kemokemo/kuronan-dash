@@ -11,9 +11,9 @@ import (
 
 const (
 	// ScreenWidth is the width of scenes.
-	ScreenWidth = 800
+	ScreenWidth = 1280
 	// ScreenHeight is the heigt of scenes.
-	ScreenHeight = 480
+	ScreenHeight = 720
 
 	transitionMaxCount = 20
 )
