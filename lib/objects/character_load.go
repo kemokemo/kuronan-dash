@@ -62,6 +62,9 @@ func getBytesReaderOfAnimation(ct CharacterType) []*bytes.Reader {
 			bytes.NewReader(images.Kurona_00_png),
 			bytes.NewReader(images.Kurona_01_png),
 			bytes.NewReader(images.Kurona_02_png),
+			bytes.NewReader(images.Kurona_03_png),
+			bytes.NewReader(images.Kurona_04_png),
+			bytes.NewReader(images.Kurona_05_png),
 		}
 	case Koma:
 		return []*bytes.Reader{

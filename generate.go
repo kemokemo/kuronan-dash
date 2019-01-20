@@ -3,11 +3,13 @@ package main
 /* package images */
 //go:generate file2byteslice -package=images -input=./_assets/images/title_bg.png -output=./assets/images/title_bg.go -var=Title_bg_png
 
-// TODO: 黒菜のフレーム数を増やしながらリファインしたい
 //go:generate file2byteslice -package=images -input=./_assets/images/kurona_taiki.png -output=./assets/images/kurona_taiki.go -var=Kurona_taiki_png
 //go:generate file2byteslice -package=images -input=./_assets/images/kurona_00.png -output=./assets/images/kurona_00.go -var=Kurona_00_png
 //go:generate file2byteslice -package=images -input=./_assets/images/kurona_01.png -output=./assets/images/kurona_01.go -var=Kurona_01_png
 //go:generate file2byteslice -package=images -input=./_assets/images/kurona_02.png -output=./assets/images/kurona_02.go -var=Kurona_02_png
+//go:generate file2byteslice -package=images -input=./_assets/images/kurona_03.png -output=./assets/images/kurona_03.go -var=Kurona_03_png
+//go:generate file2byteslice -package=images -input=./_assets/images/kurona_04.png -output=./assets/images/kurona_04.go -var=Kurona_04_png
+//go:generate file2byteslice -package=images -input=./_assets/images/kurona_05.png -output=./assets/images/kurona_05.go -var=Kurona_05_png
 
 //go:generate file2byteslice -package=images -input=./_assets/images/koma_taiki.png -output=./assets/images/koma_taiki.go -var=Koma_taiki_png
 //go:generate file2byteslice -package=images -input=./_assets/images/koma_00.png -output=./assets/images/koma_00.go -var=Koma_00_png
