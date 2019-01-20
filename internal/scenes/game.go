@@ -10,8 +10,8 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/text"
 	mplus "github.com/hajimehoshi/go-mplusbitmap"
-	"github.com/kemokemo/kuronan-dash/lib/music"
-	"github.com/kemokemo/kuronan-dash/lib/objects"
+	"github.com/kemokemo/kuronan-dash/internal/music"
+	"github.com/kemokemo/kuronan-dash/internal/objects"
 )
 
 type gameState int
@@ -70,10 +70,7 @@ func (s *GameScene) Draw(screen *ebiten.Image) {
 	text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.jb.NowPlayingName()),
 		mplus.Gothic12r, 12, 15, color.White)
 
-	if s.state == gameover {
-		text.Draw(screen, "ゲームオーバー: Spaceを押してタイトルへ", mplus.Gothic12r, ScreenWidth/2-100, ScreenHeight/2, color.White)
-		return
-	}
+	s.drawWithState(screen)
 	// TODO: 衝突判定とSE再生
 	err = s.checkCollision()
 	if err != nil {
@@ -83,21 +80,46 @@ func (s *GameScene) Draw(screen *ebiten.Image) {
 }
 
 func (s *GameScene) updateStatus(state *GameState) error {
-	// TODO: とりあえずゲームオーバーの練習
-	if s.state == gameover {
+	switch s.state {
+	case beforeRun:
+		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
+			s.state = running
+		}
+	case running:
+		s.chara.Move()
+		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
+			s.state = pause
+		}
+		// TODO: とりあえずゲームオーバーの練習
+		if s.chara.Position.X+50 > ScreenWidth-50 && s.state != gameover {
+			s.state = gameover
+		}
+	case pause:
+		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
+			s.state = running
+		}
+	case gameover:
 		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
 			state.SceneManager.GoTo(&TitleScene{})
-			return nil
 		}
-		return nil
+	default:
+		s.chara.Move()
+		// unknown state
 	}
-	if s.chara.Position.X+50 > ScreenWidth-50 && s.state != gameover {
-		s.state = gameover
-		return nil
-	}
-
-	s.chara.Move()
 	return nil
+}
+
+func (s *GameScene) drawWithState(screen *ebiten.Image) {
+	switch s.state {
+	case beforeRun:
+		text.Draw(screen, "Spaceキーを押してゲームを開始してね！", mplus.Gothic12r, ScreenWidth/2-100, ScreenHeight/2, color.White)
+	case pause:
+		text.Draw(screen, "一時停止中だよ！", mplus.Gothic12r, ScreenWidth/2-100, ScreenHeight/2, color.White)
+	case gameover:
+		text.Draw(screen, "ゲームオーバー！Spaceを押してタイトルへ戻ってね！", mplus.Gothic12r, ScreenWidth/2-100, ScreenHeight/2, color.White)
+	default:
+		// nothing to draw
+	}
 }
 
 func (s *GameScene) checkCollision() error {

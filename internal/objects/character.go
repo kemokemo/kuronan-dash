@@ -2,7 +2,7 @@ package objects
 
 import (
 	"github.com/hajimehoshi/ebiten"
-	"github.com/kemokemo/kuronan-dash/lib/music"
+	"github.com/kemokemo/kuronan-dash/internal/music"
 )
 
 // Position describes the position by x and y.

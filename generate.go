@@ -2,6 +2,7 @@ package main
 
 /* package images */
 //go:generate file2byteslice -package=images -input=./_assets/images/title_bg.png -output=./assets/images/title_bg.go -var=Title_bg_png
+//go:generate file2byteslice -package=images -input=./_assets/images/select_background.png -output=./assets/images/select_bg.go -var=Select_bg_png
 
 //go:generate file2byteslice -package=images -input=./_assets/images/kurona_taiki.png -output=./assets/images/kurona_taiki.go -var=Kurona_taiki_png
 //go:generate file2byteslice -package=images -input=./_assets/images/kurona_00.png -output=./assets/images/kurona_00.go -var=Kurona_00_png

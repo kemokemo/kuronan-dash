@@ -4,16 +4,16 @@ package scenes
 
 import (
 	"github.com/hajimehoshi/ebiten"
-	"github.com/kemokemo/kuronan-dash/lib/music"
-	"github.com/kemokemo/kuronan-dash/lib/objects"
-	"github.com/kemokemo/kuronan-dash/lib/util"
+	"github.com/kemokemo/kuronan-dash/internal/music"
+	"github.com/kemokemo/kuronan-dash/internal/objects"
+	"github.com/kemokemo/kuronan-dash/internal/util"
 )
 
 const (
 	// ScreenWidth is the width of scenes.
-	ScreenWidth = 800
+	ScreenWidth = 1280
 	// ScreenHeight is the heigt of scenes.
-	ScreenHeight = 480
+	ScreenHeight = 720
 
 	transitionMaxCount = 20
 )

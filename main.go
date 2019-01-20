@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/hajimehoshi/ebiten"
-	dash "github.com/kemokemo/kuronan-dash/lib"
-	"github.com/kemokemo/kuronan-dash/lib/scenes"
+	"github.com/kemokemo/kuronan-dash/internal"
+	"github.com/kemokemo/kuronan-dash/internal/scenes"
 )
 
 const (
@@ -19,7 +19,7 @@ func main() {
 }
 
 func run() int {
-	game, err := dash.NewGame()
+	game, err := kuronandash.NewGame()
 	if err != nil {
 		log.Println("Failed to create a new game", err)
 		return exitFailed

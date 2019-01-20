@@ -12,9 +12,9 @@ import (
 	"github.com/hajimehoshi/ebiten/text"
 	mplus "github.com/hajimehoshi/go-mplusbitmap"
 	"github.com/kemokemo/kuronan-dash/assets/images"
-	"github.com/kemokemo/kuronan-dash/lib/music"
-	"github.com/kemokemo/kuronan-dash/lib/objects"
-	"github.com/kemokemo/kuronan-dash/lib/util"
+	"github.com/kemokemo/kuronan-dash/internal/music"
+	"github.com/kemokemo/kuronan-dash/internal/objects"
+	"github.com/kemokemo/kuronan-dash/internal/util"
 )
 
 var titleBG *ebiten.Image
