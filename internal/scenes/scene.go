@@ -8,7 +8,7 @@ import (
 
 // Scene is interface for the all scenes.
 type Scene interface {
-	SetResources(j *music.JukeBox, cm *character.CharacterManager)
+	SetResources(j *music.JukeBox, cm *character.Manager)
 	Update(state *GameState) error
 	Draw(screen *ebiten.Image)
 }

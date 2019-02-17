@@ -16,14 +16,14 @@ type Character struct {
 	Position  Position
 	animation StepAnimation
 	moved     bool
-	state     CharacterState
+	state     State
 	jumpSe    *music.SePlayer
 }
 
 // NewCharacter creates a new character instance.
 // Please call the Close method when you no longer use this instance.
-func NewCharacter(ct CharacterType) (*Character, error) {
-	frames, err := getAnimationFrames(ct)
+func NewCharacter(id ID) (*Character, error) {
+	frames, err := getAnimationFrames(id)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +82,7 @@ func (c *Character) Draw(screen *ebiten.Image) error {
 }
 
 // SetState sets the status for this character.
-func (c *Character) SetState(state CharacterState) {
+func (c *Character) SetState(state State) {
 	c.state = state
 }
 

@@ -54,10 +54,10 @@ func init() {
 // SelectScene is the scene to select the player character.
 type SelectScene struct {
 	jb         *music.JukeBox
-	cm         *character.CharacterManager
-	infoMap    map[character.CharacterType]*character.CharacterInfo
-	winMap     map[character.CharacterType]*ui.FrameWindow
-	selector   character.CharacterType
+	cm         *character.Manager
+	infoMap    map[character.ID]*character.Info
+	winMap     map[character.ID]*ui.FrameWindow
+	selector   character.ID
 	fontNormal font.Face
 }
 
@@ -67,7 +67,7 @@ func NewSelectScene() *SelectScene {
 }
 
 // SetResources sets the resources like music, character images and so on.
-func (s *SelectScene) SetResources(j *music.JukeBox, cm *character.CharacterManager) {
+func (s *SelectScene) SetResources(j *music.JukeBox, cm *character.Manager) {
 	s.jb = j
 	err := s.jb.SelectDisc(music.Title)
 	if err != nil {
@@ -79,7 +79,7 @@ func (s *SelectScene) SetResources(j *music.JukeBox, cm *character.CharacterMana
 	windowWidth = (ScreenWidth - windowSpacing*2 - windowMargin*2) / len(s.infoMap)
 	windowHeight = ScreenHeight - windowMargin*2 - 100
 
-	s.winMap = make(map[character.CharacterType]*ui.FrameWindow, len(s.infoMap))
+	s.winMap = make(map[character.ID]*ui.FrameWindow, len(s.infoMap))
 	for cType := range s.infoMap {
 		win, err := ui.NewFrameWindow(
 			windowMargin+(windowWidth+windowSpacing)*int(cType),
@@ -169,7 +169,7 @@ func (s *SelectScene) drawBackground(screen *ebiten.Image) {
 	}
 }
 
-func (s *SelectScene) takeHorizontalCenterPosition(cType character.CharacterType) (x, y float64) {
+func (s *SelectScene) takeHorizontalCenterPosition(cType character.ID) (x, y float64) {
 	rect := s.winMap[cType].GetWindowRect()
 	width, _ := s.infoMap[cType].MainImage.Size()
 	x = float64((rect.Max.X-rect.Min.X)/2 + rect.Min.X - (width*scale)/2)
@@ -177,7 +177,7 @@ func (s *SelectScene) takeHorizontalCenterPosition(cType character.CharacterType
 	return x, y
 }
 
-func (s *SelectScene) takeTextPosition(cType character.CharacterType) image.Point {
+func (s *SelectScene) takeTextPosition(cType character.ID) image.Point {
 	rect := s.winMap[cType].GetWindowRect()
 	x := rect.Min.X + margin
 	_, height := s.infoMap[cType].MainImage.Size()
@@ -198,7 +198,7 @@ func (s *SelectScene) checkSelectorChanged() {
 	}
 }
 
-func (s *SelectScene) drawMainImage(screen *ebiten.Image, cType character.CharacterType) {
+func (s *SelectScene) drawMainImage(screen *ebiten.Image, cType character.ID) {
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Scale(scale, scale) // important: you have to scale before translating.
 	op.GeoM.Translate(s.takeHorizontalCenterPosition(cType))
@@ -208,7 +208,7 @@ func (s *SelectScene) drawMainImage(screen *ebiten.Image, cType character.Charac
 	}
 }
 
-func (s *SelectScene) drawMessage(screen *ebiten.Image, cType character.CharacterType) {
+func (s *SelectScene) drawMessage(screen *ebiten.Image, cType character.ID) {
 	runes := []rune(s.infoMap[cType].Description)
 	rect := s.winMap[cType].GetWindowRect()
 	splitlen := (rect.Max.X - rect.Min.X - margin) / fontSize

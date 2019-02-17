@@ -35,11 +35,11 @@ func init() {
 // TitleScene is the scene for title.
 type TitleScene struct {
 	jb *music.JukeBox
-	cm *character.CharacterManager
+	cm *character.Manager
 }
 
 // SetResources sets the resources like music, character images and so on.
-func (s *TitleScene) SetResources(j *music.JukeBox, cm *character.CharacterManager) {
+func (s *TitleScene) SetResources(j *music.JukeBox, cm *character.Manager) {
 	s.jb = j
 	s.cm = cm
 	err := s.jb.SelectDisc(music.Title)

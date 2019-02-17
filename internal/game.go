@@ -14,7 +14,7 @@ import (
 type Game struct {
 	sceneManager *scenes.SceneManager
 	input        util.Input
-	charaManager *character.CharacterManager
+	charaManager *character.Manager
 	jukeBox      *music.JukeBox
 }
 
@@ -27,7 +27,7 @@ func NewGame() (*Game, error) {
 	if err != nil {
 		return nil, err
 	}
-	g.charaManager, err = character.NewCharacterManager()
+	g.charaManager, err = character.NewManager()
 	if err != nil {
 		return nil, err
 	}

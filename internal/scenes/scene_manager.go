@@ -26,7 +26,7 @@ type SceneManager struct {
 	transitionTo    *ebiten.Image
 	op              *ebiten.DrawImageOptions
 	transitionCount int
-	charaManager    *character.CharacterManager
+	charaManager    *character.Manager
 	jukeBox         *music.JukeBox
 }
 
@@ -53,7 +53,7 @@ func NewSceneManager() (*SceneManager, error) {
 }
 
 // SetResources sets the resources like music, character images and so on.
-func (s *SceneManager) SetResources(j *music.JukeBox, cm *character.CharacterManager) {
+func (s *SceneManager) SetResources(j *music.JukeBox, cm *character.Manager) {
 	s.jukeBox = j
 	s.charaManager = cm
 }

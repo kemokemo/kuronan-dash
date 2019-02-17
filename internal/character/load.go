@@ -11,8 +11,8 @@ import (
 	"github.com/kemokemo/kuronan-dash/assets/images"
 )
 
-func getMainImage(ct CharacterType) (*ebiten.Image, error) {
-	b, err := getByteOfMainImages(ct)
+func getMainImage(id ID) (*ebiten.Image, error) {
+	b, err := getByteOfMainImages(id)
 	if err != nil {
 		return nil, err
 	}
@@ -23,8 +23,8 @@ func getMainImage(ct CharacterType) (*ebiten.Image, error) {
 	return ebiten.NewImageFromImage(img, ebiten.FilterDefault)
 }
 
-func getByteOfMainImages(ct CharacterType) ([]byte, error) {
-	switch ct {
+func getByteOfMainImages(id ID) ([]byte, error) {
+	switch id {
 	case Kurona:
 		return images.Kurona_taiki_png, nil
 	case Koma:
@@ -32,14 +32,14 @@ func getByteOfMainImages(ct CharacterType) ([]byte, error) {
 	case Shishimaru:
 		return images.Shishimaru_taiki_png, nil
 	default:
-		return nil, fmt.Errorf("CharacterType %v is unknown", ct)
+		return nil, fmt.Errorf("CharacterType %v is unknown", id)
 	}
 }
 
-func getAnimationFrames(ct CharacterType) ([]*ebiten.Image, error) {
+func getAnimationFrames(id ID) ([]*ebiten.Image, error) {
 	frames := []*ebiten.Image{}
 
-	readers := getBytesReaderOfAnimation(ct)
+	readers := getBytesReaderOfAnimation(id)
 	for index := range readers {
 		img, _, err := image.Decode(readers[index])
 		if err != nil {
@@ -55,8 +55,8 @@ func getAnimationFrames(ct CharacterType) ([]*ebiten.Image, error) {
 	return frames, nil
 }
 
-func getBytesReaderOfAnimation(ct CharacterType) []*bytes.Reader {
-	switch ct {
+func getBytesReaderOfAnimation(id ID) []*bytes.Reader {
+	switch id {
 	case Kurona:
 		return []*bytes.Reader{
 			bytes.NewReader(images.Kurona_00_png),

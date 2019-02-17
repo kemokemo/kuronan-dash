@@ -38,7 +38,7 @@ func NewGameScene() *GameScene {
 }
 
 // SetResources sets the resources like music, character images and so on.
-func (s *GameScene) SetResources(j *music.JukeBox, cm *character.CharacterManager) {
+func (s *GameScene) SetResources(j *music.JukeBox, cm *character.Manager) {
 	s.jb = j
 	s.chara = cm.GetSelectedCharacter()
 	s.chara.SetInitialPosition(character.Position{X: 10, Y: 50})

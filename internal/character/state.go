@@ -1,11 +1,11 @@
 package character
 
-// CharacterState describes the state of a character.
-type CharacterState int
+// State describes the state of a character.
+type State int
 
 const (
 	// Stop describes a character is stopping
-	Stop CharacterState = iota
+	Stop State = iota
 	// Walk describes a character is walking
 	Walk
 	// Dash is Dash!
