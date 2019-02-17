@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/hajimehoshi/ebiten"
+	"github.com/kemokemo/kuronan-dash/internal/character"
 	"github.com/kemokemo/kuronan-dash/internal/music"
-	"github.com/kemokemo/kuronan-dash/internal/objects"
 	"github.com/kemokemo/kuronan-dash/internal/scenes"
 	"github.com/kemokemo/kuronan-dash/internal/util"
 )
@@ -14,7 +14,7 @@ import (
 type Game struct {
 	sceneManager *scenes.SceneManager
 	input        util.Input
-	charaManager *objects.CharacterManager
+	charaManager *character.CharacterManager
 	jukeBox      *music.JukeBox
 }
 
@@ -27,7 +27,7 @@ func NewGame() (*Game, error) {
 	if err != nil {
 		return nil, err
 	}
-	g.charaManager, err = objects.NewCharacterManager()
+	g.charaManager, err = character.NewCharacterManager()
 	if err != nil {
 		return nil, err
 	}

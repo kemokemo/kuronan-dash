@@ -1,4 +1,4 @@
-package objects
+package character
 
 import (
 	"github.com/hajimehoshi/ebiten"

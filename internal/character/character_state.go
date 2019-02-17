@@ -1,4 +1,4 @@
-package objects
+package character
 
 // CharacterState describes the state of a character.
 type CharacterState int

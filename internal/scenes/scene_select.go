@@ -11,8 +11,8 @@ import (
 	"github.com/hajimehoshi/ebiten/text"
 	mplus "github.com/hajimehoshi/go-mplusbitmap"
 	"github.com/kemokemo/kuronan-dash/assets/images"
+	"github.com/kemokemo/kuronan-dash/internal/character"
 	"github.com/kemokemo/kuronan-dash/internal/music"
-	"github.com/kemokemo/kuronan-dash/internal/objects"
 	"github.com/kemokemo/kuronan-dash/internal/ui"
 	"github.com/kemokemo/kuronan-dash/internal/util"
 	"golang.org/x/image/font"
@@ -54,10 +54,10 @@ func init() {
 // SelectScene is the scene to select the player character.
 type SelectScene struct {
 	jb         *music.JukeBox
-	cm         *objects.CharacterManager
-	infoMap    map[objects.CharacterType]*objects.CharacterInfo
-	winMap     map[objects.CharacterType]*ui.FrameWindow
-	selector   objects.CharacterType
+	cm         *character.CharacterManager
+	infoMap    map[character.CharacterType]*character.CharacterInfo
+	winMap     map[character.CharacterType]*ui.FrameWindow
+	selector   character.CharacterType
 	fontNormal font.Face
 }
 
@@ -67,7 +67,7 @@ func NewSelectScene() *SelectScene {
 }
 
 // SetResources sets the resources like music, character images and so on.
-func (s *SelectScene) SetResources(j *music.JukeBox, cm *objects.CharacterManager) {
+func (s *SelectScene) SetResources(j *music.JukeBox, cm *character.CharacterManager) {
 	s.jb = j
 	err := s.jb.SelectDisc(music.Title)
 	if err != nil {
@@ -79,7 +79,7 @@ func (s *SelectScene) SetResources(j *music.JukeBox, cm *objects.CharacterManage
 	windowWidth = (ScreenWidth - windowSpacing*2 - windowMargin*2) / len(s.infoMap)
 	windowHeight = ScreenHeight - windowMargin*2 - 100
 
-	s.winMap = make(map[objects.CharacterType]*ui.FrameWindow, len(s.infoMap))
+	s.winMap = make(map[character.CharacterType]*ui.FrameWindow, len(s.infoMap))
 	for cType := range s.infoMap {
 		win, err := ui.NewFrameWindow(
 			windowMargin+(windowWidth+windowSpacing)*int(cType),
@@ -91,7 +91,7 @@ func (s *SelectScene) SetResources(j *music.JukeBox, cm *objects.CharacterManage
 			color.RGBA{64, 64, 64, 255},
 			color.RGBA{192, 192, 192, 255},
 			color.RGBA{0, 148, 255, 255})
-		if cType == objects.Kurona {
+		if cType == character.Kurona {
 			s.selector = cType
 			win.SetBlink(true)
 		}
@@ -169,7 +169,7 @@ func (s *SelectScene) drawBackground(screen *ebiten.Image) {
 	}
 }
 
-func (s *SelectScene) takeHorizontalCenterPosition(cType objects.CharacterType) (x, y float64) {
+func (s *SelectScene) takeHorizontalCenterPosition(cType character.CharacterType) (x, y float64) {
 	rect := s.winMap[cType].GetWindowRect()
 	width, _ := s.infoMap[cType].MainImage.Size()
 	x = float64((rect.Max.X-rect.Min.X)/2 + rect.Min.X - (width*scale)/2)
@@ -177,7 +177,7 @@ func (s *SelectScene) takeHorizontalCenterPosition(cType objects.CharacterType) 
 	return x, y
 }
 
-func (s *SelectScene) takeTextPosition(cType objects.CharacterType) image.Point {
+func (s *SelectScene) takeTextPosition(cType character.CharacterType) image.Point {
 	rect := s.winMap[cType].GetWindowRect()
 	x := rect.Min.X + margin
 	_, height := s.infoMap[cType].MainImage.Size()
@@ -198,7 +198,7 @@ func (s *SelectScene) checkSelectorChanged() {
 	}
 }
 
-func (s *SelectScene) drawMainImage(screen *ebiten.Image, cType objects.CharacterType) {
+func (s *SelectScene) drawMainImage(screen *ebiten.Image, cType character.CharacterType) {
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Scale(scale, scale) // important: you have to scale before translating.
 	op.GeoM.Translate(s.takeHorizontalCenterPosition(cType))
@@ -208,7 +208,7 @@ func (s *SelectScene) drawMainImage(screen *ebiten.Image, cType objects.Characte
 	}
 }
 
-func (s *SelectScene) drawMessage(screen *ebiten.Image, cType objects.CharacterType) {
+func (s *SelectScene) drawMessage(screen *ebiten.Image, cType character.CharacterType) {
 	runes := []rune(s.infoMap[cType].Description)
 	rect := s.winMap[cType].GetWindowRect()
 	splitlen := (rect.Max.X - rect.Min.X - margin) / fontSize

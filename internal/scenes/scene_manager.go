@@ -4,8 +4,8 @@ package scenes
 
 import (
 	"github.com/hajimehoshi/ebiten"
+	"github.com/kemokemo/kuronan-dash/internal/character"
 	"github.com/kemokemo/kuronan-dash/internal/music"
-	"github.com/kemokemo/kuronan-dash/internal/objects"
 	"github.com/kemokemo/kuronan-dash/internal/util"
 )
 
@@ -26,7 +26,7 @@ type SceneManager struct {
 	transitionTo    *ebiten.Image
 	op              *ebiten.DrawImageOptions
 	transitionCount int
-	charaManager    *objects.CharacterManager
+	charaManager    *character.CharacterManager
 	jukeBox         *music.JukeBox
 }
 
@@ -53,7 +53,7 @@ func NewSceneManager() (*SceneManager, error) {
 }
 
 // SetResources sets the resources like music, character images and so on.
-func (s *SceneManager) SetResources(j *music.JukeBox, cm *objects.CharacterManager) {
+func (s *SceneManager) SetResources(j *music.JukeBox, cm *character.CharacterManager) {
 	s.jukeBox = j
 	s.charaManager = cm
 }

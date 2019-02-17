@@ -12,8 +12,8 @@ import (
 	"github.com/hajimehoshi/ebiten/text"
 	mplus "github.com/hajimehoshi/go-mplusbitmap"
 	"github.com/kemokemo/kuronan-dash/assets/images"
+	"github.com/kemokemo/kuronan-dash/internal/character"
 	"github.com/kemokemo/kuronan-dash/internal/music"
-	"github.com/kemokemo/kuronan-dash/internal/objects"
 	"github.com/kemokemo/kuronan-dash/internal/util"
 )
 
@@ -35,11 +35,11 @@ func init() {
 // TitleScene is the scene for title.
 type TitleScene struct {
 	jb *music.JukeBox
-	cm *objects.CharacterManager
+	cm *character.CharacterManager
 }
 
 // SetResources sets the resources like music, character images and so on.
-func (s *TitleScene) SetResources(j *music.JukeBox, cm *objects.CharacterManager) {
+func (s *TitleScene) SetResources(j *music.JukeBox, cm *character.CharacterManager) {
 	s.jb = j
 	s.cm = cm
 	err := s.jb.SelectDisc(music.Title)

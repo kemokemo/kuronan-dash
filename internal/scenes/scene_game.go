@@ -10,8 +10,8 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/text"
 	mplus "github.com/hajimehoshi/go-mplusbitmap"
+	"github.com/kemokemo/kuronan-dash/internal/character"
 	"github.com/kemokemo/kuronan-dash/internal/music"
-	"github.com/kemokemo/kuronan-dash/internal/objects"
 )
 
 type gameState int
@@ -26,7 +26,7 @@ const (
 // GameScene is the scene for the game.
 type GameScene struct {
 	state gameState
-	chara *objects.Character
+	chara *character.Character
 	jb    *music.JukeBox
 }
 
@@ -38,10 +38,10 @@ func NewGameScene() *GameScene {
 }
 
 // SetResources sets the resources like music, character images and so on.
-func (s *GameScene) SetResources(j *music.JukeBox, cm *objects.CharacterManager) {
+func (s *GameScene) SetResources(j *music.JukeBox, cm *character.CharacterManager) {
 	s.jb = j
 	s.chara = cm.GetSelectedCharacter()
-	s.chara.SetInitialPosition(objects.Position{X: 10, Y: 50})
+	s.chara.SetInitialPosition(character.Position{X: 10, Y: 50})
 	err := s.jb.SelectDisc(music.Stage01)
 	if err != nil {
 		log.Printf("Failed to select disc:%v", err)
@@ -125,9 +125,9 @@ func (s *GameScene) drawWithState(screen *ebiten.Image) {
 func (s *GameScene) checkCollision() error {
 	// TODO: 衝突判定の代わりにボタン入力
 	if ebiten.IsKeyPressed(ebiten.KeyJ) {
-		s.chara.SetState(objects.Ascending)
+		s.chara.SetState(character.Ascending)
 	} else {
-		s.chara.SetState(objects.Dash)
+		s.chara.SetState(character.Dash)
 	}
 	err := s.chara.PlaySe()
 	if err != nil {
