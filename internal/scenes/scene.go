@@ -2,13 +2,13 @@ package scenes
 
 import (
 	"github.com/hajimehoshi/ebiten"
-	"github.com/kemokemo/kuronan-dash/internal/character"
-	"github.com/kemokemo/kuronan-dash/internal/music"
 )
 
 // Scene is interface for the all scenes.
 type Scene interface {
-	SetResources(j *music.JukeBox, cm *character.Manager)
+	Initialize() error
 	Update(state *GameState) error
 	Draw(screen *ebiten.Image)
+	StartMusic() error
+	StopMusic() error
 }

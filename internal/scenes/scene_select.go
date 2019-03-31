@@ -1,7 +1,6 @@
 package scenes
 
 import (
-	"bytes"
 	"image"
 	"image/color"
 	"log"
@@ -10,12 +9,13 @@ import (
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"github.com/hajimehoshi/ebiten/text"
 	mplus "github.com/hajimehoshi/go-mplusbitmap"
+	"golang.org/x/image/font"
+
 	"github.com/kemokemo/kuronan-dash/assets/images"
-	"github.com/kemokemo/kuronan-dash/internal/character"
-	"github.com/kemokemo/kuronan-dash/internal/music"
+	"github.com/kemokemo/kuronan-dash/assets/music"
+	chara "github.com/kemokemo/kuronan-dash/internal/character"
 	"github.com/kemokemo/kuronan-dash/internal/ui"
 	"github.com/kemokemo/kuronan-dash/internal/util"
-	"golang.org/x/image/font"
 )
 
 const (
@@ -29,165 +29,76 @@ const (
 )
 
 var (
-	windowWidth    int
-	windowHeight   int
-	selectBG       *ebiten.Image
-	selectViewPort *viewport
+	windowWidth  int
+	windowHeight int
 )
-
-func init() {
-	var err error
-	img, _, err := image.Decode(bytes.NewReader(images.Select_bg_png))
-	if err != nil {
-		log.Printf("Failed to load the 'Select_bg_png':%v", err)
-	}
-	selectBG, err = ebiten.NewImageFromImage(img, ebiten.FilterDefault)
-	if err != nil {
-		log.Printf("Failed to create a new image from 'Select_bg_png':%v", err)
-		return
-	}
-	selectViewPort = &viewport{}
-	w, h := selectBG.Size()
-	selectViewPort.SetSize(w, h)
-}
 
 // SelectScene is the scene to select the player character.
 type SelectScene struct {
-	jb         *music.JukeBox
-	cm         *character.Manager
-	infoMap    map[character.ID]*character.Info
-	winMap     map[character.ID]*ui.FrameWindow
-	selector   character.ID
+	bg         *ebiten.Image
+	bgViewPort *viewport
+	disc       *music.Disc
+	charaList  []*chara.Player
+	windowList []*ui.FrameWindow
+	selector   int
 	fontNormal font.Face
 }
 
-// NewSelectScene creates the new GameScene.
-func NewSelectScene() *SelectScene {
-	return &SelectScene{}
-}
+// Initialize initializes all resources.
+func (s *SelectScene) Initialize() error {
+	s.bg = images.SelectBackground
+	s.bgViewPort = &viewport{}
+	s.bgViewPort.SetSize(s.bg.Size())
+	s.disc = music.Title
+	s.charaList = []*chara.Player{chara.Kurona, chara.Koma, chara.Shishimaru}
 
-// SetResources sets the resources like music, character images and so on.
-func (s *SelectScene) SetResources(j *music.JukeBox, cm *character.Manager) {
-	s.jb = j
-	err := s.jb.SelectDisc(music.Title)
-	if err != nil {
-		log.Printf("Failed to select disc:%v", err)
-	}
-
-	s.cm = cm
-	s.infoMap = s.cm.GetCharacterInfoMap()
-	windowWidth = (ScreenWidth - windowSpacing*2 - windowMargin*2) / len(s.infoMap)
+	windowWidth = (ScreenWidth - windowSpacing*2 - windowMargin*2) / len(s.charaList)
 	windowHeight = ScreenHeight - windowMargin*2 - 100
 
-	s.winMap = make(map[character.ID]*ui.FrameWindow, len(s.infoMap))
-	for cType := range s.infoMap {
+	s.windowList = make([]*ui.FrameWindow, len(s.charaList))
+	for i := range s.charaList {
 		win, err := ui.NewFrameWindow(
-			windowMargin+(windowWidth+windowSpacing)*int(cType),
+			windowMargin+(windowWidth+windowSpacing)*int(i),
 			windowMargin*2, windowWidth, windowHeight, frameWidth)
 		if err != nil {
-			log.Println("failed to create a new frame window", err)
+			log.Println("failed to create a new frame window:", err)
 		}
 		win.SetColors(
 			color.RGBA{64, 64, 64, 255},
 			color.RGBA{192, 192, 192, 255},
 			color.RGBA{0, 148, 255, 255})
-		if cType == character.Kurona {
-			s.selector = cType
+		if i == 1 {
+			s.selector = i
 			win.SetBlink(true)
 		}
-		s.winMap[cType] = win
+		s.windowList[i] = win
 	}
 	s.fontNormal = mplus.Gothic12r
+
+	return nil
 }
 
 // Update updates the status of this scene.
 func (s *SelectScene) Update(state *GameState) error {
-	selectViewPort.Move()
+	s.bgViewPort.Move()
 
 	if ebiten.IsRunningSlowly() {
 		return nil
 	}
 
 	s.checkSelectorChanged()
+	if state.Input.StateForKey(ebiten.KeySpace) == 1 ||
+		util.AnyGamepadAbstractButtonPressed(state.Input) {
+		chara.Selected = s.charaList[s.selector]
+		state.SceneManager.GoTo(&Stage01Scene{})
+	}
 
-	if state.Input.StateForKey(ebiten.KeySpace) == 1 {
-		err := s.cm.SelectCharacter(s.selector)
-		if err != nil {
-			return err
-		}
-		state.SceneManager.GoTo(NewGameScene())
-		return nil
-	}
-	if util.AnyGamepadAbstractButtonPressed(state.Input) {
-		state.SceneManager.GoTo(NewGameScene())
-		return nil
-	}
 	return nil
-}
-
-// Draw draws background and characters. This function play music too.
-func (s *SelectScene) Draw(r *ebiten.Image) {
-	err := s.jb.Play()
-	if err != nil {
-		log.Printf("Failed to play with JukeBox:%v", err)
-		return
-	}
-
-	s.drawBackground(r)
-	text.Draw(r, "← → のカーソルキーでキャラクターを選んでSpaceキーを押してね！",
-		mplus.Gothic12r, windowMargin, windowMargin, color.Black)
-
-	for cType := range s.winMap {
-		if cType == s.selector {
-			s.winMap[cType].SetBlink(true)
-		} else {
-			s.winMap[cType].SetBlink(false)
-		}
-		s.winMap[cType].DrawWindow(r)
-
-		s.drawMainImage(r, cType)
-
-		s.drawMessage(r, cType)
-	}
-}
-
-func (s *SelectScene) drawBackground(screen *ebiten.Image) {
-	x16, y16 := selectViewPort.Position()
-	offsetX, offsetY := float64(-x16)/16, float64(-y16)/16
-
-	// Draw bgImage on the screen repeatedly.
-	const repeat = 3
-	w, h := selectBG.Size()
-	for j := 0; j < repeat; j++ {
-		for i := 0; i < repeat; i++ {
-			op := &ebiten.DrawImageOptions{}
-			screenWidth, _ := screen.Size()
-			op.GeoM.Translate(float64(screenWidth)-float64(w*(i+1)), float64(h*j))
-			op.GeoM.Translate(offsetX, offsetY)
-			screen.DrawImage(selectBG, op)
-		}
-	}
-}
-
-func (s *SelectScene) takeHorizontalCenterPosition(cType character.ID) (x, y float64) {
-	rect := s.winMap[cType].GetWindowRect()
-	width, _ := s.infoMap[cType].MainImage.Size()
-	x = float64((rect.Max.X-rect.Min.X)/2 + rect.Min.X - (width*scale)/2)
-	y = float64(rect.Min.Y + margin)
-	return x, y
-}
-
-func (s *SelectScene) takeTextPosition(cType character.ID) image.Point {
-	rect := s.winMap[cType].GetWindowRect()
-	x := rect.Min.X + margin
-	_, height := s.infoMap[cType].MainImage.Size()
-	y := rect.Min.Y + margin*2 + height*scale
-	return image.Point{X: x, Y: y}
 }
 
 func (s *SelectScene) checkSelectorChanged() {
 	if inpututil.IsKeyJustPressed(ebiten.KeyRight) {
-		if int(s.selector) < len(s.winMap)-1 {
+		if int(s.selector) < len(s.windowList)-1 {
 			s.selector++
 		}
 	}
@@ -198,21 +109,74 @@ func (s *SelectScene) checkSelectorChanged() {
 	}
 }
 
-func (s *SelectScene) drawMainImage(screen *ebiten.Image, cType character.ID) {
-	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Scale(scale, scale) // important: you have to scale before translating.
-	op.GeoM.Translate(s.takeHorizontalCenterPosition(cType))
-	err := screen.DrawImage(s.infoMap[cType].MainImage, op)
-	if err != nil {
-		log.Println(err)
+// Draw draws background and characters.
+func (s *SelectScene) Draw(screen *ebiten.Image) {
+	s.drawBackground(screen)
+	text.Draw(screen, "← → のカーソルキーでキャラクターを選んでSpaceキーを押してね！",
+		mplus.Gothic12r, windowMargin, windowMargin, color.Black)
+	s.drawWindows(screen)
+	s.drawCharacters(screen)
+}
+
+func (s *SelectScene) drawBackground(screen *ebiten.Image) {
+	x16, y16 := s.bgViewPort.Position()
+	offsetX, offsetY := float64(-x16)/16, float64(-y16)/16
+
+	// Draw bgImage on the screen repeatedly.
+	const repeat = 3
+	w, h := s.bg.Size()
+	for j := 0; j < repeat; j++ {
+		for i := 0; i < repeat; i++ {
+			op := &ebiten.DrawImageOptions{}
+			screenWidth, _ := screen.Size()
+			op.GeoM.Translate(float64(screenWidth)-float64(w*(i+1)), float64(h*j))
+			op.GeoM.Translate(offsetX, offsetY)
+			screen.DrawImage(s.bg, op)
+		}
 	}
 }
 
-func (s *SelectScene) drawMessage(screen *ebiten.Image, cType character.ID) {
-	runes := []rune(s.infoMap[cType].Description)
-	rect := s.winMap[cType].GetWindowRect()
+func (s *SelectScene) drawWindows(screen *ebiten.Image) {
+	for i := range s.windowList {
+		if i == s.selector {
+			s.windowList[i].SetBlink(true)
+		} else {
+			s.windowList[i].SetBlink(false)
+		}
+		s.windowList[i].DrawWindow(screen)
+	}
+}
+
+func (s *SelectScene) drawCharacters(screen *ebiten.Image) {
+	for i := range s.charaList {
+		err := s.drawChara(screen, i)
+		if err != nil {
+			log.Println("failed to draw a character:", err)
+		}
+		s.drawMessage(screen, i)
+	}
+}
+
+func (s *SelectScene) drawChara(screen *ebiten.Image, i int) error {
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Scale(scale, scale) // important: you have to scale before translating.
+	op.GeoM.Translate(s.takeHorizontalCenterPosition(i))
+	return screen.DrawImage(s.charaList[i].StandingImage, op)
+}
+
+func (s *SelectScene) takeHorizontalCenterPosition(i int) (x, y float64) {
+	rect := s.windowList[i].GetWindowRect()
+	width, _ := s.charaList[i].StandingImage.Size()
+	x = float64((rect.Max.X-rect.Min.X)/2 + rect.Min.X - (width*scale)/2)
+	y = float64(rect.Min.Y + margin)
+	return x, y
+}
+
+func (s *SelectScene) drawMessage(screen *ebiten.Image, i int) {
+	runes := []rune(s.charaList[i].Description)
+	rect := s.windowList[i].GetWindowRect()
 	splitlen := (rect.Max.X - rect.Min.X - margin) / fontSize
-	startPoint := s.takeTextPosition(cType)
+	startPoint := s.takeTextPosition(i)
 
 	lineNum := 1
 	for i := 0; i < len(runes); i += splitlen {
@@ -225,4 +189,22 @@ func (s *SelectScene) drawMessage(screen *ebiten.Image, cType character.ID) {
 		}
 		lineNum++
 	}
+}
+
+func (s *SelectScene) takeTextPosition(i int) image.Point {
+	rect := s.windowList[i].GetWindowRect()
+	x := rect.Min.X + margin
+	_, height := s.charaList[i].StandingImage.Size()
+	y := rect.Min.Y + margin*2 + height*scale
+	return image.Point{X: x, Y: y}
+}
+
+// StartMusic starts playing music
+func (s *SelectScene) StartMusic() error {
+	return s.disc.Play()
+}
+
+// StopMusic stops playing music
+func (s *SelectScene) StopMusic() error {
+	return s.disc.Stop()
 }

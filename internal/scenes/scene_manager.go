@@ -4,8 +4,6 @@ package scenes
 
 import (
 	"github.com/hajimehoshi/ebiten"
-	"github.com/kemokemo/kuronan-dash/internal/character"
-	"github.com/kemokemo/kuronan-dash/internal/music"
 	"github.com/kemokemo/kuronan-dash/internal/util"
 )
 
@@ -26,12 +24,11 @@ type SceneManager struct {
 	transitionTo    *ebiten.Image
 	op              *ebiten.DrawImageOptions
 	transitionCount int
-	charaManager    *character.Manager
-	jukeBox         *music.JukeBox
 }
 
 // GameState describe the state of this game.
 type GameState struct {
+	State        state
 	SceneManager *SceneManager
 	Input        *util.Input
 }
@@ -50,12 +47,6 @@ func NewSceneManager() (*SceneManager, error) {
 	}
 	sm.op = &ebiten.DrawImageOptions{}
 	return sm, nil
-}
-
-// SetResources sets the resources like music, character images and so on.
-func (s *SceneManager) SetResources(j *music.JukeBox, cm *character.Manager) {
-	s.jukeBox = j
-	s.charaManager = cm
 }
 
 // Update updates the status of this scene.
@@ -94,13 +85,32 @@ func (s *SceneManager) Draw(r *ebiten.Image) {
 }
 
 // GoTo sets resources to the new scene and change the current scene
-// to the new scene.
-func (s *SceneManager) GoTo(scene Scene) {
-	scene.SetResources(s.jukeBox, s.charaManager)
+// to the new scene. This stops the music of the current and starts
+// the music of the next.
+func (s *SceneManager) GoTo(scene Scene) error {
+	err := scene.Initialize()
+	if err != nil {
+		return err
+	}
+
 	if s.current == nil {
 		s.current = scene
+		err = s.current.StartMusic()
+		if err != nil {
+			return err
+		}
 	} else {
+		err = s.current.StopMusic()
+		if err != nil {
+			return err
+		}
 		s.next = scene
+		err = s.next.StartMusic()
+		if err != nil {
+			return err
+		}
 		s.transitionCount = transitionMaxCount
 	}
+
+	return nil
 }

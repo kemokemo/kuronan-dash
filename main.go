@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/hajimehoshi/ebiten"
-	"github.com/kemokemo/kuronan-dash/internal"
+	kuronandash "github.com/kemokemo/kuronan-dash/internal"
 	"github.com/kemokemo/kuronan-dash/internal/scenes"
 )
 
@@ -21,20 +21,20 @@ func main() {
 func run() int {
 	game, err := kuronandash.NewGame()
 	if err != nil {
-		log.Println("Failed to create a new game", err)
+		log.Println("failed to create a new game:", err)
 		return exitFailed
 	}
 	defer func() {
 		e := game.Close()
 		if e != nil {
-			log.Println("Failed to close", e)
+			log.Println("failed to close this game:", e)
 		}
 	}()
 
 	err = ebiten.Run(game.Update, scenes.ScreenWidth, scenes.ScreenHeight,
 		1, "Kuronan Dash!")
 	if err != nil {
-		log.Println("Failed to run.", err)
+		log.Println("failed to run:", err)
 		return exitFailed
 	}
 	return exitOK
