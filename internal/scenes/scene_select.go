@@ -16,6 +16,7 @@ import (
 	chara "github.com/kemokemo/kuronan-dash/internal/character"
 	"github.com/kemokemo/kuronan-dash/internal/ui"
 	"github.com/kemokemo/kuronan-dash/internal/util"
+	"github.com/kemokemo/kuronan-dash/internal/view"
 )
 
 const (
@@ -36,7 +37,7 @@ var (
 // SelectScene is the scene to select the player character.
 type SelectScene struct {
 	bg         *ebiten.Image
-	bgViewPort *viewport
+	bgViewPort *view.Viewport
 	disc       *music.Disc
 	charaList  []*chara.Player
 	windowList []*ui.FrameWindow
@@ -47,7 +48,7 @@ type SelectScene struct {
 // Initialize initializes all resources.
 func (s *SelectScene) Initialize() error {
 	s.bg = images.SelectBackground
-	s.bgViewPort = &viewport{}
+	s.bgViewPort = &view.Viewport{}
 	s.bgViewPort.SetSize(s.bg.Size())
 	s.disc = music.Title
 	s.charaList = []*chara.Player{chara.Kurona, chara.Koma, chara.Shishimaru}
@@ -80,7 +81,7 @@ func (s *SelectScene) Initialize() error {
 
 // Update updates the status of this scene.
 func (s *SelectScene) Update(state *GameState) error {
-	s.bgViewPort.Move()
+	s.bgViewPort.Move(view.UpperRight)
 
 	if ebiten.IsRunningSlowly() {
 		return nil
@@ -120,7 +121,7 @@ func (s *SelectScene) Draw(screen *ebiten.Image) {
 
 func (s *SelectScene) drawBackground(screen *ebiten.Image) {
 	x16, y16 := s.bgViewPort.Position()
-	offsetX, offsetY := float64(-x16)/16, float64(-y16)/16
+	offsetX, offsetY := float64(x16)/16, float64(y16)/16
 
 	// Draw bgImage on the screen repeatedly.
 	const repeat = 3

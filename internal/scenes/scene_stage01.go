@@ -11,16 +11,20 @@ import (
 	"github.com/hajimehoshi/ebiten/text"
 	mplus "github.com/hajimehoshi/go-mplusbitmap"
 
+	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/assets/music"
 
 	chara "github.com/kemokemo/kuronan-dash/internal/character"
+	"github.com/kemokemo/kuronan-dash/internal/view"
 )
 
 // Stage01Scene is the scene for the 1st stage game.
 type Stage01Scene struct {
-	state  state
-	player *chara.Player
-	disc   *music.Disc
+	state     state
+	player    *chara.Player
+	disc      *music.Disc
+	prairie   *ebiten.Image
+	fieldView view.Viewport
 }
 
 // Initialize initializes all resources.
@@ -28,6 +32,9 @@ func (s *Stage01Scene) Initialize() error {
 	s.disc = music.Stage01
 	s.player = chara.Selected
 	s.player.SetInitialPosition(chara.Position{X: 10, Y: 50})
+	s.prairie = images.TilePrairie
+	s.fieldView = view.Viewport{}
+	s.fieldView.SetSize(s.prairie.Size())
 	return nil
 }
 
@@ -39,11 +46,14 @@ func (s *Stage01Scene) Update(state *GameState) error {
 
 // Draw draws background and characters.
 func (s *Stage01Scene) Draw(screen *ebiten.Image) {
+	s.drawFieldParts(screen)
+
 	err := s.player.Draw(screen)
 	if err != nil {
 		log.Println("failed to draw a character:", err)
 		return
 	}
+
 	text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
 		mplus.Gothic12r, 12, 15, color.White)
 
@@ -56,6 +66,32 @@ func (s *Stage01Scene) Draw(screen *ebiten.Image) {
 	}
 }
 
+const repeat = 3
+
+const (
+	firstLaneHeight  = 100
+	secondLaneHeight = 300
+	thirdLaneHeight  = 500
+)
+
+var laneHeights = []int{firstLaneHeight, secondLaneHeight, thirdLaneHeight}
+
+func (s *Stage01Scene) drawFieldParts(screen *ebiten.Image) {
+	// todo: 遅い方のViewPortも用意して、キャラクターの状態が歩くの場合はそっちを使う
+	x16, y16 := s.fieldView.Position()
+	offsetX, offsetY := float64(x16)/16, float64(y16)/16
+
+	w, _ := s.prairie.Size()
+	for _, h := range laneHeights {
+		for i := 0; i < repeat; i++ {
+			op := &ebiten.DrawImageOptions{}
+			op.GeoM.Translate(float64(w*i), float64(h))
+			op.GeoM.Translate(offsetX, offsetY)
+			screen.DrawImage(s.prairie, op)
+		}
+	}
+}
+
 func (s *Stage01Scene) updateStatus(state *GameState) error {
 	switch s.state {
 	case beforeRun:
@@ -64,6 +100,7 @@ func (s *Stage01Scene) updateStatus(state *GameState) error {
 		}
 	case running:
 		s.player.Move()
+		s.fieldView.Move(view.Left)
 		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
 			s.state = pause
 		}
@@ -81,6 +118,7 @@ func (s *Stage01Scene) updateStatus(state *GameState) error {
 		}
 	default:
 		s.player.Move()
+		s.fieldView.Move(view.Left)
 		// unknown state
 	}
 	return nil

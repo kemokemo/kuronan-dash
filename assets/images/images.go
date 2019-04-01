@@ -12,6 +12,11 @@ var (
 	SelectBackground *ebiten.Image
 )
 
+// field parts
+var (
+	TilePrairie *ebiten.Image
+)
+
 // character standing image
 var (
 	KuronaStanding     *ebiten.Image
@@ -33,12 +38,17 @@ func LoadImages() error {
 		return err
 	}
 
-	err = loadAnimation()
+	err = loadFieldparts()
 	if err != nil {
 		return err
 	}
 
 	err = loadStandingImages()
+	if err != nil {
+		return err
+	}
+
+	err = loadAnimation()
 	if err != nil {
 		return err
 	}

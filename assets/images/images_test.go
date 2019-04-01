@@ -23,8 +23,12 @@ func TestImages(t *testing.T) {
 		name string
 		img  *ebiten.Image
 	}{
+		// Background
 		{"TitleBackground", TitleBackground},
 		{"SelectBackground", SelectBackground},
+		// Field parts
+		{"TilePrairie", TilePrairie},
+		// Character standing images
 		{"KuronaStanding", KuronaStanding},
 		{"KomaStanding", KomaStanding},
 		{"ShishimaruStanding", ShishimaruStanding},
