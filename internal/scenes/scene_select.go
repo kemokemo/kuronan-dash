@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	frameWidth    = 2
+	frameWidth    = 5
 	margin        = 20
 	scale         = 2
 	windowSpacing = 15
@@ -67,8 +67,8 @@ func (s *SelectScene) Initialize() error {
 		win.SetColors(
 			color.RGBA{64, 64, 64, 255},
 			color.RGBA{192, 192, 192, 255},
-			color.RGBA{0, 148, 255, 255})
-		if i == 1 {
+			color.RGBA{33, 228, 68, 255})
+		if i == 0 {
 			s.selector = i
 			win.SetBlink(true)
 		}
