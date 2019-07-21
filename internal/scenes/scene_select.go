@@ -14,8 +14,8 @@ import (
 	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/assets/music"
 	chara "github.com/kemokemo/kuronan-dash/internal/character"
+	"github.com/kemokemo/kuronan-dash/internal/input"
 	"github.com/kemokemo/kuronan-dash/internal/ui"
-	"github.com/kemokemo/kuronan-dash/internal/util"
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
 
@@ -89,7 +89,7 @@ func (s *SelectScene) Update(state *GameState) error {
 
 	s.checkSelectorChanged()
 	if state.Input.StateForKey(ebiten.KeySpace) == 1 ||
-		util.AnyGamepadAbstractButtonPressed(state.Input) {
+		input.AnyGamepadAbstractButtonPressed(state.Input) {
 		chara.Selected = s.charaList[s.selector]
 		state.SceneManager.GoTo(&Stage01Scene{})
 	}

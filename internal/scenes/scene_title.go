@@ -11,8 +11,7 @@ import (
 
 	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/assets/music"
-
-	"github.com/kemokemo/kuronan-dash/internal/util"
+	"github.com/kemokemo/kuronan-dash/internal/input"
 )
 
 // TitleScene is the scene for title.
@@ -34,7 +33,7 @@ func (s *TitleScene) Update(state *GameState) error {
 		state.SceneManager.GoTo(&SelectScene{})
 		return nil
 	}
-	if util.AnyGamepadAbstractButtonPressed(state.Input) {
+	if input.AnyGamepadAbstractButtonPressed(state.Input) {
 		state.SceneManager.GoTo(&SelectScene{})
 		return nil
 	}

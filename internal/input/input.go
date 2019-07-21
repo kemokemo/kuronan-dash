@@ -1,6 +1,6 @@
 // Copy from github.com/hajimehoshi/ebiten/example/blocks
 
-package util
+package input
 
 import (
 	"github.com/hajimehoshi/ebiten"

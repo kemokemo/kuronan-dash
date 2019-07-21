@@ -1,6 +1,8 @@
 package character
 
 import (
+	"log"
+
 	"github.com/hajimehoshi/ebiten"
 	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/assets/messages"
@@ -57,38 +59,57 @@ type Player struct {
 	StandingImage *ebiten.Image
 	Description   string
 	animation     *StepAnimation
-	moved         bool
-	state         State
+	previous      state
+	current       state
 	jumpSe        *se.Player
 }
 
-// SetInitialPosition sets the initial position for this character.
-func (p *Player) SetInitialPosition(pos Position) {
+// SetPosition sets the position of this character.
+func (p *Player) SetPosition(pos Position) {
 	p.Position = pos
 }
 
-// Move moves the character regarding the user input.
-func (p *Player) Move() {
-	p.moved = false
-	if ebiten.IsKeyPressed(ebiten.KeyLeft) || ebiten.GamepadAxis(0, 0) <= -0.5 {
-		p.Position.X--
-		p.moved = true
+// Update updates the character regarding the user input.
+func (p *Player) Update() {
+	p.updateState()
+	p.updatePosition()
+	err := p.playSe()
+	if err != nil {
+		log.Println("failed to play SE:", err)
+		return
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyRight) || ebiten.GamepadAxis(0, 0) >= 0.5 {
-		p.Position.X++
-		p.moved = true
-	}
+}
+
+func (p *Player) updateState() {
+	// todo:
+	// ひとつ上のレーンに到達したら上昇を終了
+
 	if ebiten.IsKeyPressed(ebiten.KeyUp) || ebiten.GamepadAxis(0, 1) <= -0.5 {
-		p.Position.Y--
-		p.moved = true
-	}
-	if ebiten.IsKeyPressed(ebiten.KeyDown) || ebiten.GamepadAxis(0, 1) >= 0.5 {
-		p.Position.Y++
-		p.moved = true
+		if p.current == stop || p.current == walk || p.current == dash {
+			p.previous = p.current
+			p.current = ascending
+		}
 	}
 
-	if p.moved {
+	if ebiten.IsKeyPressed(ebiten.KeyDown) || ebiten.GamepadAxis(0, 1) >= 0.5 {
+		if p.current == stop || p.current == walk || p.current == dash {
+			p.previous = p.current
+			p.current = descending
+		}
+	}
+}
+
+func (p *Player) updatePosition() {
+	// todo: 固定値での移動ではなくキャラごと、stateごとの初速度と加速度から算出される速度で移動させる
+	switch p.current {
+	case walk:
+		p.Position.X++
 		p.animation.AddStep(1)
+	case dash:
+		p.Position.X += 2
+		p.animation.AddStep(2)
+	default:
+		// Don't move
 	}
 }
 
@@ -99,16 +120,8 @@ func (p *Player) Draw(screen *ebiten.Image) error {
 	return screen.DrawImage(p.animation.GetCurrentFrame(), op)
 }
 
-// SetState sets the status for this character.
-func (p *Player) SetState(state State) {
-	p.state = state
-}
-
-// PlaySe plays a sound effect according to the status of this character.
-func (p *Player) PlaySe() error {
-	// TODO: ステータスに応じたSEを再生
-	if p.state == Ascending {
-		// TODO: このままだとジャンプ中SE再生し続けるので対策が必要
+func (p *Player) playSe() error {
+	if p.previous != ascending && p.current == ascending {
 		return p.jumpSe.Play()
 	}
 	return nil

@@ -20,7 +20,7 @@ import (
 
 // Stage01Scene is the scene for the 1st stage game.
 type Stage01Scene struct {
-	state     state
+	state     gameState
 	player    *chara.Player
 	disc      *music.Disc
 	prairie   *ebiten.Image
@@ -31,7 +31,7 @@ type Stage01Scene struct {
 func (s *Stage01Scene) Initialize() error {
 	s.disc = music.Stage01
 	s.player = chara.Selected
-	s.player.SetInitialPosition(chara.Position{X: 10, Y: 50})
+	s.player.SetPosition(chara.Position{X: 10, Y: 50})
 	s.prairie = images.TilePrairie
 	s.fieldView = view.Viewport{}
 	s.fieldView.SetSize(s.prairie.Size())
@@ -40,8 +40,41 @@ func (s *Stage01Scene) Initialize() error {
 
 // Update updates the status of this scene.
 func (s *Stage01Scene) Update(state *GameState) error {
-	s.updateStatus(state)
+	s.updateGameStatus(state)
+	s.updatePlayerStatus(state)
 	return nil
+}
+
+func (s *Stage01Scene) updateGameStatus(state *GameState) {
+	switch s.state {
+	case wait:
+		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
+			s.state = run
+		}
+	case run:
+		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
+			s.state = pause
+		}
+		// TODO: とりあえずゲームオーバーの練習
+		if s.player.Position.X+50 > ScreenWidth-50 && s.state != gameover {
+			s.state = gameover
+		}
+	case pause:
+		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
+			s.state = run
+		}
+	case gameover:
+		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
+			state.SceneManager.GoTo(&TitleScene{})
+		}
+	default:
+		// unknown state
+	}
+}
+
+func (s *Stage01Scene) updatePlayerStatus(state *GameState) {
+	s.player.Update()
+	s.fieldView.Move(view.Left)
 }
 
 // Draw draws background and characters.
@@ -77,7 +110,7 @@ const (
 var laneHeights = []int{firstLaneHeight, secondLaneHeight, thirdLaneHeight}
 
 func (s *Stage01Scene) drawFieldParts(screen *ebiten.Image) {
-	// todo: 遅い方のViewPortも用意して、キャラクターの状態が歩くの場合はそっちを使う
+	// todo: 遅い方のViewPortも用意して、キャラクターの状態がwalkの場合はそっちを使う
 	x16, y16 := s.fieldView.Position()
 	offsetX, offsetY := float64(x16)/16, float64(y16)/16
 
@@ -92,41 +125,9 @@ func (s *Stage01Scene) drawFieldParts(screen *ebiten.Image) {
 	}
 }
 
-func (s *Stage01Scene) updateStatus(state *GameState) error {
-	switch s.state {
-	case beforeRun:
-		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
-			s.state = running
-		}
-	case running:
-		s.player.Move()
-		s.fieldView.Move(view.Left)
-		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
-			s.state = pause
-		}
-		// TODO: とりあえずゲームオーバーの練習
-		if s.player.Position.X+50 > ScreenWidth-50 && s.state != gameover {
-			s.state = gameover
-		}
-	case pause:
-		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
-			s.state = running
-		}
-	case gameover:
-		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
-			state.SceneManager.GoTo(&TitleScene{})
-		}
-	default:
-		s.player.Move()
-		s.fieldView.Move(view.Left)
-		// unknown state
-	}
-	return nil
-}
-
 func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 	switch s.state {
-	case beforeRun:
+	case wait:
 		text.Draw(screen, "Spaceキーを押してゲームを開始してね！", mplus.Gothic12r, ScreenWidth/2-100, ScreenHeight/2, color.White)
 	case pause:
 		text.Draw(screen, "一時停止中だよ！", mplus.Gothic12r, ScreenWidth/2-100, ScreenHeight/2, color.White)
@@ -138,16 +139,7 @@ func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 }
 
 func (s *Stage01Scene) checkCollision() error {
-	// TODO: 衝突判定の代わりにボタン入力
-	if ebiten.IsKeyPressed(ebiten.KeyJ) {
-		s.player.SetState(chara.Ascending)
-	} else {
-		s.player.SetState(chara.Dash)
-	}
-	err := s.player.PlaySe()
-	if err != nil {
-		return err
-	}
+	// TODO: プレイヤーと障害物との衝突判定などをするよ
 	return nil
 }
 

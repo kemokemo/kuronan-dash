@@ -4,7 +4,7 @@ package scenes
 
 import (
 	"github.com/hajimehoshi/ebiten"
-	"github.com/kemokemo/kuronan-dash/internal/util"
+	"github.com/kemokemo/kuronan-dash/internal/input"
 )
 
 const (
@@ -26,13 +26,6 @@ type SceneManager struct {
 	transitionCount int
 }
 
-// GameState describe the state of this game.
-type GameState struct {
-	State        state
-	SceneManager *SceneManager
-	Input        *util.Input
-}
-
 // NewSceneManager returns a new SceneManager.
 func NewSceneManager() (*SceneManager, error) {
 	sm := &SceneManager{}
@@ -50,7 +43,7 @@ func NewSceneManager() (*SceneManager, error) {
 }
 
 // Update updates the status of this scene.
-func (s *SceneManager) Update(input *util.Input) error {
+func (s *SceneManager) Update(input *input.Input) error {
 	if s.transitionCount == 0 {
 		return s.current.Update(&GameState{
 			SceneManager: s,

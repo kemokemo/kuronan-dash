@@ -6,14 +6,14 @@ import (
 	"github.com/kemokemo/kuronan-dash/assets"
 
 	"github.com/kemokemo/kuronan-dash/internal/character"
+	"github.com/kemokemo/kuronan-dash/internal/input"
 	"github.com/kemokemo/kuronan-dash/internal/scenes"
-	"github.com/kemokemo/kuronan-dash/internal/util"
 )
 
 // Game controls all things in the screen.
 type Game struct {
 	scenes *scenes.SceneManager
-	input  util.Input
+	input  input.Input
 }
 
 // NewGame returns a new game instance.
