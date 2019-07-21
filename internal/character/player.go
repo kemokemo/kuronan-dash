@@ -61,12 +61,45 @@ type Player struct {
 	animation     *StepAnimation
 	previous      state
 	current       state
+	lanes         Lanes
 	jumpSe        *se.Player
 }
 
 // SetPosition sets the position of this character.
 func (p *Player) SetPosition(pos Position) {
 	p.Position = pos
+}
+
+// SetLanes sets the lanes information.
+func (p *Player) SetLanes(heights []int) error {
+	p.lanes = Lanes{}
+	err := p.lanes.SetHeights(heights)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// Start starts dash!
+func (p *Player) Start() {
+	p.current = dash
+}
+
+// Stop stops this character.
+func (p *Player) Stop() {
+	p.previous = p.current
+	p.current = stop
+}
+
+// Pause pauses this character.
+func (p *Player) Pause() {
+	p.previous = p.current
+	p.current = pause
+}
+
+// ReStart starts again this character.
+func (p *Player) ReStart() {
+	p.current = p.previous
 }
 
 // Update updates the character regarding the user input.
@@ -81,20 +114,32 @@ func (p *Player) Update() {
 }
 
 func (p *Player) updateState() {
-	// todo:
-	// ひとつ上のレーンに到達したら上昇を終了
-
-	if ebiten.IsKeyPressed(ebiten.KeyUp) || ebiten.GamepadAxis(0, 1) <= -0.5 {
-		if p.current == stop || p.current == walk || p.current == dash {
-			p.previous = p.current
-			p.current = ascending
+	switch p.current {
+	case pause:
+		return
+	case ascending:
+		if p.lanes.IsReachedTarget(p.Position.Y) {
+			p.current = p.previous
 		}
-	}
-
-	if ebiten.IsKeyPressed(ebiten.KeyDown) || ebiten.GamepadAxis(0, 1) >= 0.5 {
-		if p.current == stop || p.current == walk || p.current == dash {
-			p.previous = p.current
-			p.current = descending
+	case descending:
+		if p.lanes.IsReachedTarget(p.Position.Y) {
+			p.current = p.previous
+		}
+	default:
+		if ebiten.IsKeyPressed(ebiten.KeyUp) || ebiten.GamepadAxis(0, 1) <= -0.5 {
+			if !p.lanes.IsTop() {
+				if p.lanes.Ascend() {
+					p.previous = p.current
+					p.current = ascending
+				}				
+			}
+		} else if ebiten.IsKeyPressed(ebiten.KeyDown) || ebiten.GamepadAxis(0, 1) >= 0.5 {
+			if !p.lanes.IsBottom() {
+				if p.lanes.Descend() {
+					p.previous = p.current
+					p.current = descending
+				}				
+			}
 		}
 	}
 }
@@ -106,8 +151,16 @@ func (p *Player) updatePosition() {
 		p.Position.X++
 		p.animation.AddStep(1)
 	case dash:
-		p.Position.X += 2
+		p.Position.X++
 		p.animation.AddStep(2)
+	case ascending:
+		p.Position.X++
+		p.Position.Y -= 2
+		p.animation.AddStep(1)
+	case descending:
+		p.Position.X++
+		p.Position.Y += 2
+		p.animation.AddStep(1)
 	default:
 		// Don't move
 	}

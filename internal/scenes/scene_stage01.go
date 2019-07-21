@@ -32,6 +32,10 @@ func (s *Stage01Scene) Initialize() error {
 	s.disc = music.Stage01
 	s.player = chara.Selected
 	s.player.SetPosition(chara.Position{X: 10, Y: 50})
+	err := s.player.SetLanes(laneHeights)
+	if err != nil {
+		return err
+	}
 	s.prairie = images.TilePrairie
 	s.fieldView = view.Viewport{}
 	s.fieldView.SetSize(s.prairie.Size())
@@ -40,28 +44,28 @@ func (s *Stage01Scene) Initialize() error {
 
 // Update updates the status of this scene.
 func (s *Stage01Scene) Update(state *GameState) error {
-	s.updateGameStatus(state)
-	s.updatePlayerStatus(state)
-	return nil
-}
-
-func (s *Stage01Scene) updateGameStatus(state *GameState) {
 	switch s.state {
 	case wait:
 		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
 			s.state = run
+			s.player.Start()
 		}
 	case run:
 		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
 			s.state = pause
-		}
-		// TODO: とりあえずゲームオーバーの練習
-		if s.player.Position.X+50 > ScreenWidth-50 && s.state != gameover {
+			s.player.Pause()
+		} else if s.player.Position.X+50 > ScreenWidth-50 && s.state != gameover {
+			// TODO: とりあえずゲームオーバーの練習
 			s.state = gameover
+			s.player.Stop()
+		} else {
+			s.player.Update()
+			s.fieldView.Move(view.Left)
 		}
 	case pause:
 		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
 			s.state = run
+			s.player.ReStart()
 		}
 	case gameover:
 		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
@@ -70,11 +74,7 @@ func (s *Stage01Scene) updateGameStatus(state *GameState) {
 	default:
 		// unknown state
 	}
-}
-
-func (s *Stage01Scene) updatePlayerStatus(state *GameState) {
-	s.player.Update()
-	s.fieldView.Move(view.Left)
+	return nil
 }
 
 // Draw draws background and characters.
@@ -110,9 +110,16 @@ const (
 var laneHeights = []int{firstLaneHeight, secondLaneHeight, thirdLaneHeight}
 
 func (s *Stage01Scene) drawFieldParts(screen *ebiten.Image) {
-	// todo: 遅い方のViewPortも用意して、キャラクターの状態がwalkの場合はそっちを使う
-	x16, y16 := s.fieldView.Position()
-	offsetX, offsetY := float64(x16)/16, float64(y16)/16
+	var offsetX, offsetY float64
+	if s.state == run {
+		// todo: 遅い方のViewPortも用意して、キャラクターの状態がwalkの場合はそっちを使う
+
+		x16, y16 := s.fieldView.Position()
+		offsetX, offsetY = float64(x16)/16, float64(y16)/16
+
+	} else {
+		offsetX, offsetY = 0, 0
+	}
 
 	w, _ := s.prairie.Size()
 	for _, h := range laneHeights {

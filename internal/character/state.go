@@ -10,4 +10,5 @@ const (
 	dash
 	ascending
 	descending
+	pause
 )
