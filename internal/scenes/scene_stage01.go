@@ -31,7 +31,6 @@ type Stage01Scene struct {
 func (s *Stage01Scene) Initialize() error {
 	s.disc = music.Stage01
 	s.player = chara.Selected
-	s.player.SetPosition(chara.Position{X: 10, Y: 50})
 	err := s.player.SetLanes(laneHeights)
 	if err != nil {
 		return err

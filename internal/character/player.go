@@ -65,18 +65,24 @@ type Player struct {
 	jumpSe        *se.Player
 }
 
-// SetPosition sets the position of this character.
-func (p *Player) SetPosition(pos Position) {
-	p.Position = pos
-}
-
 // SetLanes sets the lanes information.
 func (p *Player) SetLanes(heights []int) error {
 	p.lanes = Lanes{}
-	err := p.lanes.SetHeights(heights)
+	charaHeights := []int{}
+	_, h := p.StandingImage.Size()
+
+	for index := 0; index < len(heights); index++ {
+		charaHeights = append(charaHeights, heights[index]-h)
+	}
+
+	err := p.lanes.SetHeights(charaHeights)
 	if err != nil {
 		return err
 	}
+
+	// set the player at the top lane.
+	p.Position = Position{X: 10, Y: charaHeights[0]}
+
 	return nil
 }
 
@@ -131,14 +137,14 @@ func (p *Player) updateState() {
 				if p.lanes.Ascend() {
 					p.previous = p.current
 					p.current = ascending
-				}				
+				}
 			}
 		} else if ebiten.IsKeyPressed(ebiten.KeyDown) || ebiten.GamepadAxis(0, 1) >= 0.5 {
 			if !p.lanes.IsBottom() {
 				if p.lanes.Descend() {
 					p.previous = p.current
 					p.current = descending
-				}				
+				}
 			}
 		}
 	}
