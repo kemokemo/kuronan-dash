@@ -1,70 +1,60 @@
 package kuronandash
 
 import (
-	"fmt"
-
 	"github.com/hajimehoshi/ebiten"
-	"github.com/kemokemo/kuronan-dash/internal/music"
-	"github.com/kemokemo/kuronan-dash/internal/objects"
+
+	"github.com/kemokemo/kuronan-dash/assets"
+
+	"github.com/kemokemo/kuronan-dash/internal/character"
+	"github.com/kemokemo/kuronan-dash/internal/input"
 	"github.com/kemokemo/kuronan-dash/internal/scenes"
-	"github.com/kemokemo/kuronan-dash/internal/util"
 )
 
 // Game controls all things in the screen.
 type Game struct {
-	sceneManager *scenes.SceneManager
-	input        util.Input
-	charaManager *objects.CharacterManager
-	jukeBox      *music.JukeBox
+	scenes *scenes.SceneManager
+	input  input.Input
 }
 
 // NewGame returns a new game instance.
 // Please call the Close method when you no longer use this instance.
 func NewGame() (*Game, error) {
-	g := Game{}
-	var err error
-	g.jukeBox, err = music.NewJukeBox()
-	if err != nil {
-		return nil, err
-	}
-	g.charaManager, err = objects.NewCharacterManager()
+	err := assets.LoadAssets()
 	if err != nil {
 		return nil, err
 	}
 
-	g.sceneManager, err = scenes.NewSceneManager()
+	err = character.NewPlayers()
 	if err != nil {
 		return nil, err
 	}
-	g.sceneManager.SetResources(g.jukeBox, g.charaManager)
-	g.sceneManager.GoTo(&scenes.TitleScene{})
-	return &g, nil
+
+	sm, err := scenes.NewSceneManager()
+	if err != nil {
+		return nil, err
+	}
+	sm.GoTo(&scenes.TitleScene{})
+
+	return &Game{
+		scenes: sm,
+	}, nil
 }
 
 // Close closes inner resources.
 func (g *Game) Close() error {
-	var err, e error
-	e = g.jukeBox.Close()
-	if e != nil {
-		err = fmt.Errorf("%v %v", err, e)
-	}
-	e = g.charaManager.Close()
-	if e != nil {
-		err = fmt.Errorf("%v %v", err, e)
-	}
-	return err
+	return assets.CloseAssets()
 }
 
 // Update is an implements to draw screens.
 func (g *Game) Update(screen *ebiten.Image) error {
 	g.input.Update()
-	if err := g.sceneManager.Update(&g.input); err != nil {
+	if err := g.scenes.Update(&g.input); err != nil {
 		return err
 	}
 	// First of all, updates all status.
 	if ebiten.IsRunningSlowly() {
 		return nil
 	}
-	g.sceneManager.Draw(screen)
+	g.scenes.Draw(screen)
 	return nil
 }
