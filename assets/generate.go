@@ -4,6 +4,7 @@ package assets
 // Background
 //go:generate file2byteslice -package=images -input=../_assets/images/title_bg.png -output=./images/title_bg.go -var=title_bg_png
 //go:generate file2byteslice -package=images -input=../_assets/images/select_background.png -output=./images/select_bg.go -var=select_bg_png
+//go:generate file2byteslice -package=images -input=../_assets/images/sky_background.png -output=./images/sky_bg.go -var=sky_bg_png
 
 // Characters
 //  - Kurona
@@ -34,6 +35,8 @@ package assets
 // Field Parts
 //  - Prairie
 //go:generate file2byteslice -package=images -input=../_assets/images/tilePrairie.png -output=./images/tilePrairie.go -var=tilePrairie_png
+//go:generate file2byteslice -package=images -input=../_assets/images/mountain_near.png -output=./images/mountain_near.go -var=mountainNear_png
+//go:generate file2byteslice -package=images -input=../_assets/images/mountain_far.png -output=./images/mountain_far.go -var=mountainFar_png
 
 /* package music */
 //go:generate file2byteslice -package=music -input=../_assets/music/shibugaki_no_kuroneko.mp3 -output=./music/shibugaki_no_kuroneko.go -var=shibugaki_no_kuroneko_mp3

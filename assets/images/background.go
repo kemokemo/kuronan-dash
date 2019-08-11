@@ -11,6 +11,10 @@ func loadBackground() error {
 	if err != nil {
 		return err
 	}
+	SkyBackground, err = loadSingleImage(sky_bg_png)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -10,11 +10,14 @@ import (
 var (
 	TitleBackground  *ebiten.Image
 	SelectBackground *ebiten.Image
+	SkyBackground    *ebiten.Image
 )
 
 // field parts
 var (
-	TilePrairie *ebiten.Image
+	TilePrairie  *ebiten.Image
+	MountainNear *ebiten.Image
+	MountainFar  *ebiten.Image
 )
 
 // character standing image

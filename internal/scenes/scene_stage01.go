@@ -20,11 +20,14 @@ import (
 
 // Stage01Scene is the scene for the 1st stage game.
 type Stage01Scene struct {
-	state     gameState
-	player    *chara.Player
-	disc      *music.Disc
-	prairie   *ebiten.Image
-	fieldView view.Viewport
+	state    gameState
+	player   *chara.Player
+	disc     *music.Disc
+	bg       *ebiten.Image
+	prairie  *ebiten.Image
+	mtNear   *ebiten.Image
+	mtFar    *ebiten.Image
+	viewPort view.Viewport
 }
 
 // Initialize initializes all resources.
@@ -35,9 +38,13 @@ func (s *Stage01Scene) Initialize() error {
 	if err != nil {
 		return err
 	}
+	s.bg = images.SkyBackground
 	s.prairie = images.TilePrairie
-	s.fieldView = view.Viewport{}
-	s.fieldView.SetSize(s.prairie.Size())
+	s.mtNear = images.MountainNear
+	s.mtFar = images.MountainFar
+
+	s.viewPort = view.Viewport{}
+	s.viewPort.SetSize(s.prairie.Size())
 	return nil
 }
 
@@ -59,7 +66,7 @@ func (s *Stage01Scene) Update(state *GameState) error {
 			s.player.Stop()
 		} else {
 			s.player.Update()
-			s.fieldView.Move(view.Left)
+			s.viewPort.Move(view.Left)
 		}
 	case pause:
 		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
@@ -78,6 +85,8 @@ func (s *Stage01Scene) Update(state *GameState) error {
 
 // Draw draws background and characters.
 func (s *Stage01Scene) Draw(screen *ebiten.Image) {
+	screen.DrawImage(s.bg, &ebiten.DrawImageOptions{})
+
 	s.drawFieldParts(screen)
 
 	err := s.player.Draw(screen)
@@ -101,30 +110,49 @@ func (s *Stage01Scene) Draw(screen *ebiten.Image) {
 const repeat = 3
 
 const (
-	firstLaneHeight  = 100
-	secondLaneHeight = 300
-	thirdLaneHeight  = 500
+	firstLaneHeight  = 200
+	secondLaneHeight = firstLaneHeight + 170
+	thirdLaneHeight  = secondLaneHeight + 170
 )
 
 var laneHeights = []int{firstLaneHeight, secondLaneHeight, thirdLaneHeight}
 
 func (s *Stage01Scene) drawFieldParts(screen *ebiten.Image) {
-	var offsetX, offsetY float64
-	if s.state == run {
-		// todo: 遅い方のViewPortも用意して、キャラクターの状態がwalkの場合はそっちを使う
-
-		x16, y16 := s.fieldView.Position()
-		offsetX, offsetY = float64(x16)/16, float64(y16)/16
-
+	var k float64
+	if s.player.GetState() == chara.Dash {
+		k = 2
 	} else {
-		offsetX, offsetY = 0, 0
+		k = 1
 	}
 
-	w, _ := s.prairie.Size()
+	x16, y16 := s.viewPort.Position()
+	offsetX, offsetY := float64(x16)*k/16, float64(y16)*k/16
+
+	wP, hP := s.prairie.Size()
+	wMF, hMF := s.mtFar.Size()
 	for _, h := range laneHeights {
 		for i := 0; i < repeat; i++ {
 			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(float64(w*i), float64(h))
+			op.GeoM.Translate(float64(wMF*i), float64(h-hMF+hP))
+			op.GeoM.Translate(offsetX*0.5, offsetY*0.5)
+			screen.DrawImage(s.mtFar, op)
+		}
+	}
+
+	wMN, hMN := s.mtNear.Size()
+	for _, h := range laneHeights {
+		for i := 0; i < repeat; i++ {
+			op := &ebiten.DrawImageOptions{}
+			op.GeoM.Translate(float64(wMN*i), float64(h-hMN+hP))
+			op.GeoM.Translate(offsetX, offsetY)
+			screen.DrawImage(s.mtNear, op)
+		}
+	}
+
+	for _, h := range laneHeights {
+		for i := 0; i < repeat; i++ {
+			op := &ebiten.DrawImageOptions{}
+			op.GeoM.Translate(float64(wP*i), float64(h))
 			op.GeoM.Translate(offsetX, offsetY)
 			screen.DrawImage(s.prairie, op)
 		}

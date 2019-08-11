@@ -28,6 +28,7 @@ func TestImages(t *testing.T) {
 		{"SelectBackground", SelectBackground},
 		// Field parts
 		{"TilePrairie", TilePrairie},
+		{"TilePrairie", TilePrairie},
 		// Character standing images
 		{"KuronaStanding", KuronaStanding},
 		{"KomaStanding", KomaStanding},

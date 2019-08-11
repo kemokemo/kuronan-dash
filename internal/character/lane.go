@@ -8,7 +8,7 @@ type Lanes struct {
 	max     int
 	current int
 	target  int
-	state   state
+	state   State
 }
 
 // SetHeights sets the heights of the lanes.
@@ -33,11 +33,11 @@ func (l *Lanes) Ascend() bool {
 	if l.current == 0 {
 		return false
 	}
-	if l.state == ascending || l.state == descending {
+	if l.state == Ascending || l.state == Descending {
 		return false
 	}
 	l.target = l.current - 1
-	l.state = ascending
+	l.state = Ascending
 	return true
 }
 
@@ -52,20 +52,20 @@ func (l *Lanes) Descend() bool {
 	if l.current == (l.max - 1) {
 		return false
 	}
-	if l.state == ascending || l.state == descending {
+	if l.state == Ascending || l.state == Descending {
 		return false
 	}
 
 	l.target = l.current + 1
-	l.state = descending
+	l.state = Descending
 	return true
 }
 
 // IsReachedTarget returns wchich the player reached the target.
 func (l *Lanes) IsReachedTarget(height int) bool {
-	if (l.state == ascending && l.heights[l.target] >= height) ||
-		(l.state == descending && l.heights[l.target] <= height) {
-		l.state = dash
+	if (l.state == Ascending && l.heights[l.target] >= height) ||
+		(l.state == Descending && l.heights[l.target] <= height) {
+		l.state = Dash
 		l.current = l.target
 		return true
 	}
