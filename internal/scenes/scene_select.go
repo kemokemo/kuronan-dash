@@ -50,6 +50,7 @@ func (s *SelectScene) Initialize() error {
 	s.bg = images.SelectBackground
 	s.bgViewPort = &view.Viewport{}
 	s.bgViewPort.SetSize(s.bg.Size())
+	s.bgViewPort.SetVelocity(1.0)
 	s.disc = music.Title
 	s.charaList = []*chara.Player{chara.Kurona, chara.Koma, chara.Shishimaru}
 

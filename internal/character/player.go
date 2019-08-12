@@ -59,8 +59,8 @@ type Player struct {
 	StandingImage *ebiten.Image
 	Description   string
 	animation     *StepAnimation
-	previous      state
-	current       state
+	previous      State
+	current       State
 	lanes         Lanes
 	jumpSe        *se.Player
 }
@@ -88,19 +88,19 @@ func (p *Player) SetLanes(heights []int) error {
 
 // Start starts dash!
 func (p *Player) Start() {
-	p.current = dash
+	p.current = Dash
 }
 
 // Stop stops this character.
 func (p *Player) Stop() {
 	p.previous = p.current
-	p.current = stop
+	p.current = Stop
 }
 
 // Pause pauses this character.
 func (p *Player) Pause() {
 	p.previous = p.current
-	p.current = pause
+	p.current = Pause
 }
 
 // ReStart starts again this character.
@@ -121,13 +121,13 @@ func (p *Player) Update() {
 
 func (p *Player) updateState() {
 	switch p.current {
-	case pause:
+	case Pause:
 		return
-	case ascending:
+	case Ascending:
 		if p.lanes.IsReachedTarget(p.Position.Y) {
 			p.current = p.previous
 		}
-	case descending:
+	case Descending:
 		if p.lanes.IsReachedTarget(p.Position.Y) {
 			p.current = p.previous
 		}
@@ -136,14 +136,14 @@ func (p *Player) updateState() {
 			if !p.lanes.IsTop() {
 				if p.lanes.Ascend() {
 					p.previous = p.current
-					p.current = ascending
+					p.current = Ascending
 				}
 			}
 		} else if ebiten.IsKeyPressed(ebiten.KeyDown) || ebiten.GamepadAxis(0, 1) >= 0.5 {
 			if !p.lanes.IsBottom() {
 				if p.lanes.Descend() {
 					p.previous = p.current
-					p.current = descending
+					p.current = Descending
 				}
 			}
 		}
@@ -153,17 +153,17 @@ func (p *Player) updateState() {
 func (p *Player) updatePosition() {
 	// todo: 固定値での移動ではなくキャラごと、stateごとの初速度と加速度から算出される速度で移動させる
 	switch p.current {
-	case walk:
+	case Walk:
 		p.Position.X++
 		p.animation.AddStep(1)
-	case dash:
+	case Dash:
 		p.Position.X++
 		p.animation.AddStep(2)
-	case ascending:
+	case Ascending:
 		p.Position.X++
 		p.Position.Y -= 2
 		p.animation.AddStep(1)
-	case descending:
+	case Descending:
 		p.Position.X++
 		p.Position.Y += 2
 		p.animation.AddStep(1)
@@ -180,10 +180,15 @@ func (p *Player) Draw(screen *ebiten.Image) error {
 }
 
 func (p *Player) playSe() error {
-	if p.previous != ascending && p.current == ascending {
+	if p.previous != Ascending && p.current == Ascending {
 		return p.jumpSe.Play()
 	}
 	return nil
+}
+
+// GetState returns the current state of this character.
+func (p *Player) GetState() State {
+	return p.current
 }
 
 // Close closes the inner resources.

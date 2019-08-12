@@ -20,11 +20,17 @@ import (
 
 // Stage01Scene is the scene for the 1st stage game.
 type Stage01Scene struct {
-	state     gameState
-	player    *chara.Player
-	disc      *music.Disc
-	prairie   *ebiten.Image
-	fieldView view.Viewport
+	state    gameState
+	player   *chara.Player
+	disc     *music.Disc
+	bg       *ebiten.Image
+	prairie  *ebiten.Image
+	mtNear   *ebiten.Image
+	mtFar    *ebiten.Image
+	cloud    *ebiten.Image
+	cloud2   *ebiten.Image
+	viewFast view.Viewport
+	viewSlow view.Viewport
 }
 
 // Initialize initializes all resources.
@@ -35,9 +41,20 @@ func (s *Stage01Scene) Initialize() error {
 	if err != nil {
 		return err
 	}
+	s.bg = images.SkyBackground
 	s.prairie = images.TilePrairie
-	s.fieldView = view.Viewport{}
-	s.fieldView.SetSize(s.prairie.Size())
+	s.mtNear = images.MountainNear
+	s.mtFar = images.MountainFar
+	s.cloud = images.Cloud
+	s.cloud2 = images.Cloud2
+
+	s.viewFast = view.Viewport{}
+	s.viewFast.SetSize(s.prairie.Size())
+	s.viewFast.SetVelocity(2.0)
+
+	s.viewSlow = view.Viewport{}
+	s.viewSlow.SetSize(s.prairie.Size())
+	s.viewSlow.SetVelocity(1.0)
 	return nil
 }
 
@@ -59,7 +76,15 @@ func (s *Stage01Scene) Update(state *GameState) error {
 			s.player.Stop()
 		} else {
 			s.player.Update()
-			s.fieldView.Move(view.Left)
+			if s.player.GetState() == chara.Dash {
+				s.viewFast.SetVelocity(2.0)
+				s.viewSlow.SetVelocity(1.0)
+			} else {
+				s.viewFast.SetVelocity(1.0)
+				s.viewSlow.SetVelocity(0.5)
+			}
+			s.viewFast.Move(view.Left)
+			s.viewSlow.Move(view.Left)
 		}
 	case pause:
 		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
@@ -78,6 +103,8 @@ func (s *Stage01Scene) Update(state *GameState) error {
 
 // Draw draws background and characters.
 func (s *Stage01Scene) Draw(screen *ebiten.Image) {
+	screen.DrawImage(s.bg, &ebiten.DrawImageOptions{})
+
 	s.drawFieldParts(screen)
 
 	err := s.player.Draw(screen)
@@ -101,30 +128,57 @@ func (s *Stage01Scene) Draw(screen *ebiten.Image) {
 const repeat = 3
 
 const (
-	firstLaneHeight  = 100
-	secondLaneHeight = 300
-	thirdLaneHeight  = 500
+	firstLaneHeight  = 200
+	secondLaneHeight = firstLaneHeight + 170
+	thirdLaneHeight  = secondLaneHeight + 170
 )
 
 var laneHeights = []int{firstLaneHeight, secondLaneHeight, thirdLaneHeight}
 
 func (s *Stage01Scene) drawFieldParts(screen *ebiten.Image) {
-	var offsetX, offsetY float64
-	if s.state == run {
-		// todo: 遅い方のViewPortも用意して、キャラクターの状態がwalkの場合はそっちを使う
+	x16, y16 := s.viewSlow.Position()
+	offsetX, offsetY := float64(x16)/16, float64(y16)/16
 
-		x16, y16 := s.fieldView.Position()
-		offsetX, offsetY = float64(x16)/16, float64(y16)/16
-
-	} else {
-		offsetX, offsetY = 0, 0
-	}
-
-	w, _ := s.prairie.Size()
+	// まず遠くの風景を描画
+	wP, hP := s.prairie.Size()
+	wC, hC := s.cloud.Size()
+	wMF, hMF := s.mtFar.Size()
 	for _, h := range laneHeights {
 		for i := 0; i < repeat; i++ {
 			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(float64(w*i), float64(h))
+			op.GeoM.Translate(float64(wMF*i), float64(h-hMF+hP))
+			op.GeoM.Translate(offsetX, offsetY)
+			screen.DrawImage(s.mtFar, op)
+
+			op.GeoM.Translate(float64(wC), float64(-hC))
+			screen.DrawImage(s.cloud, op)
+		}
+	}
+
+	// 異なる速度のViewPort情報に切り替え
+	x16, y16 = s.viewFast.Position()
+	offsetX, offsetY = float64(x16)/16, float64(y16)/16
+
+	// つぎに近くの風景を描画
+	wC, hC = s.cloud2.Size()
+	wMN, hMN := s.mtNear.Size()
+	for _, h := range laneHeights {
+		for i := 0; i < repeat; i++ {
+			op := &ebiten.DrawImageOptions{}
+			op.GeoM.Translate(float64(wMN*i), float64(h-hMN+hP))
+			op.GeoM.Translate(offsetX, offsetY)
+			screen.DrawImage(s.mtNear, op)
+
+			op.GeoM.Translate(float64(wC), float64(hC/2))
+			screen.DrawImage(s.cloud2, op)
+		}
+	}
+
+	// さいごのレーンを描画
+	for _, h := range laneHeights {
+		for i := 0; i < repeat; i++ {
+			op := &ebiten.DrawImageOptions{}
+			op.GeoM.Translate(float64(wP*i), float64(h))
 			op.GeoM.Translate(offsetX, offsetY)
 			screen.DrawImage(s.prairie, op)
 		}
