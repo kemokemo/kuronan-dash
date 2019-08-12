@@ -27,7 +27,8 @@ type Stage01Scene struct {
 	prairie  *ebiten.Image
 	mtNear   *ebiten.Image
 	mtFar    *ebiten.Image
-	viewPort view.Viewport
+	viewFast view.Viewport
+	viewSlow view.Viewport
 }
 
 // Initialize initializes all resources.
@@ -43,8 +44,13 @@ func (s *Stage01Scene) Initialize() error {
 	s.mtNear = images.MountainNear
 	s.mtFar = images.MountainFar
 
-	s.viewPort = view.Viewport{}
-	s.viewPort.SetSize(s.prairie.Size())
+	s.viewFast = view.Viewport{}
+	s.viewFast.SetSize(s.prairie.Size())
+	s.viewFast.SetVelocity(2.0)
+
+	s.viewSlow = view.Viewport{}
+	s.viewSlow.SetSize(s.prairie.Size())
+	s.viewSlow.SetVelocity(1.0)
 	return nil
 }
 
@@ -66,7 +72,15 @@ func (s *Stage01Scene) Update(state *GameState) error {
 			s.player.Stop()
 		} else {
 			s.player.Update()
-			s.viewPort.Move(view.Left)
+			if s.player.GetState() == chara.Dash {
+				s.viewFast.SetVelocity(2.0)
+				s.viewSlow.SetVelocity(1.0)
+			} else {
+				s.viewFast.SetVelocity(1.0)
+				s.viewSlow.SetVelocity(0.5)
+			}
+			s.viewFast.Move(view.Left)
+			s.viewSlow.Move(view.Left)
 		}
 	case pause:
 		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
@@ -118,27 +132,26 @@ const (
 var laneHeights = []int{firstLaneHeight, secondLaneHeight, thirdLaneHeight}
 
 func (s *Stage01Scene) drawFieldParts(screen *ebiten.Image) {
-	var k float64
-	if s.player.GetState() == chara.Dash {
-		k = 2
-	} else {
-		k = 1
-	}
+	x16, y16 := s.viewSlow.Position()
+	offsetX, offsetY := float64(x16)/16, float64(y16)/16
 
-	x16, y16 := s.viewPort.Position()
-	offsetX, offsetY := float64(x16)*k/16, float64(y16)*k/16
-
+	// まず遠くの風景を描画
 	wP, hP := s.prairie.Size()
 	wMF, hMF := s.mtFar.Size()
 	for _, h := range laneHeights {
 		for i := 0; i < repeat; i++ {
 			op := &ebiten.DrawImageOptions{}
 			op.GeoM.Translate(float64(wMF*i), float64(h-hMF+hP))
-			op.GeoM.Translate(offsetX*0.5, offsetY*0.5)
+			op.GeoM.Translate(offsetX, offsetY)
 			screen.DrawImage(s.mtFar, op)
 		}
 	}
 
+	// 異なる速度のViewPort情報に切り替え
+	x16, y16 = s.viewFast.Position()
+	offsetX, offsetY = float64(x16)/16, float64(y16)/16
+
+	// つぎに近くの風景を描画
 	wMN, hMN := s.mtNear.Size()
 	for _, h := range laneHeights {
 		for i := 0; i < repeat; i++ {
@@ -149,6 +162,7 @@ func (s *Stage01Scene) drawFieldParts(screen *ebiten.Image) {
 		}
 	}
 
+	// さいごのレーンを描画
 	for _, h := range laneHeights {
 		for i := 0; i < repeat; i++ {
 			op := &ebiten.DrawImageOptions{}
