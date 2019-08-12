@@ -18,6 +18,8 @@ var (
 	TilePrairie  *ebiten.Image
 	MountainNear *ebiten.Image
 	MountainFar  *ebiten.Image
+	Cloud        *ebiten.Image
+	Cloud2       *ebiten.Image
 )
 
 // character standing image

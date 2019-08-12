@@ -27,6 +27,8 @@ type Stage01Scene struct {
 	prairie  *ebiten.Image
 	mtNear   *ebiten.Image
 	mtFar    *ebiten.Image
+	cloud    *ebiten.Image
+	cloud2   *ebiten.Image
 	viewFast view.Viewport
 	viewSlow view.Viewport
 }
@@ -43,6 +45,8 @@ func (s *Stage01Scene) Initialize() error {
 	s.prairie = images.TilePrairie
 	s.mtNear = images.MountainNear
 	s.mtFar = images.MountainFar
+	s.cloud = images.Cloud
+	s.cloud2 = images.Cloud2
 
 	s.viewFast = view.Viewport{}
 	s.viewFast.SetSize(s.prairie.Size())
@@ -137,6 +141,7 @@ func (s *Stage01Scene) drawFieldParts(screen *ebiten.Image) {
 
 	// まず遠くの風景を描画
 	wP, hP := s.prairie.Size()
+	wC, hC := s.cloud.Size()
 	wMF, hMF := s.mtFar.Size()
 	for _, h := range laneHeights {
 		for i := 0; i < repeat; i++ {
@@ -144,6 +149,9 @@ func (s *Stage01Scene) drawFieldParts(screen *ebiten.Image) {
 			op.GeoM.Translate(float64(wMF*i), float64(h-hMF+hP))
 			op.GeoM.Translate(offsetX, offsetY)
 			screen.DrawImage(s.mtFar, op)
+
+			op.GeoM.Translate(float64(wC), float64(-hC))
+			screen.DrawImage(s.cloud, op)
 		}
 	}
 
@@ -152,6 +160,7 @@ func (s *Stage01Scene) drawFieldParts(screen *ebiten.Image) {
 	offsetX, offsetY = float64(x16)/16, float64(y16)/16
 
 	// つぎに近くの風景を描画
+	wC, hC = s.cloud2.Size()
 	wMN, hMN := s.mtNear.Size()
 	for _, h := range laneHeights {
 		for i := 0; i < repeat; i++ {
@@ -159,6 +168,9 @@ func (s *Stage01Scene) drawFieldParts(screen *ebiten.Image) {
 			op.GeoM.Translate(float64(wMN*i), float64(h-hMN+hP))
 			op.GeoM.Translate(offsetX, offsetY)
 			screen.DrawImage(s.mtNear, op)
+
+			op.GeoM.Translate(float64(wC), float64(hC/2))
+			screen.DrawImage(s.cloud2, op)
 		}
 	}
 
