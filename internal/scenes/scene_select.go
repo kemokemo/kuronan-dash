@@ -1,6 +1,7 @@
 package scenes
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"log"
@@ -112,15 +113,25 @@ func (s *SelectScene) checkSelectorChanged() {
 }
 
 // Draw draws background and characters.
-func (s *SelectScene) Draw(screen *ebiten.Image) {
-	s.drawBackground(screen)
+func (s *SelectScene) Draw(screen *ebiten.Image) error {
+	err := s.drawBackground(screen)
+	if err != nil {
+		return fmt.Errorf("failed to draw the select screen background,%v", err)
+	}
+
 	text.Draw(screen, "← → のカーソルキーでキャラクターを選んでSpaceキーを押してね！",
 		mplus.Gothic12r, windowMargin, windowMargin, color.Black)
+
 	s.drawWindows(screen)
-	s.drawCharacters(screen)
+
+	err = s.drawCharacters(screen)
+	if err != nil {
+		return fmt.Errorf("failed to draw the select screen characters,%v", err)
+	}
+	return nil
 }
 
-func (s *SelectScene) drawBackground(screen *ebiten.Image) {
+func (s *SelectScene) drawBackground(screen *ebiten.Image) error {
 	x16, y16 := s.bgViewPort.Position()
 	offsetX, offsetY := float64(x16)/16, float64(y16)/16
 
@@ -133,9 +144,13 @@ func (s *SelectScene) drawBackground(screen *ebiten.Image) {
 			screenWidth, _ := screen.Size()
 			op.GeoM.Translate(float64(screenWidth)-float64(w*(i+1)), float64(h*j))
 			op.GeoM.Translate(offsetX, offsetY)
-			screen.DrawImage(s.bg, op)
+			err := screen.DrawImage(s.bg, op)
+			if err != nil {
+				return err
+			}
 		}
 	}
+	return nil
 }
 
 func (s *SelectScene) drawWindows(screen *ebiten.Image) {
@@ -149,14 +164,15 @@ func (s *SelectScene) drawWindows(screen *ebiten.Image) {
 	}
 }
 
-func (s *SelectScene) drawCharacters(screen *ebiten.Image) {
+func (s *SelectScene) drawCharacters(screen *ebiten.Image) error {
 	for i := range s.charaList {
 		err := s.drawChara(screen, i)
 		if err != nil {
-			log.Println("failed to draw a character:", err)
+			return err
 		}
 		s.drawMessage(screen, i)
 	}
+	return nil
 }
 
 func (s *SelectScene) drawChara(screen *ebiten.Image, i int) error {

@@ -41,11 +41,12 @@ func (s *TitleScene) Update(state *GameState) error {
 }
 
 // Draw draws background and characters.
-func (s *TitleScene) Draw(r *ebiten.Image) {
+func (s *TitleScene) Draw(r *ebiten.Image) error {
 	op := &ebiten.DrawImageOptions{}
 	r.DrawImage(s.bg, op)
 	text.Draw(r, "黒菜んダッシュ", mplus.Gothic12r, 10, 32, color.Black)
 	text.Draw(r, "Spaceを押して始めよう!", mplus.Gothic12r, 10, ScreenHeight-48, color.Black)
+	return nil
 }
 
 // StartMusic starts playing music

@@ -5,56 +5,35 @@ package scenes
 import (
 	"fmt"
 	"image/color"
-	"log"
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/text"
 	mplus "github.com/hajimehoshi/go-mplusbitmap"
 
-	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/assets/music"
 
 	chara "github.com/kemokemo/kuronan-dash/internal/character"
-	"github.com/kemokemo/kuronan-dash/internal/view"
+	"github.com/kemokemo/kuronan-dash/internal/field"
 )
 
 // Stage01Scene is the scene for the 1st stage game.
 type Stage01Scene struct {
-	state    gameState
-	player   *chara.Player
-	disc     *music.Disc
-	bg       *ebiten.Image
-	prairie  *ebiten.Image
-	mtNear   *ebiten.Image
-	mtFar    *ebiten.Image
-	cloud    *ebiten.Image
-	cloud2   *ebiten.Image
-	viewFast view.Viewport
-	viewSlow view.Viewport
+	state  gameState
+	player *chara.Player
+	disc   *music.Disc
+	field  field.Field
 }
 
 // Initialize initializes all resources.
 func (s *Stage01Scene) Initialize() error {
 	s.disc = music.Stage01
 	s.player = chara.Selected
-	err := s.player.SetLanes(laneHeights)
+	err := s.player.SetLanes(field.LaneHeights)
 	if err != nil {
 		return err
 	}
-	s.bg = images.SkyBackground
-	s.prairie = images.TilePrairie
-	s.mtNear = images.MountainNear
-	s.mtFar = images.MountainFar
-	s.cloud = images.Cloud
-	s.cloud2 = images.Cloud2
-
-	s.viewFast = view.Viewport{}
-	s.viewFast.SetSize(s.prairie.Size())
-	s.viewFast.SetVelocity(2.0)
-
-	s.viewSlow = view.Viewport{}
-	s.viewSlow.SetSize(s.prairie.Size())
-	s.viewSlow.SetVelocity(1.0)
+	s.field = &field.PrairieField{}
+	s.field.Initialize()
 	return nil
 }
 
@@ -77,14 +56,11 @@ func (s *Stage01Scene) Update(state *GameState) error {
 		} else {
 			s.player.Update()
 			if s.player.GetState() == chara.Dash {
-				s.viewFast.SetVelocity(2.0)
-				s.viewSlow.SetVelocity(1.0)
+				s.field.SetScrollSpeed(field.Normal)
 			} else {
-				s.viewFast.SetVelocity(1.0)
-				s.viewSlow.SetVelocity(0.5)
+				s.field.SetScrollSpeed(field.Slow)
 			}
-			s.viewFast.Move(view.Left)
-			s.viewSlow.Move(view.Left)
+			s.field.Update()
 		}
 	case pause:
 		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
@@ -102,15 +78,15 @@ func (s *Stage01Scene) Update(state *GameState) error {
 }
 
 // Draw draws background and characters.
-func (s *Stage01Scene) Draw(screen *ebiten.Image) {
-	screen.DrawImage(s.bg, &ebiten.DrawImageOptions{})
-
-	s.drawFieldParts(screen)
-
-	err := s.player.Draw(screen)
+func (s *Stage01Scene) Draw(screen *ebiten.Image) error {
+	err := s.field.Draw(screen)
 	if err != nil {
-		log.Println("failed to draw a character:", err)
-		return
+		return fmt.Errorf("failed to draw field parts,%v", err)
+	}
+
+	err = s.player.Draw(screen)
+	if err != nil {
+		return fmt.Errorf("failed to draw a character,%v", err)
 	}
 
 	text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
@@ -120,69 +96,9 @@ func (s *Stage01Scene) Draw(screen *ebiten.Image) {
 	// TODO: 衝突判定とSE再生
 	err = s.checkCollision()
 	if err != nil {
-		log.Println("failed to check collisions:", err)
-		return
+		return fmt.Errorf("failed to check collisions,%v", err)
 	}
-}
-
-const repeat = 3
-
-const (
-	firstLaneHeight  = 200
-	secondLaneHeight = firstLaneHeight + 170
-	thirdLaneHeight  = secondLaneHeight + 170
-)
-
-var laneHeights = []int{firstLaneHeight, secondLaneHeight, thirdLaneHeight}
-
-func (s *Stage01Scene) drawFieldParts(screen *ebiten.Image) {
-	x16, y16 := s.viewSlow.Position()
-	offsetX, offsetY := float64(x16)/16, float64(y16)/16
-
-	// まず遠くの風景を描画
-	wP, hP := s.prairie.Size()
-	wC, hC := s.cloud.Size()
-	wMF, hMF := s.mtFar.Size()
-	for _, h := range laneHeights {
-		for i := 0; i < repeat; i++ {
-			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(float64(wMF*i), float64(h-hMF+hP))
-			op.GeoM.Translate(offsetX, offsetY)
-			screen.DrawImage(s.mtFar, op)
-
-			op.GeoM.Translate(float64(wC), float64(-hC))
-			screen.DrawImage(s.cloud, op)
-		}
-	}
-
-	// 異なる速度のViewPort情報に切り替え
-	x16, y16 = s.viewFast.Position()
-	offsetX, offsetY = float64(x16)/16, float64(y16)/16
-
-	// つぎに近くの風景を描画
-	wC, hC = s.cloud2.Size()
-	wMN, hMN := s.mtNear.Size()
-	for _, h := range laneHeights {
-		for i := 0; i < repeat; i++ {
-			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(float64(wMN*i), float64(h-hMN+hP))
-			op.GeoM.Translate(offsetX, offsetY)
-			screen.DrawImage(s.mtNear, op)
-
-			op.GeoM.Translate(float64(wC), float64(hC/2))
-			screen.DrawImage(s.cloud2, op)
-		}
-	}
-
-	// さいごのレーンを描画
-	for _, h := range laneHeights {
-		for i := 0; i < repeat; i++ {
-			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(float64(wP*i), float64(h))
-			op.GeoM.Translate(offsetX, offsetY)
-			screen.DrawImage(s.prairie, op)
-		}
-	}
+	return nil
 }
 
 func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
@@ -207,7 +123,7 @@ func (s *Stage01Scene) checkCollision() error {
 func (s *Stage01Scene) Close() error {
 	err := s.disc.Stop()
 	if err != nil {
-		return fmt.Errorf("failed to stop music:%v", err)
+		return fmt.Errorf("failed to stop music,%v", err)
 	}
 	return nil
 }
