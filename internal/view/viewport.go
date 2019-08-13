@@ -8,7 +8,7 @@ type Viewport struct {
 	y      int
 	maxX16 int
 	maxY16 int
-	v      float64
+	v      float32
 }
 
 // SetSize sets the size of this Viewport.
@@ -20,15 +20,15 @@ func (p *Viewport) SetSize(w, h int) {
 }
 
 // SetVelocity sets the velocity of this viewport.
-func (p *Viewport) SetVelocity(v float64) {
+func (p *Viewport) SetVelocity(v float32) {
 	p.v = v
 }
 
 // Move moves the view of this Viewport.
 func (p *Viewport) Move(d Direction) {
 	x, y := getDirectionValue(d)
-	p.x16 += int(float64(x) * float64(p.x) * p.v / 32.0)
-	p.y16 += int(float64(y) * float64(p.y) * p.v / 32.0)
+	p.x16 += int(float32(x) * float32(p.x) * p.v / 32.0)
+	p.y16 += int(float32(y) * float32(p.y) * p.v / 32.0)
 	p.x16 %= p.maxX16
 	p.y16 %= p.maxY16
 }

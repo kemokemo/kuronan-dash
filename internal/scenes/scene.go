@@ -8,7 +8,7 @@ import (
 type Scene interface {
 	Initialize() error
 	Update(state *GameState) error
-	Draw(screen *ebiten.Image)
+	Draw(screen *ebiten.Image) error
 	StartMusic() error
 	StopMusic() error
 }
