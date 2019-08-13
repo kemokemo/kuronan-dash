@@ -15,11 +15,11 @@ func loadFieldparts() error {
 	if err != nil {
 		return err
 	}
-	Cloud, err = loadSingleImage(cloud_png)
+	CloudNear, err = loadSingleImage(cloud_near_png)
 	if err != nil {
 		return err
 	}
-	Cloud2, err = loadSingleImage(cloud2_png)
+	CloudFar, err = loadSingleImage(cloud_far_png)
 	if err != nil {
 		return err
 	}

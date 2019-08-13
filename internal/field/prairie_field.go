@@ -2,6 +2,8 @@ package field
 
 import (
 	"fmt"
+	"math/rand"
+	"time"
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/kemokemo/kuronan-dash/assets/images"
@@ -10,12 +12,12 @@ import (
 
 // PrairieField is the field of prairie.
 type PrairieField struct {
-	bg      *ebiten.Image
-	prairie *ebiten.Image
-	mtNear  *ebiten.Image
-	mtFar   *ebiten.Image
-	cloud   *ebiten.Image
-	cloud2  *ebiten.Image
+	bg         *ebiten.Image
+	prairie    *ebiten.Image
+	mtNear     *ebiten.Image
+	mtFar      *ebiten.Image
+	cloudsNear []Cloud
+	cloudsFar  []Cloud
 
 	speed    ScrollSpeed
 	viewFast view.Viewport
@@ -28,8 +30,7 @@ func (p *PrairieField) Initialize() {
 	p.prairie = images.TilePrairie
 	p.mtNear = images.MountainNear
 	p.mtFar = images.MountainFar
-	p.cloud = images.Cloud
-	p.cloud2 = images.Cloud2
+	p.createClouds()
 
 	p.viewFast = view.Viewport{}
 	p.viewFast.SetSize(p.prairie.Size())
@@ -38,6 +39,48 @@ func (p *PrairieField) Initialize() {
 	p.viewSlow = view.Viewport{}
 	p.viewSlow.SetSize(p.prairie.Size())
 	p.viewSlow.SetVelocity(1.0)
+}
+
+const cloudNum = 10
+
+func (p *PrairieField) createClouds() {
+	rand.Seed(time.Now().UnixNano())
+
+	_, hC := images.CloudNear.Size()
+	for _, h := range LaneHeights {
+		for index := 0; index < cloudNum; index++ {
+			c := Cloud{}
+			r := rand.Float32()
+			c.Initialize(images.CloudNear,
+				view.Position{
+					X: int(200*cloudNum + 2000*r),
+					Y: h - 60 - int(100*r) - hC/2,
+				})
+			c.SetSpeed(Normal)
+
+			r = rand.Float32()
+			c.SetMagnification(r)
+			p.cloudsNear = append(p.cloudsNear, c)
+		}
+	}
+
+	_, hC = images.CloudFar.Size()
+	for _, h := range LaneHeights {
+		for index := 0; index < cloudNum; index++ {
+			c := Cloud{}
+			r := rand.Float32()
+			c.Initialize(images.CloudFar,
+				view.Position{
+					X: int(500*cloudNum + 3000*r),
+					Y: h - 50 - int(100*r) - hC/2,
+				})
+			c.SetSpeed(Normal)
+
+			r = rand.Float32()
+			c.SetMagnification(r)
+			p.cloudsFar = append(p.cloudsFar, c)
+		}
+	}
 }
 
 // SetScrollSpeed sets the speed to scroll.
@@ -51,57 +94,86 @@ func (p *PrairieField) Update() {
 	case Normal:
 		p.viewFast.SetVelocity(2.0)
 		p.viewSlow.SetVelocity(1.0)
+		for i := range p.cloudsNear {
+			p.cloudsNear[i].SetSpeed(Normal)
+		}
+		for i := range p.cloudsFar {
+			p.cloudsFar[i].SetSpeed(Normal)
+		}
 	case Slow:
 		p.viewFast.SetVelocity(1.0)
 		p.viewSlow.SetVelocity(0.5)
+		for i := range p.cloudsNear {
+			p.cloudsNear[i].SetSpeed(Slow)
+		}
+		for i := range p.cloudsFar {
+			p.cloudsFar[i].SetSpeed(Slow)
+		}
 	}
 
 	p.viewFast.Move(view.Left)
 	p.viewSlow.Move(view.Left)
+	for i := range p.cloudsNear {
+		p.cloudsNear[i].Update()
+	}
+	for i := range p.cloudsFar {
+		p.cloudsFar[i].Update()
+	}
 }
 
 // Draw draws the all field parts.
 func (p *PrairieField) Draw(screen *ebiten.Image) error {
 	err := screen.DrawImage(p.bg, &ebiten.DrawImageOptions{})
 	if err != nil {
-		return fmt.Errorf("failed to draw a background,%v", err)
+		return fmt.Errorf("failed to draw a prairie background,%v", err)
 	}
 
+	// まず遠くの風景を描画
+	/// 遠くの山
 	x16, y16 := p.viewSlow.Position()
 	offsetX, offsetY := float64(x16)/16, float64(y16)/16
-
-	// まず遠くの風景を描画
 	wP, hP := p.prairie.Size()
-	wC, hC := p.cloud.Size()
 	wMF, hMF := p.mtFar.Size()
 	for _, h := range LaneHeights {
 		for i := 0; i < repeat; i++ {
 			op := &ebiten.DrawImageOptions{}
 			op.GeoM.Translate(float64(wMF*i), float64(h-hMF+hP))
 			op.GeoM.Translate(offsetX, offsetY)
-			screen.DrawImage(p.mtFar, op)
-
-			op.GeoM.Translate(float64(wC), float64(-hC))
-			screen.DrawImage(p.cloud, op)
+			err := screen.DrawImage(p.mtFar, op)
+			if err != nil {
+				return fmt.Errorf("failed to draw a mtFar,%v", err)
+			}
+		}
+	}
+	/// 遠くの雲
+	for i := range p.cloudsFar {
+		err := p.cloudsFar[i].Draw(screen)
+		if err != nil {
+			return fmt.Errorf("failed to draw a cloudFar,%v", err)
 		}
 	}
 
-	// 異なる速度のViewPort情報に切り替え
+	// つぎに近くの風景を描画
+	/// 近くの山。異なる速度のViewPort情報に切り替え
 	x16, y16 = p.viewFast.Position()
 	offsetX, offsetY = float64(x16)/16, float64(y16)/16
-
-	// つぎに近くの風景を描画
-	wC, hC = p.cloud2.Size()
 	wMN, hMN := p.mtNear.Size()
 	for _, h := range LaneHeights {
 		for i := 0; i < repeat; i++ {
 			op := &ebiten.DrawImageOptions{}
 			op.GeoM.Translate(float64(wMN*i), float64(h-hMN+hP))
 			op.GeoM.Translate(offsetX, offsetY)
-			screen.DrawImage(p.mtNear, op)
-
-			op.GeoM.Translate(float64(wC), float64(hC/2))
-			screen.DrawImage(p.cloud2, op)
+			err := screen.DrawImage(p.mtNear, op)
+			if err != nil {
+				return fmt.Errorf("failed to draw a mtNear,%v", err)
+			}
+		}
+	}
+	/// 近くの雲
+	for i := range p.cloudsNear {
+		err := p.cloudsNear[i].Draw(screen)
+		if err != nil {
+			return fmt.Errorf("failed to draw a cloudNear,%v", err)
 		}
 	}
 
@@ -111,7 +183,10 @@ func (p *PrairieField) Draw(screen *ebiten.Image) error {
 			op := &ebiten.DrawImageOptions{}
 			op.GeoM.Translate(float64(wP*i), float64(h))
 			op.GeoM.Translate(offsetX, offsetY)
-			screen.DrawImage(p.prairie, op)
+			err := screen.DrawImage(p.prairie, op)
+			if err != nil {
+				return fmt.Errorf("failed to draw the prairie field,%v", err)
+			}
 		}
 	}
 	return nil

@@ -7,6 +7,7 @@ import (
 	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/assets/messages"
 	"github.com/kemokemo/kuronan-dash/assets/se"
+	"github.com/kemokemo/kuronan-dash/internal/view"
 )
 
 // player characters
@@ -47,15 +48,9 @@ func NewPlayers() error {
 	return nil
 }
 
-// Position describes the position by x and y.
-type Position struct {
-	X int
-	Y int
-}
-
 // Player is a player character.
 type Player struct {
-	Position      Position
+	Position      view.Position
 	StandingImage *ebiten.Image
 	Description   string
 	animation     *StepAnimation
@@ -81,7 +76,7 @@ func (p *Player) SetLanes(heights []int) error {
 	}
 
 	// set the player at the top lane.
-	p.Position = Position{X: 10, Y: charaHeights[0]}
+	p.Position = view.Position{X: 10, Y: charaHeights[0]}
 
 	return nil
 }
