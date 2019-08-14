@@ -35,6 +35,7 @@ package assets
 // Field Parts
 //  - Prairie
 //go:generate file2byteslice -package=images -input=../_assets/images/tilePrairie.png -output=./images/tilePrairie.go -var=tilePrairie_png
+//go:generate file2byteslice -package=images -input=../_assets/images/prairies.png -output=./images/prairies.go -var=prairies_png
 //go:generate file2byteslice -package=images -input=../_assets/images/mountain_near.png -output=./images/mountain_near.go -var=mountainNear_png
 //go:generate file2byteslice -package=images -input=../_assets/images/mountain_far.png -output=./images/mountain_far.go -var=mountainFar_png
 //go:generate file2byteslice -package=images -input=../_assets/images/cloud_near.png -output=./images/cloud_near.go -var=cloud_near_png

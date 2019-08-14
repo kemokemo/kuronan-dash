@@ -16,6 +16,7 @@ var (
 // field parts
 var (
 	TilePrairie  *ebiten.Image
+	Prairies     *ebiten.Image
 	MountainNear *ebiten.Image
 	MountainFar  *ebiten.Image
 	CloudNear    *ebiten.Image

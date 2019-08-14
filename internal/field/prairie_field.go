@@ -12,8 +12,10 @@ import (
 
 // PrairieField is the field of prairie.
 type PrairieField struct {
-	bg            *ebiten.Image
-	prairie       *ebiten.Image
+	bg   *ebiten.Image
+	tile *ebiten.Image
+
+	prairies      []Prairie
 	mountainsNear []Mountain
 	mountainsFar  []Mountain
 	cloudsNear    []Cloud
@@ -26,13 +28,38 @@ type PrairieField struct {
 // Initialize initializes all resources to draw.
 func (p *PrairieField) Initialize() {
 	p.bg = images.SkyBackground
-	p.prairie = images.TilePrairie
+
+	p.createPrairies()
 	p.createMountains()
 	p.createClouds()
 
+	p.tile = images.TilePrairie
 	p.viewPrairie = view.RotateViewport{}
-	p.viewPrairie.SetSize(p.prairie.Size())
+	p.viewPrairie.SetSize(p.tile.Size())
 	p.viewPrairie.SetVelocity(2.0)
+}
+
+const prairieNum = 3
+
+func (p *PrairieField) createPrairies() {
+	rand.Seed(time.Now().UnixNano())
+
+	wP, hP := images.Prairies.Size()
+	_, hT := images.TilePrairie.Size()
+	for _, h := range LaneHeights {
+		for index := 0; index < prairieNum; index++ {
+			pr := Prairie{}
+			r := rand.Float32()
+			pr.Initialize(images.Prairies,
+				view.Position{
+					X: wP*index + int(1000*r),
+					Y: h - hP + hT,
+				},
+				1.8,
+			)
+			p.prairies = append(p.prairies, pr)
+		}
+	}
 }
 
 const mountNum = 3
@@ -41,7 +68,7 @@ func (p *PrairieField) createMountains() {
 	rand.Seed(time.Now().UnixNano())
 
 	wMt, hMt := images.MountainNear.Size()
-	_, hP := images.TilePrairie.Size()
+	_, hT := images.TilePrairie.Size()
 	for _, h := range LaneHeights {
 		for index := 0; index < cloudNum; index++ {
 			m := Mountain{}
@@ -49,7 +76,7 @@ func (p *PrairieField) createMountains() {
 			m.Initialize(images.MountainNear,
 				view.Position{
 					X: wMt*index + int(500*r),
-					Y: h - hMt + hP,
+					Y: h - hMt + hT,
 				},
 				1.0,
 			)
@@ -65,7 +92,7 @@ func (p *PrairieField) createMountains() {
 			m.Initialize(images.MountainFar,
 				view.Position{
 					X: wMt*index + int(500*r),
-					Y: h - hMt + hP,
+					Y: h - hMt + hT,
 				},
 				0.5,
 			)
@@ -119,6 +146,9 @@ func (p *PrairieField) createClouds() {
 // SetScrollSpeed sets the speed to scroll.
 func (p *PrairieField) SetScrollSpeed(speed ScrollSpeed) {
 	p.speed = speed
+	for i := range p.prairies {
+		p.prairies[i].SetSpeed(speed)
+	}
 	for i := range p.mountainsNear {
 		p.mountainsNear[i].SetSpeed(speed)
 	}
@@ -141,8 +171,11 @@ func (p *PrairieField) Update() {
 	case Slow:
 		p.viewPrairie.SetVelocity(1.0)
 	}
-
 	p.viewPrairie.Move(view.Left)
+
+	for i := range p.prairies {
+		p.prairies[i].Update()
+	}
 	for i := range p.mountainsNear {
 		p.mountainsNear[i].Update()
 	}
@@ -195,6 +228,13 @@ func (p *PrairieField) Draw(screen *ebiten.Image) error {
 			return fmt.Errorf("failed to draw cloudsNear,%v", err)
 		}
 	}
+	/// 近くの草むら
+	for i := range p.prairies {
+		err := p.prairies[i].Draw(screen)
+		if err != nil {
+			return fmt.Errorf("failed to draw prairies,%v", err)
+		}
+	}
 
 	// さいごのレーンを描画
 	wP, _ := images.TilePrairie.Size()
@@ -205,7 +245,7 @@ func (p *PrairieField) Draw(screen *ebiten.Image) error {
 			op := &ebiten.DrawImageOptions{}
 			op.GeoM.Translate(float64(wP*i), float64(h))
 			op.GeoM.Translate(offsetX, offsetY)
-			err := screen.DrawImage(p.prairie, op)
+			err := screen.DrawImage(p.tile, op)
 			if err != nil {
 				return fmt.Errorf("failed to draw the prairie field,%v", err)
 			}

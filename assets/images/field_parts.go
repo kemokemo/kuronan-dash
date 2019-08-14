@@ -7,6 +7,10 @@ func loadFieldparts() error {
 	if err != nil {
 		return err
 	}
+	Prairies, err = loadSingleImage(prairies_png)
+	if err != nil {
+		return err
+	}
 	MountainNear, err = loadSingleImage(mountainNear_png)
 	if err != nil {
 		return err
