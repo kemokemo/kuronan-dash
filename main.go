@@ -6,7 +6,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten"
 	kuronandash "github.com/kemokemo/kuronan-dash/internal"
-	"github.com/kemokemo/kuronan-dash/internal/scenes"
+	"github.com/kemokemo/kuronan-dash/internal/view"
 )
 
 const (
@@ -31,7 +31,7 @@ func run() int {
 		}
 	}()
 
-	err = ebiten.Run(game.Update, scenes.ScreenWidth, scenes.ScreenHeight,
+	err = ebiten.Run(game.Update, view.ScreenWidth, view.ScreenHeight,
 		1, "Kuronan Dash!")
 	if err != nil {
 		log.Println("failed to run:", err)

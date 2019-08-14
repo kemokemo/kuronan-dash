@@ -55,8 +55,8 @@ func (s *SelectScene) Initialize() error {
 	s.disc = music.Title
 	s.charaList = []*chara.Player{chara.Kurona, chara.Koma, chara.Shishimaru}
 
-	windowWidth = (ScreenWidth - windowSpacing*2 - windowMargin*2) / len(s.charaList)
-	windowHeight = ScreenHeight - windowMargin*2 - 100
+	windowWidth = (view.ScreenWidth - windowSpacing*2 - windowMargin*2) / len(s.charaList)
+	windowHeight = view.ScreenHeight - windowMargin*2 - 100
 
 	s.windowList = make([]*ui.FrameWindow, len(s.charaList))
 	for i := range s.charaList {

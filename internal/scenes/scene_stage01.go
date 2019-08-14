@@ -14,6 +14,7 @@ import (
 
 	chara "github.com/kemokemo/kuronan-dash/internal/character"
 	"github.com/kemokemo/kuronan-dash/internal/field"
+	"github.com/kemokemo/kuronan-dash/internal/view"
 )
 
 // Stage01Scene is the scene for the 1st stage game.
@@ -49,7 +50,7 @@ func (s *Stage01Scene) Update(state *GameState) error {
 		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
 			s.state = pause
 			s.player.Pause()
-		} else if s.player.Position.X+50 > ScreenWidth-50 && s.state != gameover {
+		} else if s.player.Position.X+50 > view.ScreenWidth-50 && s.state != gameover {
 			// TODO: とりあえずゲームオーバーの練習
 			s.state = gameover
 			s.player.Stop()
@@ -104,11 +105,11 @@ func (s *Stage01Scene) Draw(screen *ebiten.Image) error {
 func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 	switch s.state {
 	case wait:
-		text.Draw(screen, "Spaceキーを押してゲームを開始してね！", mplus.Gothic12r, ScreenWidth/2-100, ScreenHeight/2, color.White)
+		text.Draw(screen, "Spaceキーを押してゲームを開始してね！", mplus.Gothic12r, view.ScreenWidth/2-100, view.ScreenHeight/2, color.White)
 	case pause:
-		text.Draw(screen, "一時停止中だよ！", mplus.Gothic12r, ScreenWidth/2-100, ScreenHeight/2, color.White)
+		text.Draw(screen, "一時停止中だよ！", mplus.Gothic12r, view.ScreenWidth/2-100, view.ScreenHeight/2, color.White)
 	case gameover:
-		text.Draw(screen, "ゲームオーバー！Spaceを押してタイトルへ戻ってね！", mplus.Gothic12r, ScreenWidth/2-100, ScreenHeight/2, color.White)
+		text.Draw(screen, "ゲームオーバー！Spaceを押してタイトルへ戻ってね！", mplus.Gothic12r, view.ScreenWidth/2-100, view.ScreenHeight/2, color.White)
 	default:
 		// nothing to draw
 	}

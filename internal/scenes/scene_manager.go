@@ -5,16 +5,10 @@ package scenes
 import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/kemokemo/kuronan-dash/internal/input"
+	"github.com/kemokemo/kuronan-dash/internal/view"
 )
 
-const (
-	// ScreenWidth is the width of scenes.
-	ScreenWidth = 1280
-	// ScreenHeight is the heigt of scenes.
-	ScreenHeight = 720
-
-	transitionMaxCount = 20
-)
+const transitionMaxCount = 20
 
 // SceneManager manages all scenes.
 type SceneManager struct {
@@ -30,11 +24,11 @@ type SceneManager struct {
 func NewSceneManager() (*SceneManager, error) {
 	sm := &SceneManager{}
 	var err error
-	sm.transitionFrom, err = ebiten.NewImage(ScreenWidth, ScreenHeight, ebiten.FilterDefault)
+	sm.transitionFrom, err = ebiten.NewImage(view.ScreenWidth, view.ScreenHeight, ebiten.FilterDefault)
 	if err != nil {
 		return nil, err
 	}
-	sm.transitionTo, err = ebiten.NewImage(ScreenWidth, ScreenHeight, ebiten.FilterDefault)
+	sm.transitionTo, err = ebiten.NewImage(view.ScreenWidth, view.ScreenHeight, ebiten.FilterDefault)
 	if err != nil {
 		return nil, err
 	}

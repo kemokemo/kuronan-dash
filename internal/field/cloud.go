@@ -20,7 +20,7 @@ func (c *Cloud) Initialize(img *ebiten.Image, pos view.Position) {
 	c.Image = img
 	c.pos = pos
 	c.view = view.Viewport{}
-	c.view.SetSize(1280, 768)
+	c.view.SetSize(view.ScreenWidth, view.ScreenHeight)
 }
 
 // SetSpeed sets the speed to scroll.
