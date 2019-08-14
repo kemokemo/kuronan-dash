@@ -15,7 +15,7 @@ type PrairieField struct {
 	bg   *ebiten.Image
 	tile *ebiten.Image
 
-	prairies      []Prairie
+	grasses       []Grass
 	mountainsNear []Mountain
 	mountainsFar  []Mountain
 	cloudsNear    []Cloud
@@ -29,7 +29,7 @@ type PrairieField struct {
 func (p *PrairieField) Initialize() {
 	p.bg = images.SkyBackground
 
-	p.createPrairies()
+	p.createGrasses()
 	p.createMountains()
 	p.createClouds()
 
@@ -39,25 +39,59 @@ func (p *PrairieField) Initialize() {
 	p.viewPrairie.SetVelocity(2.0)
 }
 
-const prairieNum = 3
+const prairieNum = 10
 
-func (p *PrairieField) createPrairies() {
-	rand.Seed(time.Now().UnixNano())
-
-	wP, hP := images.Prairies.Size()
+func (p *PrairieField) createGrasses() {
 	_, hT := images.TilePrairie.Size()
+
+	rand.Seed(time.Now().UnixNano())
+	_, hP := images.Grass1.Size()
 	for _, h := range LaneHeights {
 		for index := 0; index < prairieNum; index++ {
-			pr := Prairie{}
+			pr := Grass{}
 			r := rand.Float32()
-			pr.Initialize(images.Prairies,
+			pr.Initialize(images.Grass1,
 				view.Position{
-					X: wP*index + int(1000*r),
+					X: (index+1)*600 + int(2000*r),
 					Y: h - hP + hT,
 				},
 				1.8,
 			)
-			p.prairies = append(p.prairies, pr)
+			p.grasses = append(p.grasses, pr)
+		}
+	}
+
+	rand.Seed(time.Now().UnixNano())
+	_, hP = images.Grass2.Size()
+	for _, h := range LaneHeights {
+		for index := 0; index < prairieNum; index++ {
+			pr := Grass{}
+			r := rand.Float32()
+			pr.Initialize(images.Grass2,
+				view.Position{
+					X: (index+1)*200 + int(1300*r),
+					Y: h - hP + hT,
+				},
+				1.8,
+			)
+			p.grasses = append(p.grasses, pr)
+		}
+	}
+
+	rand.Seed(time.Now().UnixNano())
+	_, hP = images.Grass3.Size()
+	for _, h := range LaneHeights {
+		for index := 0; index < prairieNum; index++ {
+			pr := Grass{}
+			r := rand.Float32()
+			pr.Initialize(images.Grass3,
+				view.Position{
+					X: (index+1)*900 + int(3000*r),
+					Y: h - hP + hT,
+				},
+				1.8,
+			)
+			p.grasses = append(p.grasses, pr)
 		}
 	}
 }
@@ -146,8 +180,8 @@ func (p *PrairieField) createClouds() {
 // SetScrollSpeed sets the speed to scroll.
 func (p *PrairieField) SetScrollSpeed(speed ScrollSpeed) {
 	p.speed = speed
-	for i := range p.prairies {
-		p.prairies[i].SetSpeed(speed)
+	for i := range p.grasses {
+		p.grasses[i].SetSpeed(speed)
 	}
 	for i := range p.mountainsNear {
 		p.mountainsNear[i].SetSpeed(speed)
@@ -173,8 +207,8 @@ func (p *PrairieField) Update() {
 	}
 	p.viewPrairie.Move(view.Left)
 
-	for i := range p.prairies {
-		p.prairies[i].Update()
+	for i := range p.grasses {
+		p.grasses[i].Update()
 	}
 	for i := range p.mountainsNear {
 		p.mountainsNear[i].Update()
@@ -229,8 +263,8 @@ func (p *PrairieField) Draw(screen *ebiten.Image) error {
 		}
 	}
 	/// 近くの草むら
-	for i := range p.prairies {
-		err := p.prairies[i].Draw(screen)
+	for i := range p.grasses {
+		err := p.grasses[i].Draw(screen)
 		if err != nil {
 			return fmt.Errorf("failed to draw prairies,%v", err)
 		}

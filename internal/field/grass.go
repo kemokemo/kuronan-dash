@@ -5,8 +5,8 @@ import (
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
 
-// Prairie is the Prairie parts to move and draw.
-type Prairie struct {
+// Grass is the Grass parts to move and draw.
+type Grass struct {
 	Image *ebiten.Image
 
 	pos   view.Position
@@ -17,7 +17,7 @@ type Prairie struct {
 
 // Initialize initializes this cloud with a image and the initial position.
 // The v0 argument is the initial scroll speed for the Normal speed.
-func (p *Prairie) Initialize(img *ebiten.Image, pos view.Position, v0 float32) {
+func (p *Grass) Initialize(img *ebiten.Image, pos view.Position, v0 float32) {
 	p.Image = img
 	p.pos = pos
 	p.v0 = v0
@@ -26,12 +26,12 @@ func (p *Prairie) Initialize(img *ebiten.Image, pos view.Position, v0 float32) {
 }
 
 // SetSpeed sets the speed to scroll.
-func (p *Prairie) SetSpeed(speed ScrollSpeed) {
+func (p *Grass) SetSpeed(speed ScrollSpeed) {
 	p.speed = speed
 }
 
 // Update updates the position of this cloud according to the spped.
-func (p *Prairie) Update() {
+func (p *Grass) Update() {
 	switch p.speed {
 	case Normal:
 		p.view.SetVelocity(p.v0)
@@ -43,7 +43,7 @@ func (p *Prairie) Update() {
 }
 
 // Draw draws this cloud.
-func (p *Prairie) Draw(screen *ebiten.Image) error {
+func (p *Grass) Draw(screen *ebiten.Image) error {
 	op := &ebiten.DrawImageOptions{}
 	x16, y16 := p.view.Position()
 	offsetX, offsetY := float64(x16)/16, float64(y16)/16

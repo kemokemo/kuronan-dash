@@ -7,7 +7,15 @@ func loadFieldparts() error {
 	if err != nil {
 		return err
 	}
-	Prairies, err = loadSingleImage(prairies_png)
+	Grass1, err = loadSingleImage(grass1_png)
+	if err != nil {
+		return err
+	}
+	Grass2, err = loadSingleImage(grass2_png)
+	if err != nil {
+		return err
+	}
+	Grass3, err = loadSingleImage(grass3_png)
 	if err != nil {
 		return err
 	}
