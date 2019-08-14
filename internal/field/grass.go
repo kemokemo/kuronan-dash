@@ -22,7 +22,7 @@ func (p *Grass) Initialize(img *ebiten.Image, pos view.Position, v0 float32) {
 	p.pos = pos
 	p.v0 = v0
 	p.view = view.Viewport{}
-	p.view.SetSize(1280, 768)
+	p.view.SetSize(view.ScreenWidth, view.ScreenHeight)
 }
 
 // SetSpeed sets the speed to scroll.

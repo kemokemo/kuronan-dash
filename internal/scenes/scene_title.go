@@ -12,6 +12,7 @@ import (
 	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/assets/music"
 	"github.com/kemokemo/kuronan-dash/internal/input"
+	"github.com/kemokemo/kuronan-dash/internal/view"
 )
 
 // TitleScene is the scene for title.
@@ -45,7 +46,7 @@ func (s *TitleScene) Draw(r *ebiten.Image) error {
 	op := &ebiten.DrawImageOptions{}
 	r.DrawImage(s.bg, op)
 	text.Draw(r, "黒菜んダッシュ", mplus.Gothic12r, 10, 32, color.Black)
-	text.Draw(r, "Spaceを押して始めよう!", mplus.Gothic12r, 10, ScreenHeight-48, color.Black)
+	text.Draw(r, "Spaceを押して始めよう!", mplus.Gothic12r, 10, view.ScreenHeight-48, color.Black)
 	return nil
 }
 

@@ -22,7 +22,7 @@ func (m *Mountain) Initialize(img *ebiten.Image, pos view.Position, v0 float32) 
 	m.pos = pos
 	m.v0 = v0
 	m.view = view.Viewport{}
-	m.view.SetSize(1280, 768)
+	m.view.SetSize(view.ScreenWidth, view.ScreenHeight)
 }
 
 // SetSpeed sets the speed to scroll.
