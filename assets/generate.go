@@ -22,6 +22,8 @@ package assets
 //go:generate file2byteslice -package=images -input=../_assets/images/koma_01.png -output=./images/koma_01.go -var=koma_01_png
 //go:generate file2byteslice -package=images -input=../_assets/images/koma_02.png -output=./images/koma_02.go -var=koma_02_png
 //go:generate file2byteslice -package=images -input=../_assets/images/koma_03.png -output=./images/koma_03.go -var=koma_03_png
+//go:generate file2byteslice -package=images -input=../_assets/images/koma_04.png -output=./images/koma_04.go -var=koma_04_png
+//go:generate file2byteslice -package=images -input=../_assets/images/koma_05.png -output=./images/koma_05.go -var=koma_05_png
 
 //  - Shishimaru
 //go:generate file2byteslice -package=images -input=../_assets/images/shishimaru_taiki.png -output=./images/shishimaru_taiki.go -var=shishimaru_taiki_png
