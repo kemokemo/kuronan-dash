@@ -24,6 +24,8 @@ var (
 		bytes.NewReader(koma_01_png),
 		bytes.NewReader(koma_02_png),
 		bytes.NewReader(koma_03_png),
+		bytes.NewReader(koma_04_png),
+		bytes.NewReader(koma_05_png),
 	}
 
 	shishimaruFrames = []*bytes.Reader{
