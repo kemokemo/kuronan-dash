@@ -16,6 +16,9 @@ var (
 
 	// GamerFontL is the large size font of the strong gamer font.
 	GamerFontL font.Face
+
+	// GamerFontLL is the extra large size font of the strong gamer font.
+	GamerFontLL font.Face
 )
 
 // LoadFonts loads the fonts data.
@@ -38,6 +41,11 @@ func LoadFonts() error {
 	})
 	GamerFontL = truetype.NewFace(tt, &truetype.Options{
 		Size:    36,
+		DPI:     dpi,
+		Hinting: font.HintingFull,
+	})
+	GamerFontLL = truetype.NewFace(tt, &truetype.Options{
+		Size:    60,
 		DPI:     dpi,
 		Hinting: font.HintingFull,
 	})
