@@ -35,13 +35,13 @@ func LoadMusic() error {
 	if err != nil {
 		return err
 	}
-	Title = &Disc{Name: "渋垣の黒猫", player: p}
+	Title = &Disc{Name: "しぶがき の くろねこ", player: p}
 
 	p, err = loadPlayer(hashire_kurona_mp3)
 	if err != nil {
 		return err
 	}
-	Stage01 = &Disc{Name: "走れ！黒菜！", player: p}
+	Stage01 = &Disc{Name: "はしれ! くろな!", player: p}
 
 	return nil
 }

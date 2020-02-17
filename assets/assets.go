@@ -3,6 +3,7 @@ package assets
 import (
 	"fmt"
 
+	"github.com/kemokemo/kuronan-dash/assets/fonts"
 	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/assets/music"
 	"github.com/kemokemo/kuronan-dash/assets/se"
@@ -28,6 +29,11 @@ func LoadAssets() error {
 	}
 
 	err = se.LoadSE()
+	if err != nil {
+		return err
+	}
+
+	err = fonts.LoadFonts()
 	if err != nil {
 		return err
 	}

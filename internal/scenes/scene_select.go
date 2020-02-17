@@ -9,9 +9,9 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"github.com/hajimehoshi/ebiten/text"
-	mplus "github.com/hajimehoshi/go-mplusbitmap"
 	"golang.org/x/image/font"
 
+	"github.com/kemokemo/kuronan-dash/assets/fonts"
 	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/assets/music"
 	chara "github.com/kemokemo/kuronan-dash/internal/character"
@@ -22,11 +22,11 @@ import (
 
 const (
 	frameWidth    = 5
-	margin        = 20
+	margin        = 30
 	scale         = 2
-	windowSpacing = 15
+	windowSpacing = 20
 	windowMargin  = 20
-	fontSize      = 12
+	fontSize      = 20
 	lineSpacing   = 2
 )
 
@@ -76,7 +76,7 @@ func (s *SelectScene) Initialize() error {
 		}
 		s.windowList[i] = win
 	}
-	s.fontNormal = mplus.Gothic12r
+	s.fontNormal = fonts.GamerFontM
 
 	return nil
 }
@@ -119,8 +119,8 @@ func (s *SelectScene) Draw(screen *ebiten.Image) error {
 		return fmt.Errorf("failed to draw the select screen background,%v", err)
 	}
 
-	text.Draw(screen, "← → のカーソルキーでキャラクターを選んでSpaceキーを押してね！",
-		mplus.Gothic12r, windowMargin, windowMargin, color.Black)
+	text.Draw(screen, "さゆう の カーソルキー で キャラクター を えらんで スペースキー を おしてね！",
+		fonts.GamerFontM, windowMargin, windowMargin+5, color.Black)
 
 	s.drawWindows(screen)
 

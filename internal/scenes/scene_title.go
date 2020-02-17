@@ -7,8 +7,8 @@ import (
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/text"
-	mplus "github.com/hajimehoshi/go-mplusbitmap"
 
+	"github.com/kemokemo/kuronan-dash/assets/fonts"
 	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/assets/music"
 	"github.com/kemokemo/kuronan-dash/internal/input"
@@ -17,14 +17,22 @@ import (
 
 // TitleScene is the scene for title.
 type TitleScene struct {
-	bg   *ebiten.Image
-	disc *music.Disc
+	bg       *ebiten.Image
+	disc     *music.Disc
+	titlePos view.Position
+	msgPos   view.Position
 }
 
 // Initialize initializes all resources.
 func (s *TitleScene) Initialize() error {
 	s.bg = images.TitleBackground
 	s.disc = music.Title
+	s.titlePos = view.Position{
+		X: int(view.ScreenWidth/2) - 200,
+		Y: 80}
+	s.msgPos = view.Position{
+		X: int(view.ScreenWidth/2) - 170,
+		Y: int(view.ScreenHeight/2) - 48}
 	return nil
 }
 
@@ -45,8 +53,8 @@ func (s *TitleScene) Update(state *GameState) error {
 func (s *TitleScene) Draw(r *ebiten.Image) error {
 	op := &ebiten.DrawImageOptions{}
 	r.DrawImage(s.bg, op)
-	text.Draw(r, "黒菜んダッシュ", mplus.Gothic12r, 10, 32, color.Black)
-	text.Draw(r, "Spaceを押して始めよう!", mplus.Gothic12r, 10, view.ScreenHeight-48, color.Black)
+	text.Draw(r, "くろなんダッシュ", fonts.GamerFontLL, s.titlePos.X, s.titlePos.Y, color.Black)
+	text.Draw(r, "Space をおして はじめよう!", fonts.GamerFontM, s.msgPos.X, s.msgPos.Y, color.Black)
 	return nil
 }
 
