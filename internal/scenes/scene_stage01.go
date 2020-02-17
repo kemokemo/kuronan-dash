@@ -8,8 +8,9 @@ import (
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/text"
-	mplus "github.com/hajimehoshi/go-mplusbitmap"
 
+	"github.com/kemokemo/kuronan-dash/assets/fonts"
+	"github.com/kemokemo/kuronan-dash/assets/messages"
 	"github.com/kemokemo/kuronan-dash/assets/music"
 
 	chara "github.com/kemokemo/kuronan-dash/internal/character"
@@ -91,7 +92,7 @@ func (s *Stage01Scene) Draw(screen *ebiten.Image) error {
 	}
 
 	text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
-		mplus.Gothic12r, 12, 15, color.White)
+		fonts.GamerFontS, 12, 15, color.White)
 
 	s.drawWithState(screen)
 	// TODO: 衝突判定とSE再生
@@ -105,11 +106,11 @@ func (s *Stage01Scene) Draw(screen *ebiten.Image) error {
 func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 	switch s.state {
 	case wait:
-		text.Draw(screen, "Spaceキーを押してゲームを開始してね！", mplus.Gothic12r, view.ScreenWidth/2-100, view.ScreenHeight/2, color.White)
+		text.Draw(screen, messages.GameStart, fonts.GamerFontL, view.ScreenWidth/2-250, view.ScreenHeight/2, color.White)
 	case pause:
-		text.Draw(screen, "一時停止中だよ！", mplus.Gothic12r, view.ScreenWidth/2-100, view.ScreenHeight/2, color.White)
+		text.Draw(screen, messages.GamePause, fonts.GamerFontL, view.ScreenWidth/2-150, view.ScreenHeight/2, color.White)
 	case gameover:
-		text.Draw(screen, "ゲームオーバー！Spaceを押してタイトルへ戻ってね！", mplus.Gothic12r, view.ScreenWidth/2-100, view.ScreenHeight/2, color.White)
+		text.Draw(screen, messages.GameOver, fonts.GamerFontL, view.ScreenWidth/2-420, view.ScreenHeight/2, color.White)
 	default:
 		// nothing to draw
 	}

@@ -1,5 +1,6 @@
 package messages
 
+// Description for each chacters
 const (
 	// DescKurona is the description for the Kurona
 	DescKurona = "このゲーム の しゅじんこう。いつもげんきいっぱいな しぶがき の アイドル。みんなともだち。かみなり が にがて。"
