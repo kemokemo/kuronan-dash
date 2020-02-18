@@ -2,15 +2,26 @@
 git:
   short_hash: true
 builds:
+  - env:
+    - CGO_ENABLED=0
   - main: ./
-    binary: kuronandash
+    binary: KuronanDash
     goos:
       - windows
       - darwin
       - linux
-      - freebsd
     goarch:
       - amd64
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
 # Archive customization
 archive:
   format: tar.gz
@@ -18,11 +29,10 @@ archive:
     - goos: windows
       format: zip
   replacements:
-    amd64: 64bit
+    amd64: x86_64
     windows: Windows
     darwin: macOS
     linux: Linux
-    freebsd: FreeBSD
   files:
     - LICENSE
     - README.md
