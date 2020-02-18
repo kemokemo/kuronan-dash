@@ -1,9 +1,4 @@
-# Build customization
-git:
-  short_hash: true
 builds:
-  - env:
-    - CGO_ENABLED=0
   - main: ./
     binary: KuronanDash
     goos:
@@ -12,27 +7,30 @@ builds:
       - linux
     goarch:
       - amd64
-checksum:
-  name_template: 'checksums.txt'
+    env:
+      - CGO_ENABLED=0
+
 snapshot:
   name_template: "{{ .Tag }}-next"
+
 changelog:
   sort: asc
   filters:
     exclude:
       - '^docs:'
       - '^test:'
-# Archive customization
-archive:
-  format: tar.gz
-  format_overrides:
-    - goos: windows
-      format: zip
-  replacements:
-    amd64: x86_64
-    windows: Windows
-    darwin: macOS
-    linux: Linux
-  files:
-    - LICENSE
-    - README.md
+
+archives:
+  - format: zip
+    replacements:
+      amd64: 64-bit
+      386: 32-bit
+      windows: Windows
+      darwin: macOS
+      linux: Linux
+    files:
+      - LICENSE
+      - README.md
+checksum:
+  name_template: "{{ .ProjectName }}_{{ .Version }}_checksums.txt"
+  algorithm: sha256
