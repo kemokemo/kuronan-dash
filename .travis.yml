@@ -12,6 +12,7 @@ addons:
 
 before_install:
   - go get -v golang.org/x/lint/golint
+  - export DISPLAY=:99.0
 
 jobs:
   include:
