@@ -1,5 +1,9 @@
 language: go
 
+os:
+  - linux
+  - osx
+
 go:
   - 1.13.x
 
@@ -19,16 +23,23 @@ services:
 
 jobs:
   include:
-    - stage: go info
-      script: go version && go env
     - stage: lint and test
       name: check by golint
       script: golint ./...
+      if: os = linux
     - name: check by go vet
       script: go vet ./...
+      if: os = linux
     - name: test
       script: go test -v -cover ./...
+      if: os = linux
     - stage: build
-      script: CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 cc=clang go build -o kuronan-dash_macOS_amd64
-    - script: CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build -o kuronan-dash_windows_amd64.exe
-    - script: CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o kuronan-dash_linux_amd64
+      name: build darwin on osx
+      script: CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build -o kuronan-dash_macOS_amd64
+      if: os = osx
+    - name: build windows on linux 
+      script: CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build -o kuronan-dash_windows_amd64.exe
+      if: os = linux
+    - name: build linux on linux
+      script: CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o kuronan-dash_linux_amd64
+      if: os = linux
