@@ -19,6 +19,8 @@ services:
 
 jobs:
   include:
+    - stage: go info
+      script: go version && go env
     - stage: lint and test
       name: check by golint
       script: golint ./...
@@ -27,6 +29,6 @@ jobs:
     - name: test
       script: go test -v -cover ./...
     - stage: build
-      script: CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build -o kuronan-dash_macOS_amd64
+      script: CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 cc=clang go build -o kuronan-dash_macOS_amd64
     - script: CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build -o kuronan-dash_windows_amd64.exe
     - script: CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o kuronan-dash_linux_amd64
