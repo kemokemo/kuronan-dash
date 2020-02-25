@@ -1,19 +1,45 @@
 language: go
-sudo: true
 go:
-  - "1.13"
+- 1.13.x
+addons:
+  apt:
+    packages:
+    - libgl1-mesa-dev
+    - xorg-dev
+    - libasound2-dev
+services:
+- xvfb
 before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install libgl1-mesa-dev xorg-dev libasound2-dev
-script:
-  - go vet ./...
-after_success:
-  - test -n "$TRAVIS_TAG" && curl -sL https://git.io/goreleaser | bash
+- go get -v golang.org/x/lint/golint
+- export DISPLAY=:99.0
+
+jobs:
+  include:
+  - stage: lint and test
+    os: linux
+    script:
+    - golint ./...
+    - go vet ./...
+    - go test -v -cover ./...
+  - stage: build for windows and linux
+    script:
+    - mkdir release
+    - CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build -o release/kuronan-dash_windows_amd64.exe
+    - CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o release/kuronan-dash_linux_amd64
+  - stage: build for macOS
+    os: osx
+    osx_image: xcode11.3
+    script:
+    - mkdir release
+    - CGO_ENABLED=1 go build -o release/kuronan-dash_macOS_amd64
 
 deploy:
-  - provider: script
-    skip_cleanup: true
-    script: curl -sL https://git.io/goreleaser | bash
-    on:
-      tags: true
-      condition: $TRAVIS_OS_NAME = linux
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: XxZBWakGpFq6bTJMifNXBNRoG8GwcFx88mjdbpt537tStCZXQKS0kxMJ8Q0ma1ET0ciTz1ZFNb8hJyejJfwkGJ83LY3hvxwTo8+okKoB44CZiASwJw9w+x7NS65hzkMiyoqiUhWcd8lyc9ghCsu9/7yjiYH0kmogOYuMjZsNuXlaE+EZ8xuzceNfxQ1nJpt4loHWojoHNaNF7aSSTnsdfsPKQX7F2gFsR/eX5kIblJz8iiQLvMNnbmqOxjsIL+VBf/Qa2JEFrp3BmKNltZnQfU6UOTZXh0dENzFyzdGZi9Yy/hWbfvQnc5HVX/nOFM/9jAym9x5hyXfiIuWrqOWwjYlBVQMQLXjHVWuFWpyq8fbQl1J2Sc4AtRppgIkpp6W3hYomLZpZ51dSOUljcF6eYjy1LEs6ZFbg0tHcQ8l/RpgIf7VOknJrlD/a0bCn3/NRmX1X5Q2+8s4hWBjKFxZMvo2T3ZefmTT73X4Sj71G20buFc6dp7jcufRy3SX7lMrw2ZZllLFAwILvyHHTZ7Xk/g/tao9mPVPUzMvGBB3L/+j50yJkQXniU5Gd1PGx3dOP6az9v+/yCIgik8MgqJV2H8Ng8MhjBuwm0GxqMrkVojGosMOZipKDurbuUsT5G2b04SLoeJugV2jmuB+s9xHyLInf9bb/lfuknLW9WI5UtOU=
+  file_glob: true
+  file: release/*
+  on:
+    tags: true
+    repo: kemokemo/try-ebiten-with-travis
