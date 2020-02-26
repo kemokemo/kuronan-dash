@@ -12,7 +12,6 @@ services:
 before_install:
 - go get -v golang.org/x/lint/golint
 - export DISPLAY=:99.0
-
 jobs:
   include:
   - stage: lint and test
@@ -32,14 +31,13 @@ jobs:
     script:
     - mkdir release
     - CGO_ENABLED=1 go build -o release/kuronan-dash_macOS_amd64
-
 deploy:
   provider: releases
   skip_cleanup: true
   api_key:
-    secure: XxZBWakGpFq6bTJMifNXBNRoG8GwcFx88mjdbpt537tStCZXQKS0kxMJ8Q0ma1ET0ciTz1ZFNb8hJyejJfwkGJ83LY3hvxwTo8+okKoB44CZiASwJw9w+x7NS65hzkMiyoqiUhWcd8lyc9ghCsu9/7yjiYH0kmogOYuMjZsNuXlaE+EZ8xuzceNfxQ1nJpt4loHWojoHNaNF7aSSTnsdfsPKQX7F2gFsR/eX5kIblJz8iiQLvMNnbmqOxjsIL+VBf/Qa2JEFrp3BmKNltZnQfU6UOTZXh0dENzFyzdGZi9Yy/hWbfvQnc5HVX/nOFM/9jAym9x5hyXfiIuWrqOWwjYlBVQMQLXjHVWuFWpyq8fbQl1J2Sc4AtRppgIkpp6W3hYomLZpZ51dSOUljcF6eYjy1LEs6ZFbg0tHcQ8l/RpgIf7VOknJrlD/a0bCn3/NRmX1X5Q2+8s4hWBjKFxZMvo2T3ZefmTT73X4Sj71G20buFc6dp7jcufRy3SX7lMrw2ZZllLFAwILvyHHTZ7Xk/g/tao9mPVPUzMvGBB3L/+j50yJkQXniU5Gd1PGx3dOP6az9v+/yCIgik8MgqJV2H8Ng8MhjBuwm0GxqMrkVojGosMOZipKDurbuUsT5G2b04SLoeJugV2jmuB+s9xHyLInf9bb/lfuknLW9WI5UtOU=
+    secure: e0qT1neTUtV/A5QiDec5spZ2u5buLPai1mya+RndLZIPBpAAyubHlJjfmUIttvemxgBbqFrqcnDeBdm5ctqIQA4EXh63e3eZOYt/uEzffUwYET4IWoC//G4imqQ3vuA9d1Qt8HcT0Bj4pxgql5ExV/MqhMYIKAjXYy3lb8AHEMXEduGi2yoIZC2Su89J99EbXpHK7rsZOpfixVUCwPW8jtyu3Ow7CpAjJDhQOsyKei49HTAj4sdl4yWrQM7fbO9ig0EFnCGTIwH2Yy3x9B1V1U7cm20wC5A3UCOC4fHBqzOBuF85v+Cc9ZURI8vMXenSzrdjSNIu1yVSdZaZk5V5qHc+es3pLbdXP0ajBeL3cz+9LtE+nkkVNPxnwnmKhrAcV4UxE7xtNLmkm/S45JrANnpRegYrSgLo2RR/8cneaU8BC3U66SRuyzjOVnGZQpL5eNjvOYOmvQPmDKvvRVBiNCuCP/vCXPpEEy9WoLuy7D0uELP6e9YF9cNkItxyVXMnRvJknq4qv74v8nghLYi41D5mC+Xl9o+EqyTq5vB6WvnobNY63eNZRL3x53dj3kAo9KkmzCmFovyHZurxuldEJBPOvZKfrvI3M/5NnWenneo7nOLp8CB4ERH3sFLu7cfGNzxxpNhVTrknY1LsrLKT6PsoqsvgVxqrw8rDIIA4Zhs=
   file_glob: true
   file: release/*
   on:
     tags: true
-    repo: kemokemo/try-ebiten-with-travis
+    repo: kemokemo/kuronan-dash
