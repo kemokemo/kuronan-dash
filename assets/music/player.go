@@ -6,9 +6,10 @@ import (
 )
 
 func loadPlayer(b []byte) (*audio.Player, error) {
-	s, err := mp3.Decode(AudioContext, audio.BytesReadSeekCloser(b))
+	m, err := mp3.Decode(AudioContext, audio.BytesReadSeekCloser(b))
 	if err != nil {
 		return nil, err
 	}
+	s := audio.NewInfiniteLoop(m, m.Length())
 	return audio.NewPlayer(AudioContext, s)
 }
