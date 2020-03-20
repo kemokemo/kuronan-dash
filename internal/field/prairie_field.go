@@ -2,8 +2,6 @@ package field
 
 import (
 	"fmt"
-	"math/rand"
-	"time"
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/kemokemo/kuronan-dash/assets/images"
@@ -12,267 +10,117 @@ import (
 
 // PrairieField is the field of prairie.
 type PrairieField struct {
-	bg   *ebiten.Image
-	tile *ebiten.Image
+	bg           *ebiten.Image
+	tile         *ebiten.Image
+	fartherParts []ScrollableObject
+	closerParts  []ScrollableObject
 
-	grasses       []Grass
-	mountainsNear []Mountain
-	mountainsFar  []Mountain
-	cloudsNear    []Cloud
-	cloudsFar     []Cloud
-
-	speed       ScrollSpeed
-	viewPrairie view.RotateViewport
+	viewLane view.RotateViewport
 }
 
 // Initialize initializes all resources to draw.
 func (p *PrairieField) Initialize() {
 	p.bg = images.SkyBackground
 
-	p.createGrasses()
-	p.createMountains()
-	p.createClouds()
+	p.createFartherParts()
+	p.createCloserParts()
 
 	p.tile = images.TilePrairie
-	p.viewPrairie = view.RotateViewport{}
-	p.viewPrairie.SetSize(p.tile.Size())
-	p.viewPrairie.SetVelocity(2.0)
+	p.viewLane = view.RotateViewport{}
+	p.viewLane.SetSize(p.tile.Size())
+	p.viewLane.SetVelocity(2.0)
 }
 
-const prairieNum = 10
-
-func (p *PrairieField) createGrasses() {
-	_, hT := images.TilePrairie.Size()
-
-	rand.Seed(time.Now().UnixNano())
-	_, hP := images.Grass1.Size()
-	for _, h := range LaneHeights {
-		for index := 0; index < prairieNum; index++ {
-			pr := Grass{}
-			r := rand.Float32()
-			pr.Initialize(images.Grass1,
-				view.Position{
-					X: (index+1)*600 + int(2000*r),
-					Y: h - hP + hT,
-				},
-				1.8,
-			)
-			p.grasses = append(p.grasses, pr)
-		}
+func (p *PrairieField) createFartherParts() {
+	assets := []struct {
+		img        *ebiten.Image
+		num        int
+		param1     int
+		param2     int
+		vel        view.Vector
+		moreRandom bool
+	}{
+		{images.MountainFar, 3, 1280, 500, view.Vector{X: -0.5, Y: 0.0}, false},
+		{images.CloudFar, 10, 2000, 2000, view.Vector{X: -1.7, Y: 0.0}, true},
+		{images.MountainNear, 3, 518, 500, view.Vector{X: -1.0, Y: 0.0}, false},
+		{images.CloudNear, 10, 5000, 3000, view.Vector{X: -3.5, Y: 0.0}, true},
+		{images.Grass1, 10, 600, 2000, view.Vector{X: -1.8, Y: 0.0}, false},
+		{images.Grass3, 10, 900, 3000, view.Vector{X: -1.1, Y: 0.0}, false},
 	}
 
-	rand.Seed(time.Now().UnixNano())
-	_, hP = images.Grass2.Size()
-	for _, h := range LaneHeights {
-		for index := 0; index < prairieNum; index++ {
-			pr := Grass{}
-			r := rand.Float32()
-			pr.Initialize(images.Grass2,
-				view.Position{
-					X: (index+1)*200 + int(1300*r),
-					Y: h - hP + hT,
-				},
-				1.8,
-			)
-			p.grasses = append(p.grasses, pr)
-		}
-	}
-
-	rand.Seed(time.Now().UnixNano())
-	_, hP = images.Grass3.Size()
-	for _, h := range LaneHeights {
-		for index := 0; index < prairieNum; index++ {
-			pr := Grass{}
-			r := rand.Float32()
-			pr.Initialize(images.Grass3,
-				view.Position{
-					X: (index+1)*900 + int(3000*r),
-					Y: h - hP + hT,
-				},
-				1.8,
-			)
-			p.grasses = append(p.grasses, pr)
-		}
+	for _, asset := range assets {
+		array := create(asset.img, asset.num, asset.param1, asset.param2, asset.vel, asset.moreRandom)
+		p.fartherParts = append(p.fartherParts, array...)
 	}
 }
 
-const mountNum = 3
-
-func (p *PrairieField) createMountains() {
-	rand.Seed(time.Now().UnixNano())
-
-	wMt, hMt := images.MountainNear.Size()
-	_, hT := images.TilePrairie.Size()
-	for _, h := range LaneHeights {
-		for index := 0; index < cloudNum; index++ {
-			m := Mountain{}
-			r := rand.Float32()
-			m.Initialize(images.MountainNear,
-				view.Position{
-					X: wMt*index + int(500*r),
-					Y: h - hMt + hT,
-				},
-				1.0,
-			)
-			p.mountainsNear = append(p.mountainsNear, m)
-		}
+func (p *PrairieField) createCloserParts() {
+	assets := []struct {
+		img        *ebiten.Image
+		num        int
+		param1     int
+		param2     int
+		vel        view.Vector
+		moreRandom bool
+	}{
+		{images.Grass2, 10, 200, 1300, view.Vector{X: -1.4, Y: 0.0}, false},
 	}
 
-	wMt, hMt = images.MountainFar.Size()
-	for _, h := range LaneHeights {
-		for index := 0; index < cloudNum; index++ {
-			m := Mountain{}
-			r := rand.Float32()
-			m.Initialize(images.MountainFar,
-				view.Position{
-					X: wMt*index + int(500*r),
-					Y: h - hMt + hT,
-				},
-				0.5,
-			)
-			p.mountainsFar = append(p.mountainsFar, m)
-		}
-	}
-}
-
-const cloudNum = 10
-
-func (p *PrairieField) createClouds() {
-	rand.Seed(time.Now().UnixNano())
-
-	_, hC := images.CloudNear.Size()
-	for _, h := range LaneHeights {
-		for index := 0; index < cloudNum; index++ {
-			c := Cloud{}
-			r := rand.Float32()
-			c.Initialize(images.CloudNear,
-				view.Position{
-					X: int(200*cloudNum + 2000*r),
-					Y: h - 50 - int(100*r) - hC/2,
-				})
-			c.SetSpeed(Normal)
-
-			r = rand.Float32()
-			c.SetMagnification(r)
-			p.cloudsNear = append(p.cloudsNear, c)
-		}
+	for _, asset := range assets {
+		array := create(asset.img, asset.num, asset.param1, asset.param2, asset.vel, asset.moreRandom)
+		p.closerParts = append(p.closerParts, array...)
 	}
 
-	_, hC = images.CloudFar.Size()
-	for _, h := range LaneHeights {
-		for index := 0; index < cloudNum; index++ {
-			c := Cloud{}
-			r := rand.Float32()
-			c.Initialize(images.CloudFar,
-				view.Position{
-					X: int(500*cloudNum + 3000*r),
-					Y: h - 40 - int(100*r) - hC/2,
-				})
-			c.SetSpeed(Normal)
-
-			r = rand.Float32()
-			c.SetMagnification(r)
-			p.cloudsFar = append(p.cloudsFar, c)
-		}
-	}
-}
-
-// SetScrollSpeed sets the speed to scroll.
-func (p *PrairieField) SetScrollSpeed(speed ScrollSpeed) {
-	p.speed = speed
-	for i := range p.grasses {
-		p.grasses[i].SetSpeed(speed)
-	}
-	for i := range p.mountainsNear {
-		p.mountainsNear[i].SetSpeed(speed)
-	}
-	for i := range p.mountainsFar {
-		p.mountainsFar[i].SetSpeed(speed)
-	}
-	for i := range p.cloudsNear {
-		p.cloudsNear[i].SetSpeed(speed)
-	}
-	for i := range p.cloudsFar {
-		p.cloudsFar[i].SetSpeed(speed)
-	}
 }
 
 // Update moves viewport for the all field parts.
-func (p *PrairieField) Update() {
-	switch p.speed {
-	case Normal:
-		p.viewPrairie.SetVelocity(2.0)
-	case Slow:
-		p.viewPrairie.SetVelocity(1.0)
-	}
-	p.viewPrairie.Move(view.Left)
+func (p *PrairieField) Update(v view.Vector) {
+	p.viewLane.SetVelocity(v.X)
+	p.viewLane.Move(view.Left)
 
-	for i := range p.grasses {
-		p.grasses[i].Update()
+	for i := range p.fartherParts {
+		p.fartherParts[i].Update(v)
 	}
-	for i := range p.mountainsNear {
-		p.mountainsNear[i].Update()
-	}
-	for i := range p.mountainsFar {
-		p.mountainsFar[i].Update()
-	}
-	for i := range p.cloudsNear {
-		p.cloudsNear[i].Update()
-	}
-	for i := range p.cloudsFar {
-		p.cloudsFar[i].Update()
+	for i := range p.closerParts {
+		p.closerParts[i].Update(v)
 	}
 }
 
-// Draw draws the all field parts.
-func (p *PrairieField) Draw(screen *ebiten.Image) error {
+// DrawFarther draws the farther field parts.
+func (p *PrairieField) DrawFarther(screen *ebiten.Image) error {
+	// 背景を描画
 	err := screen.DrawImage(p.bg, &ebiten.DrawImageOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to draw a prairie background,%v", err)
 	}
 
-	// まず遠くの風景を描画
-	/// 遠くの山
-	for i := range p.mountainsFar {
-		err := p.mountainsFar[i].Draw(screen)
-		if err != nil {
-			return fmt.Errorf("failed to draw mountainsFar,%v", err)
-		}
-	}
-	/// 遠くの雲
-	for i := range p.cloudsFar {
-		err := p.cloudsFar[i].Draw(screen)
-		if err != nil {
-			return fmt.Errorf("failed to draw cloudsFar,%v", err)
-		}
-	}
-
-	// つぎに近くの風景を描画
-	/// 近くの山。異なる速度のViewPort情報に切り替え
-	for i := range p.mountainsNear {
-		err := p.mountainsNear[i].Draw(screen)
-		if err != nil {
-			return fmt.Errorf("failed to draw mountainsNear,%v", err)
-		}
-	}
-	/// 近くの雲
-	for i := range p.cloudsNear {
-		err := p.cloudsNear[i].Draw(screen)
+	// 遠くのフィールドパーツを描画
+	for i := range p.fartherParts {
+		err := p.fartherParts[i].Draw(screen)
 		if err != nil {
 			return fmt.Errorf("failed to draw cloudsNear,%v", err)
 		}
 	}
+
+	return nil
+}
+
+// DrawCloser draws the closer field part.
+func (p *PrairieField) DrawCloser(screen *ebiten.Image) error {
+	// プレイヤーよりも手間に配置するフィールドパーツを、遠くから順に描画
+	/// 障害物を描画
+
 	/// 近くの草むら
-	for i := range p.grasses {
-		err := p.grasses[i].Draw(screen)
+	for i := range p.closerParts {
+		err := p.closerParts[i].Draw(screen)
 		if err != nil {
-			return fmt.Errorf("failed to draw prairies,%v", err)
+			return fmt.Errorf("failed to draw cloudsNear,%v", err)
 		}
 	}
 
-	// さいごのレーンを描画
+	// レーンを描画
 	wP, _ := images.TilePrairie.Size()
-	x16, y16 := p.viewPrairie.Position()
+	x16, y16 := p.viewLane.Position()
 	offsetX, offsetY := float64(x16)/16, float64(y16)/16
 	for _, h := range LaneHeights {
 		for i := 0; i < repeat; i++ {

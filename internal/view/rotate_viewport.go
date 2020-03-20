@@ -8,7 +8,7 @@ type RotateViewport struct {
 	y      int
 	maxX16 int
 	maxY16 int
-	v      float32
+	v      float64
 }
 
 // SetSize sets the size of this RotateViewport.
@@ -20,15 +20,15 @@ func (p *RotateViewport) SetSize(w, h int) {
 }
 
 // SetVelocity sets the velocity of this RotateViewport.
-func (p *RotateViewport) SetVelocity(v float32) {
+func (p *RotateViewport) SetVelocity(v float64) {
 	p.v = v
 }
 
 // Move moves the view of this RotateViewport.
 func (p *RotateViewport) Move(d Direction) {
 	x, y := getDirectionValue(d)
-	p.x16 += int(float32(x) * float32(p.x) * p.v / 32.0)
-	p.y16 += int(float32(y) * float32(p.y) * p.v / 32.0)
+	p.x16 += int(float64(x) * float64(p.x) * p.v / 32.0)
+	p.y16 += int(float64(y) * float64(p.y) * p.v / 32.0)
 	p.x16 %= p.maxX16
 	p.y16 %= p.maxY16
 }
