@@ -1,7 +1,6 @@
 package field
 
 import (
-	"fmt"
 	"math/rand"
 	"time"
 
@@ -19,7 +18,7 @@ func generatePoints(hT, hP, num, param1, param2 int) []view.Vector {
 			r := rand.Float64()
 			pos := view.Vector{
 				X: float64((index+1)*param1) + float64(param2)*r,
-				Y: h - float64(hP-hT),
+				Y: h - float64(hP-3),
 			}
 			points = append(points, pos)
 		}
@@ -60,9 +59,7 @@ func create(img *ebiten.Image, num, param1, param2 int, vel view.Vector, moreRan
 		if moreRandom {
 			rand.Seed(time.Now().UnixNano())
 			r := rand.Float64()
-			v := view.Vector{X: vel.X * r, Y: vel.Y}
-			fp.Initialize(img, point, v)
-			fmt.Println("view: ", v)
+			fp.Initialize(img, point, view.Vector{X: vel.X * r, Y: vel.Y})
 		} else {
 			fp.Initialize(img, point, vel)
 		}

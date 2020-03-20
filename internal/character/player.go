@@ -1,11 +1,9 @@
 package character
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/ebitenutil"
 	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/assets/messages"
 	"github.com/kemokemo/kuronan-dash/assets/se"
@@ -172,10 +170,6 @@ func (p *Player) updatePosition() {
 
 // Draw draws the character image.
 func (p *Player) Draw(screen *ebiten.Image) error {
-	// TODO: 状態を出してデバッグするよ
-	ebitenutil.DebugPrint(screen, fmt.Sprintf("Position: %v, State: pre(%v) cur(%v)",
-		p.position, p.previous, p.current))
-
 	// TODO: ダッシュ中とか奥義中とか状態に応じて多少前後しつつ、ほぼ画面中央に描画したい
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(view.ScreenWidth/4, p.position.Y)

@@ -78,7 +78,7 @@ func (s *Stage01Scene) Update(state *GameState) error {
 func (s *Stage01Scene) Draw(screen *ebiten.Image) error {
 	err := s.field.DrawFarther(screen)
 	if err != nil {
-		return fmt.Errorf("failed to draw field parts,%v", err)
+		return fmt.Errorf("failed to draw the farther field parts,%v", err)
 	}
 
 	err = s.player.Draw(screen)
@@ -88,7 +88,7 @@ func (s *Stage01Scene) Draw(screen *ebiten.Image) error {
 
 	err = s.field.DrawCloser(screen)
 	if err != nil {
-		return fmt.Errorf("failed to draw field parts,%v", err)
+		return fmt.Errorf("failed to draw the closer field parts,%v", err)
 	}
 
 	text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),

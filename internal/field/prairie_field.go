@@ -41,9 +41,9 @@ func (p *PrairieField) createFartherParts() {
 		moreRandom bool
 	}{
 		{images.MountainFar, 3, 1280, 500, view.Vector{X: -0.5, Y: 0.0}, false},
-		{images.CloudFar, 10, 2000, 2000, view.Vector{X: -1.7, Y: 0.0}, true},
+		{images.CloudFar, 10, 2000, 2000, view.Vector{X: -16.0, Y: 0.0}, true},
 		{images.MountainNear, 3, 518, 500, view.Vector{X: -1.0, Y: 0.0}, false},
-		{images.CloudNear, 10, 5000, 3000, view.Vector{X: -3.5, Y: 0.0}, true},
+		{images.CloudNear, 10, 5000, 3000, view.Vector{X: -16.0, Y: 0.0}, true},
 		{images.Grass1, 10, 600, 2000, view.Vector{X: -1.8, Y: 0.0}, false},
 		{images.Grass3, 10, 900, 3000, view.Vector{X: -1.1, Y: 0.0}, false},
 	}
@@ -98,23 +98,7 @@ func (p *PrairieField) DrawFarther(screen *ebiten.Image) error {
 	for i := range p.fartherParts {
 		err := p.fartherParts[i].Draw(screen)
 		if err != nil {
-			return fmt.Errorf("failed to draw cloudsNear,%v", err)
-		}
-	}
-
-	return nil
-}
-
-// DrawCloser draws the closer field part.
-func (p *PrairieField) DrawCloser(screen *ebiten.Image) error {
-	// プレイヤーよりも手間に配置するフィールドパーツを、遠くから順に描画
-	/// 障害物を描画
-
-	/// 近くの草むら
-	for i := range p.closerParts {
-		err := p.closerParts[i].Draw(screen)
-		if err != nil {
-			return fmt.Errorf("failed to draw cloudsNear,%v", err)
+			return fmt.Errorf("failed to draw fartherParts,%v", err)
 		}
 	}
 
@@ -133,5 +117,22 @@ func (p *PrairieField) DrawCloser(screen *ebiten.Image) error {
 			}
 		}
 	}
+
+	return nil
+}
+
+// DrawCloser draws the closer field part.
+func (p *PrairieField) DrawCloser(screen *ebiten.Image) error {
+	// プレイヤーよりも手間に配置するフィールドパーツを、遠くから順に描画
+	/// 障害物を描画
+
+	/// 近くの草むら
+	for i := range p.closerParts {
+		err := p.closerParts[i].Draw(screen)
+		if err != nil {
+			return fmt.Errorf("failed to draw closerParts,%v", err)
+		}
+	}
+
 	return nil
 }
