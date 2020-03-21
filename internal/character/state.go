@@ -5,10 +5,9 @@ type State int
 
 // States
 const (
-	Stop State = iota
+	Pause State = iota
 	Walk
 	Dash
 	Ascending
 	Descending
-	Pause
 )

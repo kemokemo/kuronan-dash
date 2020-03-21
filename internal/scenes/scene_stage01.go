@@ -51,18 +51,13 @@ func (s *Stage01Scene) Update(state *GameState) error {
 		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
 			s.state = pause
 			s.player.Pause()
-		} else if s.player.Position.X+50 > view.ScreenWidth-50 && s.state != gameover {
+		} else if s.player.GetPosition().X+50.0 > view.ScreenWidth-50 && s.state != gameover {
 			// TODO: とりあえずゲームオーバーの練習
 			s.state = gameover
-			s.player.Stop()
+			s.player.Pause()
 		} else {
 			s.player.Update()
-			if s.player.GetState() == chara.Dash {
-				s.field.SetScrollSpeed(field.Normal)
-			} else {
-				s.field.SetScrollSpeed(field.Slow)
-			}
-			s.field.Update()
+			s.field.Update(s.player.GetVelocity())
 		}
 	case pause:
 		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
@@ -81,9 +76,9 @@ func (s *Stage01Scene) Update(state *GameState) error {
 
 // Draw draws background and characters.
 func (s *Stage01Scene) Draw(screen *ebiten.Image) error {
-	err := s.field.Draw(screen)
+	err := s.field.DrawFarther(screen)
 	if err != nil {
-		return fmt.Errorf("failed to draw field parts,%v", err)
+		return fmt.Errorf("failed to draw the farther field parts,%v", err)
 	}
 
 	err = s.player.Draw(screen)
@@ -91,8 +86,13 @@ func (s *Stage01Scene) Draw(screen *ebiten.Image) error {
 		return fmt.Errorf("failed to draw a character,%v", err)
 	}
 
+	err = s.field.DrawCloser(screen)
+	if err != nil {
+		return fmt.Errorf("failed to draw the closer field parts,%v", err)
+	}
+
 	text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
-		fonts.GamerFontS, 12, 15, color.White)
+		fonts.GamerFontS, 12, 35, color.White)
 
 	s.drawWithState(screen)
 	// TODO: 衝突判定とSE再生

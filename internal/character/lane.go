@@ -4,7 +4,7 @@ import "fmt"
 
 // Lanes manages the player's lane to run.
 type Lanes struct {
-	heights []int
+	heights []float64
 	max     int
 	current int
 	target  int
@@ -12,7 +12,7 @@ type Lanes struct {
 }
 
 // SetHeights sets the heights of the lanes.
-func (l *Lanes) SetHeights(heights []int) error {
+func (l *Lanes) SetHeights(heights []float64) error {
 	length := len(heights)
 	if length == 0 {
 		return fmt.Errorf("heights is empty")
@@ -62,7 +62,7 @@ func (l *Lanes) Descend() bool {
 }
 
 // IsReachedTarget returns wchich the player reached the target.
-func (l *Lanes) IsReachedTarget(height int) bool {
+func (l *Lanes) IsReachedTarget(height float64) bool {
 	if (l.state == Ascending && l.heights[l.target] >= height) ||
 		(l.state == Descending && l.heights[l.target] <= height) {
 		l.state = Dash

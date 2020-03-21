@@ -50,24 +50,25 @@ func NewPlayers() error {
 
 // Player is a player character.
 type Player struct {
-	Position      view.Position
+	position      view.Vector
 	StandingImage *ebiten.Image
 	Description   string
 	animation     *StepAnimation
 	previous      State
 	current       State
+	velocity      view.Vector
 	lanes         Lanes
 	jumpSe        *se.Player
 }
 
 // SetLanes sets the lanes information.
-func (p *Player) SetLanes(heights []int) error {
+func (p *Player) SetLanes(heights []float64) error {
 	p.lanes = Lanes{}
-	charaHeights := []int{}
+	charaHeights := []float64{}
 	_, h := p.StandingImage.Size()
 
 	for index := 0; index < len(heights); index++ {
-		charaHeights = append(charaHeights, heights[index]-h)
+		charaHeights = append(charaHeights, heights[index]-float64(h))
 	}
 
 	err := p.lanes.SetHeights(charaHeights)
@@ -76,7 +77,7 @@ func (p *Player) SetLanes(heights []int) error {
 	}
 
 	// set the player at the top lane.
-	p.Position = view.Position{X: 10, Y: charaHeights[0]}
+	p.position = view.Vector{X: 10.0, Y: float64(charaHeights[0])}
 
 	return nil
 }
@@ -86,14 +87,11 @@ func (p *Player) Start() {
 	p.current = Dash
 }
 
-// Stop stops this character.
-func (p *Player) Stop() {
-	p.previous = p.current
-	p.current = Stop
-}
-
 // Pause pauses this character.
 func (p *Player) Pause() {
+	if p.current == Pause {
+		return
+	}
 	p.previous = p.current
 	p.current = Pause
 }
@@ -119,11 +117,11 @@ func (p *Player) updateState() {
 	case Pause:
 		return
 	case Ascending:
-		if p.lanes.IsReachedTarget(p.Position.Y) {
+		if p.lanes.IsReachedTarget(p.position.Y) {
 			p.current = p.previous
 		}
 	case Descending:
-		if p.lanes.IsReachedTarget(p.Position.Y) {
+		if p.lanes.IsReachedTarget(p.position.Y) {
 			p.current = p.previous
 		}
 	default:
@@ -149,28 +147,32 @@ func (p *Player) updatePosition() {
 	// todo: 固定値での移動ではなくキャラごと、stateごとの初速度と加速度から算出される速度で移動させる
 	switch p.current {
 	case Walk:
-		p.Position.X++
+		p.velocity.X = 1.0
+		p.velocity.Y = 0.0
 		p.animation.AddStep(1)
 	case Dash:
-		p.Position.X++
+		p.velocity.X = 2.0
+		p.velocity.Y = 0.0
 		p.animation.AddStep(2)
 	case Ascending:
-		p.Position.X++
-		p.Position.Y -= 2
+		p.velocity.X = 1.0
+		p.velocity.Y = -2.0
 		p.animation.AddStep(1)
 	case Descending:
-		p.Position.X++
-		p.Position.Y += 2
+		p.velocity.X = 1.0
+		p.velocity.Y = 2.0
 		p.animation.AddStep(1)
 	default:
 		// Don't move
 	}
+	p.position = p.position.Add(p.velocity)
 }
 
 // Draw draws the character image.
 func (p *Player) Draw(screen *ebiten.Image) error {
+	// TODO: ダッシュ中とか奥義中とか状態に応じて多少前後しつつ、ほぼ画面中央に描画したい
 	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(float64(p.Position.X), float64(p.Position.Y))
+	op.GeoM.Translate(view.ScreenWidth/4, p.position.Y)
 	return screen.DrawImage(p.animation.GetCurrentFrame(), op)
 }
 
@@ -181,9 +183,13 @@ func (p *Player) playSe() error {
 	return nil
 }
 
-// GetState returns the current state of this character.
-func (p *Player) GetState() State {
-	return p.current
+func (p *Player) GetPosition() view.Vector {
+	return p.position
+}
+
+// GetVelocity returns the velocity of this playable character.
+func (p *Player) GetVelocity() view.Vector {
+	return p.velocity
 }
 
 // Close closes the inner resources.

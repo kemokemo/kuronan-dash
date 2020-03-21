@@ -1,23 +1,21 @@
 package field
 
-import "github.com/hajimehoshi/ebiten"
+import (
+	"github.com/hajimehoshi/ebiten"
+	"github.com/kemokemo/kuronan-dash/internal/view"
+)
 
 // Field is the interface to draw the field.
 type Field interface {
+	// Initialize initializes the all of field parts.
 	Initialize()
-	SetScrollSpeed(speed ScrollSpeed)
-	Update()
-	Draw(screen *ebiten.Image) error
+
+	// Update updates the internal state and position with the player's velocity.
+	Update(v view.Vector)
+
+	// DrawFarther draws the field parts farther than the player from the user's point of view.
+	DrawFarther(screen *ebiten.Image) error
+
+	// DrawCloser draws the field parts closer than the player from the user's point of view.
+	DrawCloser(screen *ebiten.Image) error
 }
-
-// lane information to draw
-const repeat = 3
-
-const (
-	firstLaneHeight  = 200
-	secondLaneHeight = firstLaneHeight + 170
-	thirdLaneHeight  = secondLaneHeight + 170
-)
-
-// LaneHeights is the height array to draw lanes.
-var LaneHeights = []int{firstLaneHeight, secondLaneHeight, thirdLaneHeight}
