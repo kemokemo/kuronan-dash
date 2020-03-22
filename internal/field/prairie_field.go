@@ -46,6 +46,7 @@ func (p *PrairieField) createFartherParts() {
 		{images.CloudNear, 10, 5000, 3000, view.Vector{X: -16.0, Y: 0.0}, true},
 		{images.Grass1, 10, 600, 2000, view.Vector{X: -1.8, Y: 0.0}, false},
 		{images.Grass3, 10, 900, 3000, view.Vector{X: -1.1, Y: 0.0}, false},
+		{images.RockNormal, 30, 300, 1000, view.Vector{X: 0.0, Y: 0.0}, false},
 	}
 
 	for _, asset := range assets {
@@ -94,7 +95,7 @@ func (p *PrairieField) DrawFarther(screen *ebiten.Image) error {
 		return fmt.Errorf("failed to draw a prairie background,%v", err)
 	}
 
-	// 遠くのフィールドパーツを描画
+	// レーンよりも遠くかレーン上のパーツを描画
 	for i := range p.fartherParts {
 		err := p.fartherParts[i].Draw(screen)
 		if err != nil {
@@ -123,8 +124,7 @@ func (p *PrairieField) DrawFarther(screen *ebiten.Image) error {
 
 // DrawCloser draws the closer field part.
 func (p *PrairieField) DrawCloser(screen *ebiten.Image) error {
-	// プレイヤーよりも手間に配置するフィールドパーツを、遠くから順に描画
-	/// 障害物を描画
+	// レーンよりも手前のパーツを描画
 
 	/// 近くの草むら
 	for i := range p.closerParts {

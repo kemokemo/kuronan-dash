@@ -45,6 +45,10 @@ package assets
 //go:generate file2byteslice -package=images -input=../_assets/images/cloud_near.png -output=./images/cloud_near.go -var=cloud_near_png
 //go:generate file2byteslice -package=images -input=../_assets/images/cloud_far.png -output=./images/cloud_far.go -var=cloud_far_png
 
+// Obstacles
+//  - Rock
+//go:generate file2byteslice -package=images -input=../_assets/images/rock-normal.png -output=./images/rock_normal.go -var=rock_normal_png
+
 /* package music */
 //go:generate file2byteslice -package=music -input=../_assets/music/shibugaki_no_kuroneko.mp3 -output=./music/shibugaki_no_kuroneko.go -var=shibugaki_no_kuroneko_mp3
 //go:generate file2byteslice -package=music -input=../_assets/music/hashire_kurona.mp3 -output=./music/hashire_kurona.go -var=hashire_kurona_mp3
