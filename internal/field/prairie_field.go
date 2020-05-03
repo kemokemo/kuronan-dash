@@ -14,64 +14,60 @@ type PrairieField struct {
 	tile         *ebiten.Image
 	fartherParts []ScrollableObject
 	closerParts  []ScrollableObject
+	obstacles    []Obstacle
 
-	viewLane view.RotateViewport
+	viewLane view.Viewport
 }
 
 // Initialize initializes all resources to draw.
 func (p *PrairieField) Initialize() {
 	p.bg = images.SkyBackground
 
-	p.createFartherParts()
-	p.createCloserParts()
+	p.createParts()
 
 	p.tile = images.TilePrairie
-	p.viewLane = view.RotateViewport{}
+	p.viewLane = view.Viewport{}
 	p.viewLane.SetSize(p.tile.Size())
 	p.viewLane.SetVelocity(2.0)
+	p.viewLane.SetLoop(true)
 }
 
-func (p *PrairieField) createFartherParts() {
-	assets := []struct {
+// create all field parts to draw.
+func (p *PrairieField) createParts() {
+	// Farther parts
+	type ast struct {
 		img        *ebiten.Image
 		num        int
 		param1     int
 		param2     int
 		vel        view.Vector
 		moreRandom bool
-	}{
+	}
+
+	assets := []ast{
 		{images.MountainFar, 3, 1280, 500, view.Vector{X: -0.5, Y: 0.0}, false},
 		{images.CloudFar, 10, 2000, 2000, view.Vector{X: -16.0, Y: 0.0}, true},
 		{images.MountainNear, 3, 518, 500, view.Vector{X: -1.0, Y: 0.0}, false},
 		{images.CloudNear, 10, 5000, 3000, view.Vector{X: -16.0, Y: 0.0}, true},
 		{images.Grass1, 10, 600, 2000, view.Vector{X: -1.8, Y: 0.0}, false},
 		{images.Grass3, 10, 900, 3000, view.Vector{X: -1.1, Y: 0.0}, false},
-		{images.RockNormal, 30, 300, 1000, view.Vector{X: 0.0, Y: 0.0}, false},
 	}
 
 	for _, asset := range assets {
 		array := create(asset.img, asset.num, asset.param1, asset.param2, asset.vel, asset.moreRandom)
 		p.fartherParts = append(p.fartherParts, array...)
 	}
-}
 
-func (p *PrairieField) createCloserParts() {
-	assets := []struct {
-		img        *ebiten.Image
-		num        int
-		param1     int
-		param2     int
-		vel        view.Vector
-		moreRandom bool
-	}{
-		{images.Grass2, 10, 200, 1300, view.Vector{X: -1.4, Y: 0.0}, false},
+	// Obstacles
+	assets = []ast{
+		{images.RockNormal, 30, 300, 1000, view.Vector{X: 0.0, Y: 0.0}, false},
 	}
 
 	for _, asset := range assets {
 		array := create(asset.img, asset.num, asset.param1, asset.param2, asset.vel, asset.moreRandom)
-		p.closerParts = append(p.closerParts, array...)
+		p.fartherParts = append(p.fartherParts, array...)
+		// TODO: register the obstacle array to check cllision.
 	}
-
 }
 
 // Update moves viewport for the all field parts.
@@ -95,7 +91,7 @@ func (p *PrairieField) DrawFarther(screen *ebiten.Image) error {
 		return fmt.Errorf("failed to draw a prairie background,%v", err)
 	}
 
-	// レーンよりも遠くかレーン上のパーツを描画
+	// レーンよりも遠くのパーツを描画
 	for i := range p.fartherParts {
 		err := p.fartherParts[i].Draw(screen)
 		if err != nil {

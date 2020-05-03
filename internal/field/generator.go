@@ -9,12 +9,12 @@ import (
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
 
-func generatePoints(hT, hP, num, param1, param2 int) []view.Vector {
+func generatePoints(hT, hP, amount, param1, param2 int) []view.Vector {
 	var points []view.Vector
 
 	rand.Seed(time.Now().UnixNano())
 	for _, h := range LaneHeights {
-		for index := 0; index < num; index++ {
+		for index := 0; index < amount; index++ {
 			r := rand.Float64()
 			pos := view.Vector{
 				X: float64((index+1)*param1) + float64(param2)*r,
@@ -26,12 +26,12 @@ func generatePoints(hT, hP, num, param1, param2 int) []view.Vector {
 	return points
 }
 
-func generateCloudPoints(hT, hP, num, param1, param2 int) []view.Vector {
+func generateCloudPoints(hT, hP, amount, param1, param2 int) []view.Vector {
 	var points []view.Vector
 
 	rand.Seed(time.Now().UnixNano())
 	for _, h := range LaneHeights {
-		for index := 0; index < num; index++ {
+		for index := 0; index < amount; index++ {
 			r := rand.Float64()
 			pos := view.Vector{
 				X: float64(param1) + float64(param2)*r,
@@ -43,16 +43,16 @@ func generateCloudPoints(hT, hP, num, param1, param2 int) []view.Vector {
 	return points
 }
 
-func create(img *ebiten.Image, num, param1, param2 int, vel view.Vector, moreRandom bool) []ScrollableObject {
+func create(img *ebiten.Image, amount, param1, param2 int, vel view.Vector, moreRandom bool) []ScrollableObject {
 	var array []ScrollableObject
 	_, hT := images.TilePrairie.Size()
 
 	_, hP := img.Size()
 	var points []view.Vector
 	if moreRandom {
-		points = generateCloudPoints(hT, hP, num, param1, param2)
+		points = generateCloudPoints(hT, hP, amount, param1, param2)
 	} else {
-		points = generatePoints(hT, hP, num, param1, param2)
+		points = generatePoints(hT, hP, amount, param1, param2)
 	}
 	for _, point := range points {
 		fp := &Parts{}

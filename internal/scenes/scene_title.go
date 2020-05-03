@@ -19,20 +19,20 @@ import (
 type TitleScene struct {
 	bg       *ebiten.Image
 	disc     *music.Disc
-	titlePos view.Position
-	msgPos   view.Position
+	titlePos view.Vector
+	msgPos   view.Vector
 }
 
 // Initialize initializes all resources.
 func (s *TitleScene) Initialize() error {
 	s.bg = images.TitleBackground
 	s.disc = music.Title
-	s.titlePos = view.Position{
-		X: int(view.ScreenWidth/2) - 200,
+	s.titlePos = view.Vector{
+		X: float64(view.ScreenWidth/2) - 200,
 		Y: 80}
-	s.msgPos = view.Position{
-		X: int(view.ScreenWidth/2) - 170,
-		Y: int(view.ScreenHeight/2) - 48}
+	s.msgPos = view.Vector{
+		X: float64(view.ScreenWidth/2) - 170,
+		Y: float64(view.ScreenHeight/2) - 48}
 	return nil
 }
 
@@ -53,8 +53,8 @@ func (s *TitleScene) Update(state *GameState) error {
 func (s *TitleScene) Draw(r *ebiten.Image) error {
 	op := &ebiten.DrawImageOptions{}
 	r.DrawImage(s.bg, op)
-	text.Draw(r, "くろなんダッシュ", fonts.GamerFontLL, s.titlePos.X, s.titlePos.Y, color.Black)
-	text.Draw(r, "Space をおして はじめよう!", fonts.GamerFontM, s.msgPos.X, s.msgPos.Y, color.Black)
+	text.Draw(r, "くろなんダッシュ", fonts.GamerFontLL, int(s.titlePos.X), int(s.titlePos.Y), color.Black)
+	text.Draw(r, "Space をおして はじめよう!", fonts.GamerFontM, int(s.msgPos.X), int(s.msgPos.Y), color.Black)
 	return nil
 }
 
