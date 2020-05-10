@@ -1,6 +1,9 @@
 package field
 
 import (
+	"fmt"
+	"image"
+
 	"github.com/kemokemo/kuronan-dash/internal/view"
 
 	"github.com/hajimehoshi/ebiten"
@@ -12,7 +15,7 @@ const offset = 2
 type Rock struct {
 	image    *ebiten.Image
 	position view.Vector
-	rect     view.Rectangle
+	rect     image.Rectangle
 	velocity view.Vector
 	hardness float64
 }
@@ -28,9 +31,9 @@ func (r *Rock) Initialize(img *ebiten.Image, pos, vel view.Vector) {
 	r.velocity = vel
 
 	w, h := img.Size()
-	r.rect = view.Rectangle{
-		LeftBottom: view.Vector{X: pos.X, Y: pos.Y},
-		RightTop:   view.Vector{X: pos.X + float64(w-offset), Y: pos.Y + float64(h-offset)},
+	r.rect = image.Rectangle{
+		Min: image.Point{X: int(pos.X), Y: int(pos.Y)},
+		Max: image.Point{X: int(pos.X) + w - offset, Y: int(pos.Y) + h - offset},
 	}
 }
 
@@ -41,6 +44,11 @@ func (r *Rock) Update(charaV view.Vector) {
 	r.position = r.position.Add(r.velocity)
 	// Calculate relative speed with player only in horizontal direction
 	r.position.X -= charaV.X
+
+	// TODO:
+	w, h := r.image.Size()
+	r.rect.Min = image.Point{X: int(r.position.X), Y: int(r.position.Y)}
+	r.rect.Max = image.Point{X: int(r.position.X) + w - offset, Y: int(r.position.Y) + h - offset}
 }
 
 // Draw draws this object to the screen.
@@ -68,7 +76,14 @@ func (r *Rock) IsBroken() bool {
 	return r.hardness <= 0
 }
 
-// IsColleded returns whether this obstacle is collided the arg.
-func (r *Rock) IsCollided(rect view.Rectangle) bool {
-	return r.rect.IsCollided(rect)
+// IsCollided returns whether this obstacle is collided the arg.
+func (r *Rock) IsCollided(rect image.Rectangle) bool {
+	// TODO:
+	ret := r.rect.Overlaps(rect)
+	if ret {
+		fmt.Println("Hit!")
+		fmt.Printf(" player> rect: %v", rect)
+		fmt.Printf(" rock> pos:%v, rect: %v\n", r.position, r.rect)
+	}
+	return ret
 }

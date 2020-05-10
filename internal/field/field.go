@@ -1,6 +1,8 @@
 package field
 
 import (
+	"image"
+
 	"github.com/hajimehoshi/ebiten"
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
@@ -18,4 +20,7 @@ type Field interface {
 
 	// DrawCloser draws the field parts closer than the player from the user's point of view.
 	DrawCloser(screen *ebiten.Image) error
+
+	// IsCollidedWithObstacles returns whether the r is collided with this item.
+	IsCollidedWithObstacles(r image.Rectangle) bool
 }

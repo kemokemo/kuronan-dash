@@ -2,6 +2,7 @@ package field
 
 import (
 	"fmt"
+	"image"
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/kemokemo/kuronan-dash/assets/images"
@@ -63,7 +64,7 @@ func (p *PrairieField) createParts() {
 
 	// Obstacles
 	assets = []ast{
-		{images.RockNormal, genPosField, genPosSet{30, 300, 1000}, genVel, genVelSet{-1 * gameSpeed, 0.0, false}},
+		{images.RockNormal, genPosField, genPosSet{30, 300, 1000}, genVel, genVelSet{0.0, 0.0, false}},
 	}
 	for _, asset := range assets {
 		array := genRocks(asset.img, asset.gpf, asset.gps, asset.gvf, asset.gvs)
@@ -150,4 +151,16 @@ func (p *PrairieField) DrawCloser(screen *ebiten.Image) error {
 	}
 
 	return nil
+}
+
+// IsCollidedWithObstacles returns whether the r is collided with this item.
+func (p *PrairieField) IsCollidedWithObstacles(r image.Rectangle) bool {
+	for i := range p.obstacles {
+		if p.obstacles[i].IsCollided(r) {
+			return true
+		}
+	}
+	fmt.Println("No")
+
+	return false
 }

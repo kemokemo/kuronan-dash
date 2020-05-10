@@ -5,6 +5,7 @@ package scenes
 import (
 	"fmt"
 	"image/color"
+	"log"
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/text"
@@ -41,6 +42,7 @@ func (s *Stage01Scene) Initialize() error {
 
 // Update updates the status of this scene.
 func (s *Stage01Scene) Update(state *GameState) error {
+	var err error
 	switch s.state {
 	case wait:
 		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
@@ -48,17 +50,7 @@ func (s *Stage01Scene) Update(state *GameState) error {
 			s.player.Start()
 		}
 	case run:
-		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
-			s.state = pause
-			s.player.Pause()
-		} else if s.player.GetPosition().X+50.0 > view.ScreenWidth-50 && s.state != gameover {
-			// TODO: とりあえずゲームオーバーの練習
-			s.state = gameover
-			s.player.Pause()
-		} else {
-			s.player.Update()
-			s.field.Update(s.player.GetVelocity())
-		}
+		err = s.run(state)
 	case pause:
 		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
 			s.state = run
@@ -69,9 +61,34 @@ func (s *Stage01Scene) Update(state *GameState) error {
 			state.SceneManager.GoTo(&TitleScene{})
 		}
 	default:
-		// unknown state
+		log.Println("unknown state of Stage01Scene:", s.state)
 	}
-	return nil
+	return err
+}
+
+// run works with 'run' state.
+func (s *Stage01Scene) run(state *GameState) error {
+	var err error
+	if state.Input.StateForKey(ebiten.KeySpace) == 1 {
+		s.state = pause
+		s.player.Pause()
+	} else if s.player.GetPosition().X+50.0 > view.ScreenWidth-50 && s.state != gameover {
+		// TODO: ゴールとプレイヤーの衝突有無や、経過時間が制限時間以内かをチェックした結果でゲームオーバー判定を行う
+		s.state = gameover
+		s.player.Pause()
+	} else {
+		// 位置の更新
+		err = s.player.Update()
+		if err != nil {
+			log.Println("failed to update the player:", err)
+		}
+		s.field.Update(s.player.GetVelocity())
+
+		// TODO: プレイヤーの攻撃が障害物に当たっているか判定しつつ、当たっていればダメージを加える処理
+
+		s.player.BeBlocked(s.field.IsCollidedWithObstacles(s.player.GetRectangle()))
+	}
+	return err
 }
 
 // Draw draws background and characters.
@@ -95,11 +112,6 @@ func (s *Stage01Scene) Draw(screen *ebiten.Image) error {
 		fonts.GamerFontS, 12, 35, color.White)
 
 	s.drawWithState(screen)
-	// TODO: 衝突判定とSE再生
-	err = s.checkCollision()
-	if err != nil {
-		return fmt.Errorf("failed to check collisions,%v", err)
-	}
 	return nil
 }
 
@@ -114,11 +126,6 @@ func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 	default:
 		// nothing to draw
 	}
-}
-
-func (s *Stage01Scene) checkCollision() error {
-	// TODO: プレイヤーと障害物との衝突判定などをするよ
-	return nil
 }
 
 // Close stops music
