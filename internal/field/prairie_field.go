@@ -160,7 +160,6 @@ func (p *PrairieField) IsCollidedWithObstacles(r image.Rectangle) bool {
 			return true
 		}
 	}
-	fmt.Println("No")
 
 	return false
 }

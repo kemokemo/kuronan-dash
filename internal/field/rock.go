@@ -8,11 +8,13 @@ import (
 	"github.com/hajimehoshi/ebiten"
 )
 
+// Position offset to make it look like it's on the lane
 const offset = 2
 
 // Rock is the interface of the field part.
 type Rock struct {
 	image    *ebiten.Image
+	imgSize  image.Point
 	position view.Vector
 	rect     image.Rectangle
 	velocity view.Vector
@@ -30,6 +32,7 @@ func (r *Rock) Initialize(img *ebiten.Image, pos, vel view.Vector) {
 	r.velocity = vel
 
 	w, h := img.Size()
+	r.imgSize = image.Point{w, h}
 	r.rect = image.Rectangle{
 		Min: image.Point{X: int(pos.X), Y: int(pos.Y)},
 		Max: image.Point{X: int(pos.X) + w - offset, Y: int(pos.Y) + h - offset},
@@ -44,10 +47,8 @@ func (r *Rock) Update(charaV view.Vector) {
 	// Calculate relative speed with player only in horizontal direction
 	r.position.X -= charaV.X
 
-	// TODO: imageを設定したタイミングでwとhは計算できるはずなので、メンバで持っておけば良いと思う
-	w, h := r.image.Size()
 	r.rect.Min = image.Point{X: int(r.position.X), Y: int(r.position.Y)}
-	r.rect.Max = image.Point{X: int(r.position.X) + w - offset, Y: int(r.position.Y) + h - offset}
+	r.rect.Max = image.Point{X: int(r.position.X) + r.imgSize.X - offset, Y: int(r.position.Y) + r.imgSize.Y - offset}
 }
 
 // Draw draws this object to the screen.
