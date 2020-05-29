@@ -104,7 +104,7 @@ func (p *PrairieField) Update(v view.Vector) {
 }
 
 // DrawFarther draws the farther field parts.
-func (p *PrairieField) DrawFarther(screen *ebiten.Image) error {
+func (p *PrairieField) DrawFarther(screen *ebiten.Image, pOffset image.Point) error {
 	// 背景を描画
 	err := screen.DrawImage(p.bg, &ebiten.DrawImageOptions{})
 	if err != nil {
@@ -113,7 +113,7 @@ func (p *PrairieField) DrawFarther(screen *ebiten.Image) error {
 
 	// レーンよりも遠くのパーツを描画
 	for i := range p.fartherParts {
-		err := p.fartherParts[i].Draw(screen)
+		err := p.fartherParts[i].Draw(screen, pOffset)
 		if err != nil {
 			return fmt.Errorf("failed to draw fartherParts,%v", err)
 		}
@@ -139,12 +139,12 @@ func (p *PrairieField) DrawFarther(screen *ebiten.Image) error {
 }
 
 // DrawCloser draws the closer field part.
-func (p *PrairieField) DrawCloser(screen *ebiten.Image) error {
+func (p *PrairieField) DrawCloser(screen *ebiten.Image, pOffset image.Point) error {
 	// レーンよりも手前のパーツを描画
 
 	/// 近くの草むら
 	for i := range p.closerParts {
-		err := p.closerParts[i].Draw(screen)
+		err := p.closerParts[i].Draw(screen, pOffset)
 		if err != nil {
 			return fmt.Errorf("failed to draw closerParts,%v", err)
 		}

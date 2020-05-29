@@ -52,6 +52,7 @@ func NewPlayers() error {
 // Player is a player character.
 type Player struct {
 	position      view.Vector
+	offset        image.Point
 	rectangle     image.Rectangle
 	blocked       bool
 	StandingImage *ebiten.Image
@@ -208,8 +209,8 @@ func (p *Player) updatePosition() {
 func (p *Player) Draw(screen *ebiten.Image) error {
 	// TODO: ダッシュ中とか奥義中とか状態に応じて多少前後しつつ、ほぼ画面中央に描画したい
 	op := &ebiten.DrawImageOptions{}
-	// TODO: 本当はview.ScreenWidth/4のX位置に描画したいけど、それだと当たり判定と描画位置が一致しなくなる
-	op.GeoM.Translate(p.position.X, p.position.Y)
+	op.GeoM.Translate(view.ScreenWidth/4, p.position.Y)
+	p.offset.X = (int)(p.position.X - view.ScreenWidth/4)
 	return screen.DrawImage(p.animation.GetCurrentFrame(), op)
 }
 
@@ -223,6 +224,11 @@ func (p *Player) playSe() error {
 // GetPosition return the current position of this player.
 func (p *Player) GetPosition() view.Vector {
 	return p.position
+}
+
+// GetOffset returns the offset to draw other filed parts.
+func (p *Player) GetOffset() image.Point {
+	return p.offset
 }
 
 // GetVelocity returns the velocity of this playable character.

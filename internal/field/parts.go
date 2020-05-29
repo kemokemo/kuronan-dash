@@ -1,6 +1,8 @@
 package field
 
 import (
+	"image"
+
 	"github.com/kemokemo/kuronan-dash/internal/view"
 
 	"github.com/hajimehoshi/ebiten"
@@ -34,9 +36,8 @@ func (p *Parts) Update(charaV view.Vector) {
 }
 
 // Draw draws this object to the screen.
-func (p *Parts) Draw(screen *ebiten.Image) error {
+func (p *Parts) Draw(screen *ebiten.Image, offset image.Point) error {
 	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(p.position.X, p.position.Y)
-
+	op.GeoM.Translate(p.position.X-float64(offset.X), p.position.Y-float64(offset.Y))
 	return screen.DrawImage(p.image, op)
 }

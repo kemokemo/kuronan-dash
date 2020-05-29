@@ -1,7 +1,6 @@
 package field
 
 import (
-	"fmt"
 	"image"
 
 	"github.com/kemokemo/kuronan-dash/internal/view"
@@ -45,16 +44,16 @@ func (r *Rock) Update(charaV view.Vector) {
 	// Calculate relative speed with player only in horizontal direction
 	r.position.X -= charaV.X
 
-	// TODO:
+	// TODO: imageを設定したタイミングでwとhは計算できるはずなので、メンバで持っておけば良いと思う
 	w, h := r.image.Size()
 	r.rect.Min = image.Point{X: int(r.position.X), Y: int(r.position.Y)}
 	r.rect.Max = image.Point{X: int(r.position.X) + w - offset, Y: int(r.position.Y) + h - offset}
 }
 
 // Draw draws this object to the screen.
-func (r *Rock) Draw(screen *ebiten.Image) error {
+func (r *Rock) Draw(screen *ebiten.Image, offset image.Point) error {
 	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(r.position.X, r.position.Y)
+	op.GeoM.Translate(r.position.X-float64(offset.X), r.position.Y-float64(offset.Y))
 
 	return screen.DrawImage(r.image, op)
 }
@@ -78,12 +77,5 @@ func (r *Rock) IsBroken() bool {
 
 // IsCollided returns whether this obstacle is collided the arg.
 func (r *Rock) IsCollided(rect image.Rectangle) bool {
-	// TODO:
-	ret := r.rect.Overlaps(rect)
-	if ret {
-		fmt.Println("Hit!")
-		fmt.Printf(" player> rect: %v", rect)
-		fmt.Printf(" rock> pos:%v, rect: %v\n", r.position, r.rect)
-	}
-	return ret
+	return r.rect.Overlaps(rect)
 }

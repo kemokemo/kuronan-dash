@@ -1,6 +1,8 @@
 package field
 
 import (
+	"image"
+
 	"github.com/hajimehoshi/ebiten"
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
@@ -21,5 +23,5 @@ type ScrollableObject interface {
 	Update(charaV view.Vector)
 
 	// Draw draws this object to the screen.
-	Draw(screen *ebiten.Image) error
+	Draw(screen *ebiten.Image, offset image.Point) error
 }

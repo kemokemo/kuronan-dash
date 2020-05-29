@@ -93,7 +93,8 @@ func (s *Stage01Scene) run(state *GameState) error {
 
 // Draw draws background and characters.
 func (s *Stage01Scene) Draw(screen *ebiten.Image) error {
-	err := s.field.DrawFarther(screen)
+	pOffset := s.player.GetOffset()
+	err := s.field.DrawFarther(screen, pOffset)
 	if err != nil {
 		return fmt.Errorf("failed to draw the farther field parts,%v", err)
 	}
@@ -103,7 +104,7 @@ func (s *Stage01Scene) Draw(screen *ebiten.Image) error {
 		return fmt.Errorf("failed to draw a character,%v", err)
 	}
 
-	err = s.field.DrawCloser(screen)
+	err = s.field.DrawCloser(screen, pOffset)
 	if err != nil {
 		return fmt.Errorf("failed to draw the closer field parts,%v", err)
 	}
