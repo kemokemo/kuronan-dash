@@ -2,11 +2,15 @@ package field
 
 import (
 	"fmt"
+	"image"
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
+
+// gameSpeed is the scroll speed for the lane to move.
+const gameSpeed = 2.0
 
 // PrairieField is the field of prairie.
 type PrairieField struct {
@@ -14,63 +18,76 @@ type PrairieField struct {
 	tile         *ebiten.Image
 	fartherParts []ScrollableObject
 	closerParts  []ScrollableObject
+	obstacles    []Obstacle
 
-	viewLane view.RotateViewport
+	viewLane view.Viewport
 }
 
 // Initialize initializes all resources to draw.
 func (p *PrairieField) Initialize() {
 	p.bg = images.SkyBackground
 
-	p.createFartherParts()
-	p.createCloserParts()
+	p.createParts()
 
 	p.tile = images.TilePrairie
-	p.viewLane = view.RotateViewport{}
+	p.viewLane = view.Viewport{}
 	p.viewLane.SetSize(p.tile.Size())
-	p.viewLane.SetVelocity(2.0)
+	p.viewLane.SetVelocity(gameSpeed)
+	p.viewLane.SetLoop(true)
 }
 
-func (p *PrairieField) createFartherParts() {
-	assets := []struct {
-		img        *ebiten.Image
-		num        int
-		param1     int
-		param2     int
-		vel        view.Vector
-		moreRandom bool
-	}{
-		{images.MountainFar, 3, 1280, 500, view.Vector{X: -0.5, Y: 0.0}, false},
-		{images.CloudFar, 10, 2000, 2000, view.Vector{X: -16.0, Y: 0.0}, true},
-		{images.MountainNear, 3, 518, 500, view.Vector{X: -1.0, Y: 0.0}, false},
-		{images.CloudNear, 10, 5000, 3000, view.Vector{X: -16.0, Y: 0.0}, true},
-		{images.Grass1, 10, 600, 2000, view.Vector{X: -1.8, Y: 0.0}, false},
-		{images.Grass3, 10, 900, 3000, view.Vector{X: -1.1, Y: 0.0}, false},
+// create all field parts to draw.
+func (p *PrairieField) createParts() {
+	// Farther parts
+	type ast struct {
+		img *ebiten.Image
+		gpf genPosFunc
+		gps genPosSet
+		gvf genVelFunc
+		gvs genVelSet
 	}
 
+	assets := []ast{
+		{images.MountainFar, genPosField, genPosSet{3, 1280, 500}, genVel, genVelSet{-0.5, 0.0, false}},
+		{images.CloudFar, genPosAir, genPosSet{10, 2000, 2000}, genVel, genVelSet{-16.0, 0.0, true}},
+		{images.MountainNear, genPosField, genPosSet{3, 518, 500}, genVel, genVelSet{-1.0, 0.0, false}},
+		{images.CloudNear, genPosAir, genPosSet{10, 5000, 3000}, genVel, genVelSet{-16.0, 0.0, true}},
+		{images.Grass1, genPosField, genPosSet{10, 600, 2000}, genVel, genVelSet{-1.8, 0.0, false}},
+		{images.Grass3, genPosField, genPosSet{10, 900, 3000}, genVel, genVelSet{-1.1, 0.0, false}},
+	}
 	for _, asset := range assets {
-		array := create(asset.img, asset.num, asset.param1, asset.param2, asset.vel, asset.moreRandom)
-		p.fartherParts = append(p.fartherParts, array...)
-	}
-}
-
-func (p *PrairieField) createCloserParts() {
-	assets := []struct {
-		img        *ebiten.Image
-		num        int
-		param1     int
-		param2     int
-		vel        view.Vector
-		moreRandom bool
-	}{
-		{images.Grass2, 10, 200, 1300, view.Vector{X: -1.4, Y: 0.0}, false},
+		array := genParts(asset.img, asset.gpf, asset.gps, asset.gvf, asset.gvs)
+		for i := range array {
+			p.fartherParts = append(p.fartherParts, array[i])
+		}
 	}
 
+	// Obstacles
+	assets = []ast{
+		{images.RockNormal, genPosField, genPosSet{30, 300, 1000}, genVel, genVelSet{0.0, 0.0, false}},
+	}
 	for _, asset := range assets {
-		array := create(asset.img, asset.num, asset.param1, asset.param2, asset.vel, asset.moreRandom)
-		p.closerParts = append(p.closerParts, array...)
+		array := genRocks(asset.img, asset.gpf, asset.gps, asset.gvf, asset.gvs)
+		for i := range array {
+			if randBool() {
+				p.fartherParts = append(p.fartherParts, array[i])
+			} else {
+				p.closerParts = append(p.closerParts, array[i])
+			}
+			p.obstacles = append(p.obstacles, array[i])
+		}
 	}
 
+	// Closer parts
+	assets = []ast{
+		{images.Grass3, genPosField, genPosSet{10, 900, 3000}, genVel, genVelSet{-1 * gameSpeed, 0.0, false}},
+	}
+	for _, asset := range assets {
+		array := genParts(asset.img, asset.gpf, asset.gps, asset.gvf, asset.gvs)
+		for i := range array {
+			p.closerParts = append(p.closerParts, array[i])
+		}
+	}
 }
 
 // Update moves viewport for the all field parts.
@@ -87,16 +104,16 @@ func (p *PrairieField) Update(v view.Vector) {
 }
 
 // DrawFarther draws the farther field parts.
-func (p *PrairieField) DrawFarther(screen *ebiten.Image) error {
+func (p *PrairieField) DrawFarther(screen *ebiten.Image, pOffset image.Point) error {
 	// 背景を描画
 	err := screen.DrawImage(p.bg, &ebiten.DrawImageOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to draw a prairie background,%v", err)
 	}
 
-	// 遠くのフィールドパーツを描画
+	// レーンよりも遠くのパーツを描画
 	for i := range p.fartherParts {
-		err := p.fartherParts[i].Draw(screen)
+		err := p.fartherParts[i].Draw(screen, pOffset)
 		if err != nil {
 			return fmt.Errorf("failed to draw fartherParts,%v", err)
 		}
@@ -122,17 +139,27 @@ func (p *PrairieField) DrawFarther(screen *ebiten.Image) error {
 }
 
 // DrawCloser draws the closer field part.
-func (p *PrairieField) DrawCloser(screen *ebiten.Image) error {
-	// プレイヤーよりも手間に配置するフィールドパーツを、遠くから順に描画
-	/// 障害物を描画
+func (p *PrairieField) DrawCloser(screen *ebiten.Image, pOffset image.Point) error {
+	// レーンよりも手前のパーツを描画
 
 	/// 近くの草むら
 	for i := range p.closerParts {
-		err := p.closerParts[i].Draw(screen)
+		err := p.closerParts[i].Draw(screen, pOffset)
 		if err != nil {
 			return fmt.Errorf("failed to draw closerParts,%v", err)
 		}
 	}
 
 	return nil
+}
+
+// IsCollidedWithObstacles returns whether the r is collided with this item.
+func (p *PrairieField) IsCollidedWithObstacles(r image.Rectangle) bool {
+	for i := range p.obstacles {
+		if p.obstacles[i].IsCollided(r) {
+			return true
+		}
+	}
+
+	return false
 }

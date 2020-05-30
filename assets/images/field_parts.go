@@ -3,6 +3,7 @@ package images
 func loadFieldparts() error {
 	var err error
 
+	// Prairie field
 	TilePrairie, err = loadSingleImage(tilePrairie_png)
 	if err != nil {
 		return err
@@ -32,6 +33,10 @@ func loadFieldparts() error {
 		return err
 	}
 	CloudFar, err = loadSingleImage(cloud_far_png)
+	if err != nil {
+		return err
+	}
+	RockNormal, err = loadSingleImage(rock_normal_png)
 	if err != nil {
 		return err
 	}

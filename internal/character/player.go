@@ -1,6 +1,7 @@
 package character
 
 import (
+	"image"
 	"log"
 
 	"github.com/hajimehoshi/ebiten"
@@ -51,6 +52,9 @@ func NewPlayers() error {
 // Player is a player character.
 type Player struct {
 	position      view.Vector
+	offset        image.Point
+	rectangle     image.Rectangle
+	blocked       bool
 	StandingImage *ebiten.Image
 	Description   string
 	animation     *StepAnimation
@@ -77,7 +81,16 @@ func (p *Player) SetLanes(heights []float64) error {
 	}
 
 	// set the player at the top lane.
-	p.position = view.Vector{X: 10.0, Y: float64(charaHeights[0])}
+	p.position = view.Vector{X: 0.0, Y: float64(charaHeights[0])}
+
+	// set the edge rectangle with the position and image's rectangle.
+	b := p.StandingImage.Bounds().Size()
+	b.X -= 3
+	b.Y -= 3
+	p.rectangle = image.Rectangle{
+		Min: image.Point{X: int(p.position.X), Y: int(p.position.Y)},
+		Max: image.Point{X: int(p.position.X) + b.X, Y: int(p.position.Y) + b.Y},
+	}
 
 	return nil
 }
@@ -102,17 +115,19 @@ func (p *Player) ReStart() {
 }
 
 // Update updates the character regarding the user input.
-func (p *Player) Update() {
+func (p *Player) Update() error {
 	p.updateState()
 	p.updatePosition()
 	err := p.playSe()
 	if err != nil {
 		log.Println("failed to play SE:", err)
-		return
+		return err
 	}
+	return nil
 }
 
 func (p *Player) updateState() {
+	// TODO: ユーザーのキー入力、キャラクターの位置、障害物との衝突有無などを総合的に判断するStateManageがほしい。
 	switch p.current {
 	case Pause:
 		return
@@ -132,13 +147,31 @@ func (p *Player) updateState() {
 					p.current = Ascending
 				}
 			}
-		} else if ebiten.IsKeyPressed(ebiten.KeyDown) || ebiten.GamepadAxis(0, 1) >= 0.5 {
+			return
+		}
+
+		if ebiten.IsKeyPressed(ebiten.KeyDown) || ebiten.GamepadAxis(0, 1) >= 0.5 {
 			if !p.lanes.IsBottom() {
 				if p.lanes.Descend() {
 					p.previous = p.current
 					p.current = Descending
 				}
 			}
+			return
+		}
+
+		if p.blocked {
+			if p.current == Walk {
+				return
+			}
+			p.previous = p.current
+			p.current = Walk
+		} else {
+			if p.current == Dash {
+				return
+			}
+			p.previous = p.current
+			p.current = Dash
 		}
 	}
 }
@@ -166,6 +199,10 @@ func (p *Player) updatePosition() {
 		// Don't move
 	}
 	p.position = p.position.Add(p.velocity)
+	// TODO: view.Rectangleなくしたい
+	vel := image.Point{int(p.velocity.X), int(p.velocity.Y)}
+	p.rectangle.Min = p.rectangle.Min.Add(vel)
+	p.rectangle.Max = p.rectangle.Max.Add(vel)
 }
 
 // Draw draws the character image.
@@ -173,6 +210,7 @@ func (p *Player) Draw(screen *ebiten.Image) error {
 	// TODO: ダッシュ中とか奥義中とか状態に応じて多少前後しつつ、ほぼ画面中央に描画したい
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(view.ScreenWidth/4, p.position.Y)
+	p.offset.X = (int)(p.position.X - view.ScreenWidth/4)
 	return screen.DrawImage(p.animation.GetCurrentFrame(), op)
 }
 
@@ -183,13 +221,29 @@ func (p *Player) playSe() error {
 	return nil
 }
 
+// GetPosition return the current position of this player.
 func (p *Player) GetPosition() view.Vector {
 	return p.position
+}
+
+// GetOffset returns the offset to draw other filed parts.
+func (p *Player) GetOffset() image.Point {
+	return p.offset
 }
 
 // GetVelocity returns the velocity of this playable character.
 func (p *Player) GetVelocity() view.Vector {
 	return p.velocity
+}
+
+// GetRectangle returns the edge rentangle of this player.
+func (p *Player) GetRectangle() image.Rectangle {
+	return p.rectangle
+}
+
+// BeBlocked puts the player in a position where the path is blocked by an obstacle.
+func (p *Player) BeBlocked(blocked bool) {
+	p.blocked = blocked
 }
 
 // Close closes the inner resources.

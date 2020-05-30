@@ -7,7 +7,7 @@ type Viewport struct {
 
 	// width ,height and velocity to move
 	w, h int
-	v    float32
+	v    float64
 
 	// loop settings
 	loop       bool
@@ -23,7 +23,7 @@ func (p *Viewport) SetSize(w, h int) {
 }
 
 // SetVelocity sets the velocity of this viewport.
-func (p *Viewport) SetVelocity(v float32) {
+func (p *Viewport) SetVelocity(v float64) {
 	p.v = v
 }
 
@@ -36,8 +36,8 @@ func (p *Viewport) SetLoop(loop bool) {
 // Move moves the view of this Viewport.
 func (p *Viewport) Move(d Direction) {
 	x, y := getDirectionValue(d)
-	p.x += int(float32(x) * float32(p.w) * p.v / 32.0)
-	p.y += int(float32(y) * float32(p.h) * p.v / 32.0)
+	p.x += int(float64(x) * float64(p.w) * p.v / 32.0)
+	p.y += int(float64(y) * float64(p.h) * p.v / 32.0)
 	if p.loop {
 		p.x %= p.maxW
 		p.y %= p.maxH

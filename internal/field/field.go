@@ -1,6 +1,8 @@
 package field
 
 import (
+	"image"
+
 	"github.com/hajimehoshi/ebiten"
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
@@ -14,8 +16,11 @@ type Field interface {
 	Update(v view.Vector)
 
 	// DrawFarther draws the field parts farther than the player from the user's point of view.
-	DrawFarther(screen *ebiten.Image) error
+	DrawFarther(screen *ebiten.Image, pOffset image.Point) error
 
 	// DrawCloser draws the field parts closer than the player from the user's point of view.
-	DrawCloser(screen *ebiten.Image) error
+	DrawCloser(screen *ebiten.Image, pOffset image.Point) error
+
+	// IsCollidedWithObstacles returns whether the r is collided with this item.
+	IsCollidedWithObstacles(r image.Rectangle) bool
 }
