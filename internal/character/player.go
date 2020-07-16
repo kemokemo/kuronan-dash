@@ -28,6 +28,7 @@ func NewPlayers() error {
 		Description:   messages.DescKurona,
 		animation:     NewStepAnimation(images.KuronaAnimation, 5),
 		jumpSe:        se.Jump,
+		stamina:       NewStamina(130, 6),
 	}
 
 	Koma = &Player{
@@ -35,6 +36,7 @@ func NewPlayers() error {
 		Description:   messages.DescKoma,
 		animation:     NewStepAnimation(images.KomaAnimation, 5),
 		jumpSe:        se.Jump,
+		stamina:       NewStamina(160, 11),
 	}
 
 	Shishimaru = &Player{
@@ -42,6 +44,7 @@ func NewPlayers() error {
 		Description:   messages.DescShishimaru,
 		animation:     NewStepAnimation(images.ShishimaruAnimation, 5),
 		jumpSe:        se.Jump,
+		stamina:       NewStamina(200, 17),
 	}
 
 	Selected = Kurona
@@ -60,6 +63,7 @@ type Player struct {
 	animation     *StepAnimation
 	previous      State
 	current       State
+	stamina       *Stamina
 	velocity      view.Vector
 	lanes         Lanes
 	jumpSe        *se.Player
@@ -97,7 +101,11 @@ func (p *Player) SetLanes(heights []float64) error {
 
 // Start starts dash!
 func (p *Player) Start() {
-	p.current = Dash
+	if p.stamina.GetStamina() > 0 {
+		p.current = Dash
+	} else {
+		p.current = Walk
+	}
 }
 
 // Pause pauses this character.
@@ -117,6 +125,7 @@ func (p *Player) ReStart() {
 // Update updates the character regarding the user input.
 func (p *Player) Update() error {
 	p.updateState()
+	p.updateStamina()
 	p.updatePosition()
 	err := p.playSe()
 	if err != nil {
@@ -140,6 +149,7 @@ func (p *Player) updateState() {
 			p.current = p.previous
 		}
 	default:
+		// update state by user input
 		if ebiten.IsKeyPressed(ebiten.KeyUp) || ebiten.GamepadAxis(0, 1) <= -0.5 {
 			if !p.lanes.IsTop() {
 				if p.lanes.Ascend() {
@@ -149,7 +159,6 @@ func (p *Player) updateState() {
 			}
 			return
 		}
-
 		if ebiten.IsKeyPressed(ebiten.KeyDown) || ebiten.GamepadAxis(0, 1) >= 0.5 {
 			if !p.lanes.IsBottom() {
 				if p.lanes.Descend() {
@@ -160,6 +169,12 @@ func (p *Player) updateState() {
 			return
 		}
 
+		// update state by stamina
+		if p.stamina.GetStamina() <= 0 {
+			p.current = Walk
+		}
+
+		// update state by blocked status
 		if p.blocked {
 			if p.current == Walk {
 				return
@@ -171,8 +186,28 @@ func (p *Player) updateState() {
 				return
 			}
 			p.previous = p.current
-			p.current = Dash
+			if p.stamina.GetStamina() > 0 {
+				p.current = Dash
+			} else {
+				p.current = Walk
+			}
 		}
+	}
+}
+
+// update stamina by current state
+func (p *Player) updateStamina() {
+	switch p.current {
+	case Dash:
+		p.stamina.Consumes(2)
+	case Walk:
+		p.stamina.Consumes(1)
+	case Ascending:
+		p.stamina.Consumes(1)
+	case Descending:
+		p.stamina.Consumes(1)
+	default:
+		// nothing to do
 	}
 }
 
@@ -234,6 +269,11 @@ func (p *Player) GetOffset() image.Point {
 // GetVelocity returns the velocity of this playable character.
 func (p *Player) GetVelocity() view.Vector {
 	return p.velocity
+}
+
+// GetStamina returns the stamina value fo this character.
+func (p *Player) GetStamina() int {
+	return p.stamina.GetStamina()
 }
 
 // GetRectangle returns the edge rentangle of this player.
