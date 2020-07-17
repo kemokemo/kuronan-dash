@@ -77,6 +77,21 @@ func genParts(img *ebiten.Image, gpf genPosFunc, gps genPosSet, gvf genVelFunc, 
 	return array
 }
 
+// genOnigiri generates onigiri.
+func genOnigiri(img *ebiten.Image, gpf genPosFunc, gps genPosSet, gvf genVelFunc, gvs genVelSet) []*Onigiri {
+	var array []*Onigiri
+
+	_, hP := img.Size()
+	points := gpf(hP, gps)
+	for _, point := range points {
+		oni := &Onigiri{}
+		vel := gvf(gvs)
+		oni.Initialize(img, point, vel)
+		array = append(array, oni)
+	}
+	return array
+}
+
 // genRocks generates scrollable objects.
 func genRocks(img *ebiten.Image, gpf genPosFunc, gps genPosSet, gvf genVelFunc, gvs genVelSet) []*Rock {
 	var array []*Rock
