@@ -89,6 +89,7 @@ func (s *Stage01Scene) run(state *GameState) error {
 		// TODO: プレイヤーの攻撃が障害物に当たっているか判定しつつ、当たっていればダメージを加える処理
 
 		s.player.BeBlocked(s.field.IsCollidedWithObstacles(s.player.GetRectangle()))
+		s.player.Eat(s.field.EatFoods(s.player.GetRectangle()))
 	}
 	return err
 }

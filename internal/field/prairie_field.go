@@ -176,3 +176,16 @@ func (p *PrairieField) IsCollidedWithObstacles(r image.Rectangle) bool {
 
 	return false
 }
+
+// EatFoods determines if there is a conflict between the player and the food.
+// If it hits, it returns the stamina gained.
+func (p *PrairieField) EatFoods(r image.Rectangle) int {
+	var stamina int
+	for i := range p.foods {
+		if p.foods[i].IsCollided(r) {
+			stamina += p.foods[i].Eat()
+		}
+	}
+
+	return stamina
+}

@@ -286,6 +286,11 @@ func (p *Player) BeBlocked(blocked bool) {
 	p.blocked = blocked
 }
 
+// Eat eats foods and restore stamina value by argument value.
+func (p *Player) Eat(stamina int) {
+	p.stamina.Restore(stamina)
+}
+
 // Close closes the inner resources.
 func (p *Player) Close() error {
 	return p.jumpSe.Close()
