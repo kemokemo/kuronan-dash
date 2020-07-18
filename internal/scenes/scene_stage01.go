@@ -33,7 +33,7 @@ func (s *Stage01Scene) Initialize() error {
 	s.goalX = 600.0
 	s.disc = music.Stage01
 	s.player = chara.Selected
-	err := s.player.SetLanes(field.LaneHeights)
+	err := s.player.InitilizeWithLanesInfo(field.LaneHeights)
 	if err != nil {
 		return err
 	}

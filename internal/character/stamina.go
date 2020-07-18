@@ -18,6 +18,12 @@ func NewStamina(max, endurance int) *Stamina {
 	}
 }
 
+// Initialize initializes stamina engine.
+func (s *Stamina) Initialize() {
+	s.val = s.max
+	s.valRate = s.endurance
+}
+
 // Consumes encourages a decrease in stamina by the value specified in the argument.
 // The actual stamina is reduced when the consumption is greater than the "endurance".
 // The stamina value does not go below zero.

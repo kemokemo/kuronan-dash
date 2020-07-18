@@ -54,38 +54,48 @@ func NewPlayers() error {
 
 // Player is a player character.
 type Player struct {
-	position      view.Vector
-	offset        image.Point
-	rectangle     image.Rectangle
-	blocked       bool
+	// Specified at creation and not changed
 	StandingImage *ebiten.Image
 	Description   string
 	animation     *StepAnimation
-	previous      State
-	current       State
-	stamina       *Stamina
-	velocity      view.Vector
-	lanes         Lanes
 	jumpSe        *se.Player
+
+	// Update each time based on the internal status and other information
+	position  view.Vector
+	velocity  view.Vector
+	rectangle image.Rectangle
+	offset    image.Point
+
+	// Initialization is required before starting the stage.
+	lanes    Lanes
+	blocked  bool
+	previous State
+	current  State
+	stamina  *Stamina
 }
 
-// SetLanes sets the lanes information.
-func (p *Player) SetLanes(heights []float64) error {
-	p.lanes = Lanes{}
-	charaHeights := []float64{}
-	_, h := p.StandingImage.Size()
+// InitilizeWithLanesInfo sets the lanes information.
+// The player can run on the lane or move between lanes based on the lane drawing height information received in the argument.
+func (p *Player) InitilizeWithLanesInfo(heights []float64) error {
+	p.blocked = false
+	p.previous = Walk
+	p.current = Walk
+	p.stamina.Initialize()
 
-	for index := 0; index < len(heights); index++ {
-		charaHeights = append(charaHeights, heights[index]-float64(h))
+	cH := []float64{}
+	_, h := p.StandingImage.Size()
+	for i := 0; i < len(heights); i++ {
+		cH = append(cH, heights[i]-float64(h))
 	}
 
-	err := p.lanes.SetHeights(charaHeights)
+	p.lanes = Lanes{}
+	err := p.lanes.SetHeights(cH)
 	if err != nil {
 		return err
 	}
 
 	// set the player at the top lane.
-	p.position = view.Vector{X: 0.0, Y: float64(charaHeights[0])}
+	p.position = view.Vector{X: 0.0, Y: float64(cH[0])}
 
 	// set the edge rectangle with the position and image's rectangle.
 	b := p.StandingImage.Bounds().Size()
@@ -99,13 +109,9 @@ func (p *Player) SetLanes(heights []float64) error {
 	return nil
 }
 
-// Start starts dash!
+// Start starts playing.
 func (p *Player) Start() {
-	if p.stamina.GetStamina() > 0 {
-		p.current = Dash
-	} else {
-		p.current = Walk
-	}
+	p.current = Dash
 }
 
 // Pause pauses this character.
