@@ -19,6 +19,7 @@ type PrairieField struct {
 	fartherParts []ScrollableObject
 	closerParts  []ScrollableObject
 	obstacles    []Obstacle
+	foods        []Food
 
 	viewLane view.Viewport
 }
@@ -59,6 +60,18 @@ func (p *PrairieField) createParts() {
 		array := genParts(asset.img, asset.gpf, asset.gps, asset.gvf, asset.gvs)
 		for i := range array {
 			p.fartherParts = append(p.fartherParts, array[i])
+		}
+	}
+
+	// Foods
+	assets = []ast{
+		{images.Onigiri, genPosField, genPosSet{30, 1000, 550}, genVel, genVelSet{0.0, 0.0, false}},
+	}
+	for _, asset := range assets {
+		array := genOnigiri(asset.img, asset.gpf, asset.gps, asset.gvf, asset.gvs)
+		for i := range array {
+			p.closerParts = append(p.closerParts, array[i])
+			p.foods = append(p.foods, array[i])
 		}
 	}
 
@@ -162,4 +175,17 @@ func (p *PrairieField) IsCollidedWithObstacles(r image.Rectangle) bool {
 	}
 
 	return false
+}
+
+// EatFoods determines if there is a conflict between the player and the food.
+// If it hits, it returns the stamina gained.
+func (p *PrairieField) EatFoods(r image.Rectangle) int {
+	var stamina int
+	for i := range p.foods {
+		if p.foods[i].IsCollided(r) {
+			stamina += p.foods[i].Eat()
+		}
+	}
+
+	return stamina
 }

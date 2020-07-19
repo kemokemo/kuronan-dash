@@ -23,4 +23,8 @@ type Field interface {
 
 	// IsCollidedWithObstacles returns whether the r is collided with this item.
 	IsCollidedWithObstacles(r image.Rectangle) bool
+
+	// EatFoods determines if there is a conflict between the player and the food.
+	// If it hits, it returns the stamina gained.
+	EatFoods(r image.Rectangle) int
 }

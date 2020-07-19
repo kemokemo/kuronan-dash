@@ -28,6 +28,7 @@ func NewPlayers() error {
 		Description:   messages.DescKurona,
 		animation:     NewStepAnimation(images.KuronaAnimation, 5),
 		jumpSe:        se.Jump,
+		stamina:       NewStamina(130, 6),
 	}
 
 	Koma = &Player{
@@ -35,6 +36,7 @@ func NewPlayers() error {
 		Description:   messages.DescKoma,
 		animation:     NewStepAnimation(images.KomaAnimation, 5),
 		jumpSe:        se.Jump,
+		stamina:       NewStamina(160, 11),
 	}
 
 	Shishimaru = &Player{
@@ -42,6 +44,7 @@ func NewPlayers() error {
 		Description:   messages.DescShishimaru,
 		animation:     NewStepAnimation(images.ShishimaruAnimation, 5),
 		jumpSe:        se.Jump,
+		stamina:       NewStamina(200, 17),
 	}
 
 	Selected = Kurona
@@ -51,37 +54,48 @@ func NewPlayers() error {
 
 // Player is a player character.
 type Player struct {
-	position      view.Vector
-	offset        image.Point
-	rectangle     image.Rectangle
-	blocked       bool
+	// Specified at creation and not changed
 	StandingImage *ebiten.Image
 	Description   string
 	animation     *StepAnimation
-	previous      State
-	current       State
-	velocity      view.Vector
-	lanes         Lanes
 	jumpSe        *se.Player
+
+	// Update each time based on the internal status and other information
+	position  view.Vector
+	velocity  view.Vector
+	rectangle image.Rectangle
+	offset    image.Point
+
+	// Initialization is required before starting the stage.
+	lanes    Lanes
+	blocked  bool
+	previous State
+	current  State
+	stamina  *Stamina
 }
 
-// SetLanes sets the lanes information.
-func (p *Player) SetLanes(heights []float64) error {
-	p.lanes = Lanes{}
-	charaHeights := []float64{}
-	_, h := p.StandingImage.Size()
+// InitilizeWithLanesInfo sets the lanes information.
+// The player can run on the lane or move between lanes based on the lane drawing height information received in the argument.
+func (p *Player) InitilizeWithLanesInfo(heights []float64) error {
+	p.blocked = false
+	p.previous = Walk
+	p.current = Walk
+	p.stamina.Initialize()
 
-	for index := 0; index < len(heights); index++ {
-		charaHeights = append(charaHeights, heights[index]-float64(h))
+	cH := []float64{}
+	_, h := p.StandingImage.Size()
+	for i := 0; i < len(heights); i++ {
+		cH = append(cH, heights[i]-float64(h))
 	}
 
-	err := p.lanes.SetHeights(charaHeights)
+	p.lanes = Lanes{}
+	err := p.lanes.SetHeights(cH)
 	if err != nil {
 		return err
 	}
 
 	// set the player at the top lane.
-	p.position = view.Vector{X: 0.0, Y: float64(charaHeights[0])}
+	p.position = view.Vector{X: 0.0, Y: float64(cH[0])}
 
 	// set the edge rectangle with the position and image's rectangle.
 	b := p.StandingImage.Bounds().Size()
@@ -95,7 +109,7 @@ func (p *Player) SetLanes(heights []float64) error {
 	return nil
 }
 
-// Start starts dash!
+// Start starts playing.
 func (p *Player) Start() {
 	p.current = Dash
 }
@@ -117,6 +131,7 @@ func (p *Player) ReStart() {
 // Update updates the character regarding the user input.
 func (p *Player) Update() error {
 	p.updateState()
+	p.updateStamina()
 	p.updatePosition()
 	err := p.playSe()
 	if err != nil {
@@ -140,6 +155,7 @@ func (p *Player) updateState() {
 			p.current = p.previous
 		}
 	default:
+		// update state by user input
 		if ebiten.IsKeyPressed(ebiten.KeyUp) || ebiten.GamepadAxis(0, 1) <= -0.5 {
 			if !p.lanes.IsTop() {
 				if p.lanes.Ascend() {
@@ -149,7 +165,6 @@ func (p *Player) updateState() {
 			}
 			return
 		}
-
 		if ebiten.IsKeyPressed(ebiten.KeyDown) || ebiten.GamepadAxis(0, 1) >= 0.5 {
 			if !p.lanes.IsBottom() {
 				if p.lanes.Descend() {
@@ -160,6 +175,12 @@ func (p *Player) updateState() {
 			return
 		}
 
+		// update state by stamina
+		if p.stamina.GetStamina() <= 0 {
+			p.current = Walk
+		}
+
+		// update state by blocked status
 		if p.blocked {
 			if p.current == Walk {
 				return
@@ -171,8 +192,28 @@ func (p *Player) updateState() {
 				return
 			}
 			p.previous = p.current
-			p.current = Dash
+			if p.stamina.GetStamina() > 0 {
+				p.current = Dash
+			} else {
+				p.current = Walk
+			}
 		}
+	}
+}
+
+// update stamina by current state
+func (p *Player) updateStamina() {
+	switch p.current {
+	case Dash:
+		p.stamina.Consumes(2)
+	case Walk:
+		p.stamina.Consumes(1)
+	case Ascending:
+		p.stamina.Consumes(1)
+	case Descending:
+		p.stamina.Consumes(1)
+	default:
+		// nothing to do
 	}
 }
 
@@ -236,6 +277,11 @@ func (p *Player) GetVelocity() view.Vector {
 	return p.velocity
 }
 
+// GetStamina returns the stamina value fo this character.
+func (p *Player) GetStamina() int {
+	return p.stamina.GetStamina()
+}
+
 // GetRectangle returns the edge rentangle of this player.
 func (p *Player) GetRectangle() image.Rectangle {
 	return p.rectangle
@@ -244,6 +290,11 @@ func (p *Player) GetRectangle() image.Rectangle {
 // BeBlocked puts the player in a position where the path is blocked by an obstacle.
 func (p *Player) BeBlocked(blocked bool) {
 	p.blocked = blocked
+}
+
+// Eat eats foods and restore stamina value by argument value.
+func (p *Player) Eat(stamina int) {
+	p.stamina.Restore(stamina)
 }
 
 // Close closes the inner resources.

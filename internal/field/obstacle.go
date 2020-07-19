@@ -15,6 +15,6 @@ type Obstacle interface {
 	// The broken state means that the hardness is 0 or less.
 	IsBroken() bool
 
-	// IsColleded returns whether this obstacle is collided the arg.
+	// IsCollided returns whether this obstacle is collided the arg.
 	IsCollided(r image.Rectangle) bool
 }

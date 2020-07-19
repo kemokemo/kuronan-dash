@@ -25,13 +25,15 @@ type Stage01Scene struct {
 	player *chara.Player
 	disc   *music.Disc
 	field  field.Field
+	goalX  float64
 }
 
 // Initialize initializes all resources.
 func (s *Stage01Scene) Initialize() error {
+	s.goalX = 600.0
 	s.disc = music.Stage01
 	s.player = chara.Selected
-	err := s.player.SetLanes(field.LaneHeights)
+	err := s.player.InitilizeWithLanesInfo(field.LaneHeights)
 	if err != nil {
 		return err
 	}
@@ -72,7 +74,7 @@ func (s *Stage01Scene) run(state *GameState) error {
 	if state.Input.StateForKey(ebiten.KeySpace) == 1 {
 		s.state = pause
 		s.player.Pause()
-	} else if s.player.GetPosition().X+50.0 > view.ScreenWidth-50 && s.state != gameover {
+	} else if s.player.GetPosition().X > view.ScreenWidth+s.goalX && s.state != gameover {
 		// TODO: ゴールとプレイヤーの衝突有無や、経過時間が制限時間以内かをチェックした結果でゲームオーバー判定を行う
 		s.state = gameover
 		s.player.Pause()
@@ -87,6 +89,7 @@ func (s *Stage01Scene) run(state *GameState) error {
 		// TODO: プレイヤーの攻撃が障害物に当たっているか判定しつつ、当たっていればダメージを加える処理
 
 		s.player.BeBlocked(s.field.IsCollidedWithObstacles(s.player.GetRectangle()))
+		s.player.Eat(s.field.EatFoods(s.player.GetRectangle()))
 	}
 	return err
 }
@@ -111,6 +114,9 @@ func (s *Stage01Scene) Draw(screen *ebiten.Image) error {
 
 	text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
 		fonts.GamerFontS, 12, 35, color.White)
+
+	text.Draw(screen, fmt.Sprintf("スタミナ: %v", s.player.GetStamina()),
+		fonts.GamerFontS, 12, 60, color.White)
 
 	s.drawWithState(screen)
 	return nil

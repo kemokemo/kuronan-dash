@@ -27,6 +27,11 @@ var (
 	RockNormal   *ebiten.Image
 )
 
+// Foods
+var (
+	Onigiri *ebiten.Image
+)
+
 // character standing image
 var (
 	KuronaStanding     *ebiten.Image
