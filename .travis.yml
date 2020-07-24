@@ -23,14 +23,14 @@ jobs:
   - stage: build for windows and linux
     script:
     - mkdir release
-    - CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build -o release/kuronan-dash_windows_amd64.exe
-    - CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o release/kuronan-dash_linux_amd64
+    - CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build -ldflags="-X 'main.Revision=$(git rev-parse --short HEAD)'" -o release/kuronan-dash_windows_amd64.exe
+    - CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -ldflags="-X 'main.Revision=$(git rev-parse --short HEAD)'" -o release/kuronan-dash_linux_amd64
   - stage: build for macOS
     os: osx
     osx_image: xcode11.3
     script:
     - mkdir release
-    - CGO_ENABLED=1 go build -o release/kuronan-dash_macOS_amd64
+    - CGO_ENABLED=1 go build -ldflags="-X 'main.Revision=$(git rev-parse --short HEAD)'" -o release/kuronan-dash_macOS_amd64
 deploy:
   provider: releases
   skip_cleanup: true

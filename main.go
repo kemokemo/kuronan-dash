@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -19,7 +20,7 @@ func main() {
 }
 
 func run() int {
-	game, err := kuronandash.NewGame()
+	game, err := kuronandash.NewGame(fmt.Sprintf("Version: %s.%s", Version, Revision))
 	if err != nil {
 		log.Println("failed to create a new game:", err)
 		return exitFailed

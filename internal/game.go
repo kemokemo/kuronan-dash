@@ -18,7 +18,7 @@ type Game struct {
 
 // NewGame returns a new game instance.
 // Please call the Close method when you no longer use this instance.
-func NewGame() (*Game, error) {
+func NewGame(ver string) (*Game, error) {
 	err := assets.LoadAssets()
 	if err != nil {
 		return nil, err
@@ -33,7 +33,7 @@ func NewGame() (*Game, error) {
 	if err != nil {
 		return nil, err
 	}
-	sm.GoTo(&scenes.TitleScene{})
+	sm.GoTo(&scenes.TitleScene{Version: ver})
 
 	return &Game{
 		scenes: sm,
