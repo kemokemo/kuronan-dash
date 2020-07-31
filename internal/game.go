@@ -29,11 +29,11 @@ func NewGame(ver string) (*Game, error) {
 		return nil, err
 	}
 
-	sm, err := scenes.NewSceneManager()
+	sm, err := scenes.NewSceneManager(ver)
 	if err != nil {
 		return nil, err
 	}
-	sm.GoTo(&scenes.TitleScene{Version: ver})
+	sm.GoTo(&scenes.TitleScene{})
 
 	return &Game{
 		scenes: sm,

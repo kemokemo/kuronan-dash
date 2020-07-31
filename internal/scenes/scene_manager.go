@@ -20,9 +20,13 @@ type SceneManager struct {
 	transitionCount int
 }
 
+// versionInfo is the version info of this game.
+var versionInfo string
+
 // NewSceneManager returns a new SceneManager.
-func NewSceneManager() (*SceneManager, error) {
+func NewSceneManager(ver string) (*SceneManager, error) {
 	sm := &SceneManager{}
+	versionInfo = ver
 	var err error
 	sm.transitionFrom, err = ebiten.NewImage(view.ScreenWidth, view.ScreenHeight, ebiten.FilterDefault)
 	if err != nil {

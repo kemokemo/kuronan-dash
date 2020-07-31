@@ -18,7 +18,6 @@ import (
 // TitleScene is the scene for title.
 type TitleScene struct {
 	bg       *ebiten.Image
-	Version  string
 	disc     *music.Disc
 	verPos   view.Vector
 	titlePos view.Vector
@@ -56,7 +55,7 @@ func (s *TitleScene) Update(state *GameState) error {
 func (s *TitleScene) Draw(r *ebiten.Image) error {
 	op := &ebiten.DrawImageOptions{}
 	r.DrawImage(s.bg, op)
-	text.Draw(r, s.Version, fonts.GamerFontS, int(s.verPos.X), int(s.verPos.Y), color.White)
+	text.Draw(r, versionInfo, fonts.GamerFontS, int(s.verPos.X), int(s.verPos.Y), color.White)
 	text.Draw(r, "くろなんダッシュ", fonts.GamerFontLL, int(s.titlePos.X), int(s.titlePos.Y), color.Black)
 	text.Draw(r, "Space をおして はじめよう!", fonts.GamerFontM, int(s.msgPos.X), int(s.msgPos.Y), color.Black)
 	return nil
