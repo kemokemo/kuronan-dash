@@ -1,0 +1,21 @@
+
+name: Deploy GitHub pages
+on: [push]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: use golang
+        uses: actions/setup-go@v2.1.1
+        with:
+          go-version: '1.14.6'
+      - run: go version
+      - name: build WebAssembly
+        run: GOOS=js GOARCH=wasm go build -o public/kuronan-dash.wasm
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
