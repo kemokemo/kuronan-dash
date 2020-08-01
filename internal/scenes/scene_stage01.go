@@ -21,16 +21,20 @@ import (
 
 // Stage01Scene is the scene for the 1st stage game.
 type Stage01Scene struct {
-	state  gameState
-	player *chara.Player
-	disc   *music.Disc
-	field  field.Field
-	goalX  float64
+	state     gameState
+	player    *chara.Player
+	disc      *music.Disc
+	field     field.Field
+	goalX     float64
+	timeLimit int // second
+	time      int // second
 }
 
 // Initialize initializes all resources.
 func (s *Stage01Scene) Initialize() error {
-	s.goalX = 600.0
+	s.goalX = 900.0
+	s.timeLimit = 600
+	s.time = s.timeLimit
 	s.disc = music.Stage01
 	s.player = chara.Selected
 	err := s.player.InitilizeWithLanesInfo(field.LaneHeights)
@@ -52,11 +56,21 @@ func (s *Stage01Scene) Update(state *GameState) error {
 			s.player.Start()
 		}
 	case run:
-		err = s.run(state)
+		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
+			s.state = pause
+			s.player.Pause()
+		} else {
+			err = s.run()
+		}
 	case pause:
 		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
 			s.state = run
 			s.player.ReStart()
+		}
+	case stageClear:
+		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
+			// TODO: goto next stage :-)
+			state.SceneManager.GoTo(&TitleScene{})
 		}
 	case gameover:
 		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
@@ -69,20 +83,23 @@ func (s *Stage01Scene) Update(state *GameState) error {
 }
 
 // run works with 'run' state.
-func (s *Stage01Scene) run(state *GameState) error {
+func (s *Stage01Scene) run() error {
+	s.time--
+	isTimeUp := s.time <= 0
+	isArriveGoal := s.player.GetPosition().X > s.goalX
+
 	var err error
-	if state.Input.StateForKey(ebiten.KeySpace) == 1 {
-		s.state = pause
+	if isArriveGoal {
+		s.state = stageClear
 		s.player.Pause()
-	} else if s.player.GetPosition().X > view.ScreenWidth+s.goalX && s.state != gameover {
-		// TODO: ゴールとプレイヤーの衝突有無や、経過時間が制限時間以内かをチェックした結果でゲームオーバー判定を行う
+	} else if !isArriveGoal && isTimeUp {
 		s.state = gameover
 		s.player.Pause()
 	} else {
-		// 位置の更新
 		err = s.player.Update()
 		if err != nil {
 			log.Println("failed to update the player:", err)
+			return err
 		}
 		s.field.Update(s.player.GetVelocity())
 
@@ -112,13 +129,25 @@ func (s *Stage01Scene) Draw(screen *ebiten.Image) error {
 		return fmt.Errorf("failed to draw the closer field parts,%v", err)
 	}
 
+	s.drawUI(screen)
+	s.drawWithState(screen)
+	return nil
+}
+
+// description
+func (s *Stage01Scene) drawUI(screen *ebiten.Image) error {
 	text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
 		fonts.GamerFontS, 12, 35, color.White)
 
 	text.Draw(screen, fmt.Sprintf("スタミナ: %v", s.player.GetStamina()),
 		fonts.GamerFontS, 12, 60, color.White)
 
-	s.drawWithState(screen)
+	text.Draw(screen, fmt.Sprintf("タイム: %v", s.time),
+		fonts.GamerFontS, 160, 60, color.White)
+
+	text.Draw(screen, fmt.Sprintf("すすんだきょり/ゴールいち: %v / %v", s.player.GetPosition().X, s.goalX),
+		fonts.GamerFontS, 300, 60, color.White)
+
 	return nil
 }
 
@@ -128,6 +157,9 @@ func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 		text.Draw(screen, messages.GameStart, fonts.GamerFontL, view.ScreenWidth/2-250, view.ScreenHeight/2, color.White)
 	case pause:
 		text.Draw(screen, messages.GamePause, fonts.GamerFontL, view.ScreenWidth/2-150, view.ScreenHeight/2, color.White)
+	case stageClear:
+		text.Draw(screen, messages.GameStageClear, fonts.GamerFontL, view.ScreenWidth/2-200, view.ScreenHeight/2-25, color.White)
+		text.Draw(screen, messages.GameStageClear2, fonts.GamerFontL, view.ScreenWidth/2-300, view.ScreenHeight/2+25, color.White)
 	case gameover:
 		text.Draw(screen, messages.GameOver, fonts.GamerFontL, view.ScreenWidth/2-420, view.ScreenHeight/2, color.White)
 	default:
