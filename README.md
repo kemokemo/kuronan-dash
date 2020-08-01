@@ -37,12 +37,26 @@
   - [ ] テンションゲージは走っても少しずつ増えますし、障害物を砕くとグンと増えます。
   - [ ] テンションMAXで、キャラクター固有のスキルが使えるようになります。
 
+### 操作方法
+
+WIP
+
+## インストール方法
+
+[最新版のリリースページ](https://github.com/kemokemo/kuronan-dash/releases/tag/v0.0.4)からお使いのOSに応じた実行ファイルをダウンロードして実行してください。[こちらのページ](https://kemokemo.github.io/kuronan-dash/)で、ブラウザ上で遊ぶこともできます。
+
 ## ビルド方法
 
-Go Ver. 1.13以上が必要です。`Go Modules`の仕組みを使っています。
+Go Ver. 1.13以上が必要です。`Go Modules`の仕組みを使っています。`kuronan-dash`バイナリを実行するとゲーム画面が開きます。
 
 ```sh
 $ go build
+```
+
+WebAssemblyへとビルドしてブラウザで遊ぶこともできます。以下のようにビルドして、`public/index.html`をブラウザで開いてみてください。
+
+```sh
+$ GOOS=js GOARCH=wasm go build -o public/kuronan-dash.wasm
 ```
 
 ## 作者
