@@ -15,5 +15,6 @@ const (
 	wait gameState = iota
 	run
 	pause
+	stageClear
 	gameover
 )
