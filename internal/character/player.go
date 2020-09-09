@@ -146,13 +146,10 @@ func (p *Player) updateState() {
 	switch p.current {
 	case Pause:
 		return
-	case Ascending:
+	case Ascending, Descending:
+		// TODO: I really want to go back to the previous movement before the ascending or descending motion.
 		if p.lanes.IsReachedTarget(p.position.Y) {
-			p.current = p.previous
-		}
-	case Descending:
-		if p.lanes.IsReachedTarget(p.position.Y) {
-			p.current = p.previous
+			p.current = Dash
 		}
 	default:
 		// update state by user input
@@ -256,6 +253,8 @@ func (p *Player) Draw(screen *ebiten.Image) error {
 }
 
 func (p *Player) playSe() error {
+	// TODO: I really only want to play the SE once at the start of the ascent or descent.
+	// How about sending a channel to the goroutine for SE playback when the status changes?
 	if p.previous != Ascending && p.current == Ascending {
 		return p.jumpSe.Play()
 	}
