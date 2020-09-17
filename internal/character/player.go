@@ -1,8 +1,8 @@
 package character
 
 import (
+	"fmt"
 	"image"
-	"log"
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/kemokemo/kuronan-dash/assets/images"
@@ -28,6 +28,7 @@ func NewPlayers() error {
 		Description:   messages.DescKurona,
 		animation:     NewStepAnimation(images.KuronaAnimation, 5),
 		jumpSe:        se.Jump,
+		dropSe:        se.Drop,
 		stamina:       NewStamina(130, 6),
 	}
 
@@ -36,6 +37,7 @@ func NewPlayers() error {
 		Description:   messages.DescKoma,
 		animation:     NewStepAnimation(images.KomaAnimation, 5),
 		jumpSe:        se.Jump,
+		dropSe:        se.Drop,
 		stamina:       NewStamina(160, 11),
 	}
 
@@ -44,6 +46,7 @@ func NewPlayers() error {
 		Description:   messages.DescShishimaru,
 		animation:     NewStepAnimation(images.ShishimaruAnimation, 5),
 		jumpSe:        se.Jump,
+		dropSe:        se.Drop,
 		stamina:       NewStamina(200, 17),
 	}
 
@@ -59,6 +62,7 @@ type Player struct {
 	Description   string
 	animation     *StepAnimation
 	jumpSe        *se.Player
+	dropSe        *se.Player
 
 	// Update each time based on the internal status and other information
 	position  view.Vector
@@ -130,22 +134,22 @@ func (p *Player) ReStart() {
 
 // Update updates the character regarding the user input.
 func (p *Player) Update() error {
-	p.updateState()
-	p.updateStamina()
-	p.updatePosition()
-	err := p.playSe()
+	err := p.updateState()
 	if err != nil {
-		log.Println("failed to play SE:", err)
 		return err
 	}
+	p.updateStamina()
+	p.updatePosition()
+
 	return nil
 }
 
-func (p *Player) updateState() {
+func (p *Player) updateState() error {
+	var err error
 	// TODO: ユーザーのキー入力、キャラクターの位置、障害物との衝突有無などを総合的に判断するStateManageがほしい。
 	switch p.current {
 	case Pause:
-		return
+		return err
 	case Ascending, Descending:
 		// TODO: I really want to go back to the previous movement before the ascending or descending motion.
 		if p.lanes.IsReachedTarget(p.position.Y) {
@@ -158,18 +162,26 @@ func (p *Player) updateState() {
 				if p.lanes.Ascend() {
 					p.previous = p.current
 					p.current = Ascending
+					err = p.jumpSe.Play()
+					if err != nil {
+						err = fmt.Errorf("failed to play se: %v", err)
+					}
 				}
 			}
-			return
+			return err
 		}
 		if ebiten.IsKeyPressed(ebiten.KeyDown) || ebiten.GamepadAxis(0, 1) >= 0.5 {
 			if !p.lanes.IsBottom() {
 				if p.lanes.Descend() {
 					p.previous = p.current
 					p.current = Descending
+					err = p.dropSe.Play()
+					if err != nil {
+						err = fmt.Errorf("failed to play se: %v", err)
+					}
 				}
 			}
-			return
+			return err
 		}
 
 		// update state by stamina
@@ -180,13 +192,13 @@ func (p *Player) updateState() {
 		// update state by blocked status
 		if p.blocked {
 			if p.current == Walk {
-				return
+				return err
 			}
 			p.previous = p.current
 			p.current = Walk
 		} else {
 			if p.current == Dash {
-				return
+				return err
 			}
 			p.previous = p.current
 			if p.stamina.GetStamina() > 0 {
@@ -196,6 +208,7 @@ func (p *Player) updateState() {
 			}
 		}
 	}
+	return err
 }
 
 // update stamina by current state
@@ -252,15 +265,6 @@ func (p *Player) Draw(screen *ebiten.Image) error {
 	return screen.DrawImage(p.animation.GetCurrentFrame(), op)
 }
 
-func (p *Player) playSe() error {
-	// TODO: I really only want to play the SE once at the start of the ascent or descent.
-	// How about sending a channel to the goroutine for SE playback when the status changes?
-	if p.previous != Ascending && p.current == Ascending {
-		return p.jumpSe.Play()
-	}
-	return nil
-}
-
 // GetPosition return the current position of this player.
 func (p *Player) GetPosition() view.Vector {
 	return p.position
@@ -298,5 +302,14 @@ func (p *Player) Eat(stamina int) {
 
 // Close closes the inner resources.
 func (p *Player) Close() error {
-	return p.jumpSe.Close()
+	var err, e error
+	e = p.jumpSe.Close()
+	if e != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+	e = p.dropSe.Close()
+	if e != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+	return err
 }

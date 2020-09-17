@@ -59,6 +59,7 @@ package assets
 
 /* package se */
 //go:generate file2byteslice -package=se -input=../_assets/se/jump.wav -output=./se/jump.go -var=jump_wav
+//go:generate file2byteslice -package=se -input=../_assets/se/drop.wav -output=./se/drop.go -var=drop_wav
 
 /* package fonts */
 //go:generate file2byteslice -package=fonts -input=../_assets/fonts/x8y12pxTheStrongGamer.ttf -output=./fonts/the_strong_gamer.go -var=the_strong_gamer_ttf
