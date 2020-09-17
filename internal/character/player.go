@@ -28,6 +28,7 @@ func NewPlayers() error {
 		Description:   messages.DescKurona,
 		animation:     NewStepAnimation(images.KuronaAnimation, 5),
 		jumpSe:        se.Jump,
+		dropSe:        se.Drop,
 		stamina:       NewStamina(130, 6),
 	}
 
@@ -36,6 +37,7 @@ func NewPlayers() error {
 		Description:   messages.DescKoma,
 		animation:     NewStepAnimation(images.KomaAnimation, 5),
 		jumpSe:        se.Jump,
+		dropSe:        se.Drop,
 		stamina:       NewStamina(160, 11),
 	}
 
@@ -44,6 +46,7 @@ func NewPlayers() error {
 		Description:   messages.DescShishimaru,
 		animation:     NewStepAnimation(images.ShishimaruAnimation, 5),
 		jumpSe:        se.Jump,
+		dropSe:        se.Drop,
 		stamina:       NewStamina(200, 17),
 	}
 
@@ -59,6 +62,7 @@ type Player struct {
 	Description   string
 	animation     *StepAnimation
 	jumpSe        *se.Player
+	dropSe        *se.Player
 
 	// Update each time based on the internal status and other information
 	position  view.Vector
@@ -171,6 +175,10 @@ func (p *Player) updateState() error {
 				if p.lanes.Descend() {
 					p.previous = p.current
 					p.current = Descending
+					err = p.dropSe.Play()
+					if err != nil {
+						err = fmt.Errorf("failed to play se: %v", err)
+					}
 				}
 			}
 			return err
@@ -294,5 +302,14 @@ func (p *Player) Eat(stamina int) {
 
 // Close closes the inner resources.
 func (p *Player) Close() error {
-	return p.jumpSe.Close()
+	var err, e error
+	e = p.jumpSe.Close()
+	if e != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+	e = p.dropSe.Close()
+	if e != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+	return err
 }
