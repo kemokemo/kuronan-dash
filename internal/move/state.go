@@ -1,4 +1,4 @@
-package character
+package move
 
 // State describes the state of a character.
 type State int

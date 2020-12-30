@@ -1,4 +1,4 @@
-package character
+package anime
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"

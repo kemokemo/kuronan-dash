@@ -1,6 +1,8 @@
-package character
+package move
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // Lanes manages the player's lane to run.
 type Lanes struct {

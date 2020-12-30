@@ -8,7 +8,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-// Parts is the interface of the field part.
+// Parts is the field parts.
 type Parts struct {
 	image    *ebiten.Image
 	position view.Vector

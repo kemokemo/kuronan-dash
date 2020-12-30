@@ -8,6 +8,8 @@ import (
 	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/assets/messages"
 	"github.com/kemokemo/kuronan-dash/assets/se"
+	"github.com/kemokemo/kuronan-dash/internal/anime"
+	"github.com/kemokemo/kuronan-dash/internal/move"
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
 
@@ -26,7 +28,7 @@ func NewPlayers() error {
 	Kurona = &Player{
 		StandingImage: images.KuronaStanding,
 		Description:   messages.DescKurona,
-		animation:     NewStepAnimation(images.KuronaAnimation, 5),
+		animation:     anime.NewStepAnimation(images.KuronaAnimation, 5),
 		jumpSe:        se.Jump,
 		dropSe:        se.Drop,
 		stamina:       NewStamina(130, 6),
@@ -35,7 +37,7 @@ func NewPlayers() error {
 	Koma = &Player{
 		StandingImage: images.KomaStanding,
 		Description:   messages.DescKoma,
-		animation:     NewStepAnimation(images.KomaAnimation, 5),
+		animation:     anime.NewStepAnimation(images.KomaAnimation, 5),
 		jumpSe:        se.Jump,
 		dropSe:        se.Drop,
 		stamina:       NewStamina(160, 11),
@@ -44,7 +46,7 @@ func NewPlayers() error {
 	Shishimaru = &Player{
 		StandingImage: images.ShishimaruStanding,
 		Description:   messages.DescShishimaru,
-		animation:     NewStepAnimation(images.ShishimaruAnimation, 5),
+		animation:     anime.NewStepAnimation(images.ShishimaruAnimation, 5),
 		jumpSe:        se.Jump,
 		dropSe:        se.Drop,
 		stamina:       NewStamina(200, 17),
@@ -60,7 +62,7 @@ type Player struct {
 	// Specified at creation and not changed
 	StandingImage *ebiten.Image
 	Description   string
-	animation     *StepAnimation
+	animation     *anime.StepAnimation
 	jumpSe        *se.Player
 	dropSe        *se.Player
 
@@ -71,19 +73,19 @@ type Player struct {
 	offset    image.Point
 
 	// Initialization is required before starting the stage.
-	lanes    Lanes
+	lanes    move.Lanes
 	blocked  bool
-	previous State
-	current  State
+	previous move.State
+	current  move.State
 	stamina  *Stamina
 }
 
-// InitilizeWithLanesInfo sets the lanes information.
+// InitializeWithLanesInfo sets the lanes information.
 // The player can run on the lane or move between lanes based on the lane drawing height information received in the argument.
-func (p *Player) InitilizeWithLanesInfo(heights []float64) error {
+func (p *Player) InitializeWithLanesInfo(heights []float64) error {
 	p.blocked = false
-	p.previous = Walk
-	p.current = Walk
+	p.previous = move.Walk
+	p.current = move.Walk
 	p.stamina.Initialize()
 
 	cH := []float64{}
@@ -92,7 +94,7 @@ func (p *Player) InitilizeWithLanesInfo(heights []float64) error {
 		cH = append(cH, heights[i]-float64(h))
 	}
 
-	p.lanes = Lanes{}
+	p.lanes = move.Lanes{}
 	err := p.lanes.SetHeights(cH)
 	if err != nil {
 		return err
@@ -115,16 +117,16 @@ func (p *Player) InitilizeWithLanesInfo(heights []float64) error {
 
 // Start starts playing.
 func (p *Player) Start() {
-	p.current = Dash
+	p.current = move.Dash
 }
 
 // Pause pauses this character.
 func (p *Player) Pause() {
-	if p.current == Pause {
+	if p.current == move.Pause {
 		return
 	}
 	p.previous = p.current
-	p.current = Pause
+	p.current = move.Pause
 }
 
 // ReStart starts again this character.
@@ -148,12 +150,12 @@ func (p *Player) updateState() error {
 	var err error
 	// TODO: ユーザーのキー入力、キャラクターの位置、障害物との衝突有無などを総合的に判断するStateManageがほしい。
 	switch p.current {
-	case Pause:
+	case move.Pause:
 		return err
-	case Ascending, Descending:
+	case move.Ascending, move.Descending:
 		// TODO: I really want to go back to the previous movement before the ascending or descending motion.
 		if p.lanes.IsReachedTarget(p.position.Y) {
-			p.current = Dash
+			p.current = move.Dash
 		}
 	default:
 		// update state by user input
@@ -161,7 +163,7 @@ func (p *Player) updateState() error {
 			if !p.lanes.IsTop() {
 				if p.lanes.Ascend() {
 					p.previous = p.current
-					p.current = Ascending
+					p.current = move.Ascending
 					err = p.jumpSe.Play()
 					if err != nil {
 						err = fmt.Errorf("failed to play se: %v", err)
@@ -174,7 +176,7 @@ func (p *Player) updateState() error {
 			if !p.lanes.IsBottom() {
 				if p.lanes.Descend() {
 					p.previous = p.current
-					p.current = Descending
+					p.current = move.Descending
 					err = p.dropSe.Play()
 					if err != nil {
 						err = fmt.Errorf("failed to play se: %v", err)
@@ -186,25 +188,25 @@ func (p *Player) updateState() error {
 
 		// update state by stamina
 		if p.stamina.GetStamina() <= 0 {
-			p.current = Walk
+			p.current = move.Walk
 		}
 
 		// update state by blocked status
 		if p.blocked {
-			if p.current == Walk {
+			if p.current == move.Walk {
 				return err
 			}
 			p.previous = p.current
-			p.current = Walk
+			p.current = move.Walk
 		} else {
-			if p.current == Dash {
+			if p.current == move.Dash {
 				return err
 			}
 			p.previous = p.current
 			if p.stamina.GetStamina() > 0 {
-				p.current = Dash
+				p.current = move.Dash
 			} else {
-				p.current = Walk
+				p.current = move.Walk
 			}
 		}
 	}
@@ -214,13 +216,13 @@ func (p *Player) updateState() error {
 // update stamina by current state
 func (p *Player) updateStamina() {
 	switch p.current {
-	case Dash:
+	case move.Dash:
 		p.stamina.Consumes(2)
-	case Walk:
+	case move.Walk:
 		p.stamina.Consumes(1)
-	case Ascending:
+	case move.Ascending:
 		p.stamina.Consumes(1)
-	case Descending:
+	case move.Descending:
 		p.stamina.Consumes(1)
 	default:
 		// nothing to do
@@ -230,19 +232,19 @@ func (p *Player) updateStamina() {
 func (p *Player) updatePosition() {
 	// todo: 固定値での移動ではなくキャラごと、stateごとの初速度と加速度から算出される速度で移動させる
 	switch p.current {
-	case Walk:
+	case move.Walk:
 		p.velocity.X = 1.0
 		p.velocity.Y = 0.0
 		p.animation.AddStep(1)
-	case Dash:
+	case move.Dash:
 		p.velocity.X = 2.0
 		p.velocity.Y = 0.0
 		p.animation.AddStep(2)
-	case Ascending:
+	case move.Ascending:
 		p.velocity.X = 1.0
 		p.velocity.Y = -2.0
 		p.animation.AddStep(1)
-	case Descending:
+	case move.Descending:
 		p.velocity.X = 1.0
 		p.velocity.Y = 2.0
 		p.animation.AddStep(1)

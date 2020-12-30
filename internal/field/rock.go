@@ -11,7 +11,7 @@ import (
 // Position offset to make it look like it's on the lane
 const offset = 2
 
-// Rock is the interface of the field part.
+// Rock is the one of obstacles.
 type Rock struct {
 	image    *ebiten.Image
 	imgSize  image.Point
