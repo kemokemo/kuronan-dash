@@ -1,22 +1,16 @@
 package field
 
 import (
-	"image"
-
 	"github.com/kemokemo/kuronan-dash/internal/view"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-// Position offset to make it look like it's on the lane
-const offset = 2
-
 // Rock is the one of obstacles.
 type Rock struct {
 	image    *ebiten.Image
-	imgSize  image.Point
-	position view.Vector
-	rect     image.Rectangle
+	op       *ebiten.DrawImageOptions
+	rect     *view.HitRectangle
 	velocity view.Vector
 	hardness float64
 }
@@ -28,34 +22,30 @@ type Rock struct {
 //   vel: the velocity to move this object
 func (r *Rock) Initialize(img *ebiten.Image, pos, vel view.Vector) {
 	r.image = img
-	r.position = pos
 	r.velocity = vel
 
+	r.op = &ebiten.DrawImageOptions{}
+	r.op.GeoM.Translate(pos.X, pos.Y-float64(fieldOffset))
+
 	w, h := img.Size()
-	r.imgSize = image.Point{w, h}
-	r.rect = image.Rectangle{
-		Min: image.Point{X: int(pos.X), Y: int(pos.Y)},
-		Max: image.Point{X: int(pos.X) + w - offset, Y: int(pos.Y) + h - offset},
-	}
+	r.rect = view.NewHitRectangle(
+		view.Vector{X: pos.X + rectOffset, Y: pos.Y + rectOffset},
+		view.Vector{X: pos.X + float64(w) - rectOffset, Y: pos.Y + float64(h) - rectOffset})
 }
 
 // Update updates the position and velocity of this object.
 //  args:
 //   charaV: the velocity of the player character
 func (r *Rock) Update(charaV view.Vector) {
-	r.position = r.position.Add(r.velocity)
 	// Calculate relative speed with player only in horizontal direction
-	r.position.X -= charaV.X
-
-	r.rect.Min = image.Point{X: int(r.position.X), Y: int(r.position.Y)}
-	r.rect.Max = image.Point{X: int(r.position.X) + r.imgSize.X - offset, Y: int(r.position.Y) + r.imgSize.Y - offset}
+	vX := r.velocity.X - charaV.X
+	r.op.GeoM.Translate(vX, r.velocity.Y)
+	r.rect.Add(view.Vector{X: vX, Y: r.velocity.Y})
 }
 
 // Draw draws this object to the screen.
-func (r *Rock) Draw(screen *ebiten.Image, offset image.Point) {
-	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(r.position.X-float64(offset.X), r.position.Y-float64(offset.Y))
-	screen.DrawImage(r.image, op)
+func (r *Rock) Draw(screen *ebiten.Image) {
+	screen.DrawImage(r.image, r.op)
 }
 
 // SetHardness sets the hardness of this obstacle.
@@ -76,6 +66,6 @@ func (r *Rock) IsBroken() bool {
 }
 
 // IsCollided returns whether this obstacle is collided the arg.
-func (r *Rock) IsCollided(rect image.Rectangle) bool {
+func (r *Rock) IsCollided(rect *view.HitRectangle) bool {
 	return r.rect.Overlaps(rect)
 }

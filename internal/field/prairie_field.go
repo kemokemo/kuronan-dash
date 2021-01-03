@@ -1,8 +1,6 @@
 package field
 
 import (
-	"image"
-
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/internal/view"
@@ -116,13 +114,13 @@ func (p *PrairieField) Update(v view.Vector) {
 }
 
 // DrawFarther draws the farther field parts.
-func (p *PrairieField) DrawFarther(screen *ebiten.Image, pOffset image.Point) {
+func (p *PrairieField) DrawFarther(screen *ebiten.Image) {
 	// 背景を描画
 	screen.DrawImage(p.bg, &ebiten.DrawImageOptions{})
 
 	// レーンよりも遠くのパーツを描画
 	for i := range p.fartherParts {
-		p.fartherParts[i].Draw(screen, pOffset)
+		p.fartherParts[i].Draw(screen)
 	}
 
 	// レーンを描画
@@ -140,19 +138,19 @@ func (p *PrairieField) DrawFarther(screen *ebiten.Image, pOffset image.Point) {
 }
 
 // DrawCloser draws the closer field part.
-func (p *PrairieField) DrawCloser(screen *ebiten.Image, pOffset image.Point) {
+func (p *PrairieField) DrawCloser(screen *ebiten.Image) {
 	// レーンよりも手前のパーツを描画
 
 	/// 近くの草むら
 	for i := range p.closerParts {
-		p.closerParts[i].Draw(screen, pOffset)
+		p.closerParts[i].Draw(screen)
 	}
 }
 
 // IsCollidedWithObstacles returns whether the r is collided with this item.
-func (p *PrairieField) IsCollidedWithObstacles(r image.Rectangle) bool {
+func (p *PrairieField) IsCollidedWithObstacles(hr *view.HitRectangle) bool {
 	for i := range p.obstacles {
-		if p.obstacles[i].IsCollided(r) {
+		if p.obstacles[i].IsCollided(hr) {
 			return true
 		}
 	}
@@ -162,10 +160,10 @@ func (p *PrairieField) IsCollidedWithObstacles(r image.Rectangle) bool {
 
 // EatFoods determines if there is a conflict between the player and the food.
 // If it hits, it returns the stamina gained.
-func (p *PrairieField) EatFoods(r image.Rectangle) int {
+func (p *PrairieField) EatFoods(hr *view.HitRectangle) int {
 	var stamina int
 	for i := range p.foods {
-		if p.foods[i].IsCollided(r) {
+		if p.foods[i].IsCollided(hr) {
 			stamina += p.foods[i].Eat()
 		}
 	}

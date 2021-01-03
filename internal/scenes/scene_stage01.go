@@ -73,7 +73,7 @@ func (s *Stage01Scene) Update(state *GameState) error {
 			// TODO: goto next stage :-)
 			state.SceneManager.GoTo(&TitleScene{})
 		}
-	case gameover:
+	case gameOver:
 		if input.TriggeredOne() {
 			state.SceneManager.GoTo(&TitleScene{})
 		}
@@ -87,14 +87,14 @@ func (s *Stage01Scene) Update(state *GameState) error {
 func (s *Stage01Scene) run() error {
 	s.time--
 	isTimeUp := s.time <= 0
-	isArriveGoal := s.player.GetPosition().X > s.goalX
+	isArriveGoal := s.player.GetPosition().X-view.DrawPosition > s.goalX
 
 	var err error
 	if isArriveGoal {
 		s.state = stageClear
 		s.player.Pause()
 	} else if !isArriveGoal && isTimeUp {
-		s.state = gameover
+		s.state = gameOver
 		s.player.Pause()
 	} else {
 		err = s.player.Update()
@@ -106,18 +106,18 @@ func (s *Stage01Scene) run() error {
 
 		// TODO: プレイヤーの攻撃が障害物に当たっているか判定しつつ、当たっていればダメージを加える処理
 
-		s.player.BeBlocked(s.field.IsCollidedWithObstacles(s.player.GetRectangle()))
-		s.player.Eat(s.field.EatFoods(s.player.GetRectangle()))
+		pRect := s.player.GetRectangle()
+		s.player.BeBlocked(s.field.IsCollidedWithObstacles(pRect))
+		s.player.Eat(s.field.EatFoods(pRect))
 	}
 	return err
 }
 
 // Draw draws background and characters.
 func (s *Stage01Scene) Draw(screen *ebiten.Image) {
-	pOffset := s.player.GetOffset()
-	s.field.DrawFarther(screen, pOffset)
+	s.field.DrawFarther(screen)
 	s.player.Draw(screen)
-	s.field.DrawCloser(screen, pOffset)
+	s.field.DrawCloser(screen)
 	s.drawUI(screen)
 	s.drawWithState(screen)
 }
@@ -133,7 +133,7 @@ func (s *Stage01Scene) drawUI(screen *ebiten.Image) error {
 	text.Draw(screen, fmt.Sprintf("タイム: %v", s.time),
 		fonts.GamerFontS, 160, 60, color.White)
 
-	text.Draw(screen, fmt.Sprintf("すすんだきょり/ゴールいち: %v / %v", s.player.GetPosition().X, s.goalX),
+	text.Draw(screen, fmt.Sprintf("すすんだきょり/ゴールいち: %v / %v", s.player.GetPosition().X-view.DrawPosition, s.goalX),
 		fonts.GamerFontS, 300, 60, color.White)
 
 	return nil
@@ -148,7 +148,7 @@ func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 	case stageClear:
 		text.Draw(screen, messages.GameStageClear, fonts.GamerFontL, view.ScreenWidth/2-200, view.ScreenHeight/2-25, color.White)
 		text.Draw(screen, messages.GameStageClear2, fonts.GamerFontL, view.ScreenWidth/2-300, view.ScreenHeight/2+25, color.White)
-	case gameover:
+	case gameOver:
 		text.Draw(screen, messages.GameOver, fonts.GamerFontL, view.ScreenWidth/2-420, view.ScreenHeight/2, color.White)
 	default:
 		// nothing to draw

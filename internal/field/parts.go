@@ -1,8 +1,6 @@
 package field
 
 import (
-	"image"
-
 	"github.com/kemokemo/kuronan-dash/internal/view"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -11,6 +9,7 @@ import (
 // Parts is the field parts.
 type Parts struct {
 	image    *ebiten.Image
+	op       *ebiten.DrawImageOptions
 	position view.Vector
 	velocity view.Vector
 }
@@ -22,22 +21,21 @@ type Parts struct {
 //   vel: the velocity to move this object
 func (p *Parts) Initialize(img *ebiten.Image, pos, vel view.Vector) {
 	p.image = img
-	p.position = pos
 	p.velocity = vel
+
+	p.op = &ebiten.DrawImageOptions{}
+	p.op.GeoM.Translate(pos.X, pos.Y)
 }
 
 // Update updates the position and velocity of this object.
 //  args:
 //   charaV: the velocity of the player character
 func (p *Parts) Update(charaV view.Vector) {
-	p.position = p.position.Add(p.velocity)
 	// Calculate relative speed with player only in horizontal direction
-	p.position.X -= charaV.X
+	p.op.GeoM.Translate(p.velocity.X-charaV.X, p.velocity.Y)
 }
 
 // Draw draws this object to the screen.
-func (p *Parts) Draw(screen *ebiten.Image, offset image.Point) {
-	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(p.position.X-float64(offset.X), p.position.Y-float64(offset.Y))
-	screen.DrawImage(p.image, op)
+func (p *Parts) Draw(screen *ebiten.Image) {
+	screen.DrawImage(p.image, p.op)
 }

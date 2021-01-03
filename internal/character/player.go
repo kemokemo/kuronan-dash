@@ -2,60 +2,13 @@ package character
 
 import (
 	"fmt"
-	"image"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/kemokemo/kuronan-dash/assets/images"
-	"github.com/kemokemo/kuronan-dash/assets/messages"
 	"github.com/kemokemo/kuronan-dash/assets/se"
 	"github.com/kemokemo/kuronan-dash/internal/anime"
 	"github.com/kemokemo/kuronan-dash/internal/move"
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
-
-// player characters
-var (
-	Kurona     *Player
-	Koma       *Player
-	Shishimaru *Player
-
-	// Selected is the selected player.
-	Selected *Player
-)
-
-// NewPlayers load all player characters.
-func NewPlayers() error {
-	Kurona = &Player{
-		StandingImage: images.KuronaStanding,
-		Description:   messages.DescKurona,
-		animation:     anime.NewStepAnimation(images.KuronaAnimation, 5),
-		jumpSe:        se.Jump,
-		dropSe:        se.Drop,
-		stamina:       NewStamina(130, 6),
-	}
-
-	Koma = &Player{
-		StandingImage: images.KomaStanding,
-		Description:   messages.DescKoma,
-		animation:     anime.NewStepAnimation(images.KomaAnimation, 5),
-		jumpSe:        se.Jump,
-		dropSe:        se.Drop,
-		stamina:       NewStamina(160, 11),
-	}
-
-	Shishimaru = &Player{
-		StandingImage: images.ShishimaruStanding,
-		Description:   messages.DescShishimaru,
-		animation:     anime.NewStepAnimation(images.ShishimaruAnimation, 5),
-		jumpSe:        se.Jump,
-		dropSe:        se.Drop,
-		stamina:       NewStamina(200, 17),
-	}
-
-	Selected = Kurona
-
-	return nil
-}
 
 // Player is a player character.
 type Player struct {
@@ -67,10 +20,10 @@ type Player struct {
 	dropSe        *se.Player
 
 	// Update each time based on the internal status and other information
-	position  view.Vector
-	velocity  view.Vector
-	rectangle image.Rectangle
-	offset    image.Point
+	op       *ebiten.DrawImageOptions
+	position view.Vector
+	velocity view.Vector
+	rect     *view.HitRectangle
 
 	// Initialization is required before starting the stage.
 	lanes    move.Lanes
@@ -101,16 +54,17 @@ func (p *Player) InitializeWithLanesInfo(heights []float64) error {
 	}
 
 	// set the player at the top lane.
-	p.position = view.Vector{X: 0.0, Y: float64(cH[0])}
+	initialY := float64(cH[0])
+	offset := 3.0
 
-	// set the edge rectangle with the position and image's rectangle.
-	b := p.StandingImage.Bounds().Size()
-	b.X -= 3
-	b.Y -= 3
-	p.rectangle = image.Rectangle{
-		Min: image.Point{X: int(p.position.X), Y: int(p.position.Y)},
-		Max: image.Point{X: int(p.position.X) + b.X, Y: int(p.position.Y) + b.Y},
-	}
+	p.position = view.Vector{X: view.DrawPosition, Y: initialY}
+	p.op = &ebiten.DrawImageOptions{}
+	p.op.GeoM.Translate(view.DrawPosition, initialY)
+
+	w, h := p.StandingImage.Size()
+	p.rect = view.NewHitRectangle(
+		view.Vector{X: view.DrawPosition + offset, Y: initialY + offset},
+		view.Vector{X: view.DrawPosition + float64(w) - offset, Y: initialY + float64(h) - offset})
 
 	return nil
 }
@@ -251,30 +205,20 @@ func (p *Player) updatePosition() {
 	default:
 		// Don't move
 	}
-	p.position = p.position.Add(p.velocity)
-	// TODO: view.Rectangleなくしたい
-	vel := image.Point{int(p.velocity.X), int(p.velocity.Y)}
-	p.rectangle.Min = p.rectangle.Min.Add(vel)
-	p.rectangle.Max = p.rectangle.Max.Add(vel)
+	p.position.Add(p.velocity)
+	p.op.GeoM.Translate(0.0, p.velocity.Y)
+	p.rect.Add(view.Vector{X: 0.0, Y: p.velocity.Y})
 }
 
 // Draw draws the character image.
 func (p *Player) Draw(screen *ebiten.Image) {
 	// TODO: ダッシュ中とか奥義中とか状態に応じて多少前後しつつ、ほぼ画面中央に描画したい
-	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(view.ScreenWidth/4, p.position.Y)
-	p.offset.X = (int)(p.position.X - view.ScreenWidth/4)
-	screen.DrawImage(p.animation.GetCurrentFrame(), op)
+	screen.DrawImage(p.animation.GetCurrentFrame(), p.op)
 }
 
 // GetPosition return the current position of this player.
 func (p *Player) GetPosition() view.Vector {
 	return p.position
-}
-
-// GetOffset returns the offset to draw other filed parts.
-func (p *Player) GetOffset() image.Point {
-	return p.offset
 }
 
 // GetVelocity returns the velocity of this playable character.
@@ -288,8 +232,8 @@ func (p *Player) GetStamina() int {
 }
 
 // GetRectangle returns the edge rentangle of this player.
-func (p *Player) GetRectangle() image.Rectangle {
-	return p.rectangle
+func (p *Player) GetRectangle() *view.HitRectangle {
+	return p.rect
 }
 
 // BeBlocked puts the player in a position where the path is blocked by an obstacle.
