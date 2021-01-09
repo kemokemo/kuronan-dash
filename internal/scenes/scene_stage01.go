@@ -102,7 +102,7 @@ func (s *Stage01Scene) run() error {
 			log.Println("failed to update the player:", err)
 			return err
 		}
-		s.field.Update(s.player.GetVelocity())
+		s.field.Update(s.player.GetScrollVelocity())
 
 		// TODO: プレイヤーの攻撃が障害物に当たっているか判定しつつ、当たっていればダメージを加える処理
 
@@ -133,7 +133,7 @@ func (s *Stage01Scene) drawUI(screen *ebiten.Image) error {
 	text.Draw(screen, fmt.Sprintf("タイム: %v", s.time),
 		fonts.GamerFontS, 160, 60, color.White)
 
-	text.Draw(screen, fmt.Sprintf("すすんだきょり/ゴールいち: %v / %v", s.player.GetPosition().X-view.DrawPosition, s.goalX),
+	text.Draw(screen, fmt.Sprintf("すすんだきょり/ゴールいち: %.1f / %.1f", s.player.GetPosition().X-view.DrawPosition, s.goalX),
 		fonts.GamerFontS, 300, 60, color.White)
 
 	return nil

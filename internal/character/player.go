@@ -20,10 +20,13 @@ type Player struct {
 	dropSe        *se.Player
 
 	// Update each time based on the internal status and other information
-	op       *ebiten.DrawImageOptions
-	position view.Vector
-	velocity view.Vector
-	rect     *view.HitRectangle
+	op         *ebiten.DrawImageOptions
+	position   *view.Vector
+	pDriver    *move.PlayerDriver
+	scrollV    *view.Vector
+	charaPosV  *view.Vector
+	charaDrawV *view.Vector
+	rect       *view.HitRectangle
 
 	// Initialization is required before starting the stage.
 	lanes    move.Lanes
@@ -57,7 +60,10 @@ func (p *Player) InitializeWithLanesInfo(heights []float64) error {
 	initialY := float64(cH[0])
 	offset := 3.0
 
-	p.position = view.Vector{X: view.DrawPosition, Y: initialY}
+	p.position = &view.Vector{X: view.DrawPosition, Y: initialY}
+	p.charaPosV = &view.Vector{X: 0.0, Y: 0.0}
+	p.scrollV = &view.Vector{X: 0.0, Y: 0.0}
+	p.pDriver = move.NewPlayerDriver()
 	p.op = &ebiten.DrawImageOptions{}
 	p.op.GeoM.Translate(view.DrawPosition, initialY)
 
@@ -94,8 +100,16 @@ func (p *Player) Update() error {
 	if err != nil {
 		return err
 	}
-	p.updateStamina()
-	p.updatePosition()
+
+	p.stamina.Consumes(p.current)
+
+	p.pDriver.Update(p.current)
+	p.scrollV, p.charaPosV, p.charaDrawV = p.pDriver.GetVelocity()
+
+	p.animation.AddStep(p.charaPosV.X)
+	p.position.Add(p.charaPosV)
+	p.op.GeoM.Translate(p.charaDrawV.X, p.charaDrawV.Y)
+	p.rect.Add(p.charaDrawV)
 
 	return nil
 }
@@ -108,7 +122,7 @@ func (p *Player) updateState() error {
 		return err
 	case move.Ascending, move.Descending:
 		// TODO: I really want to go back to the previous movement before the ascending or descending motion.
-		if p.lanes.IsReachedTarget(p.position.Y) {
+		if p.lanes.IsReachedTarget(p.position.Y, p.charaPosV.Y) {
 			p.current = move.Dash
 		}
 	default:
@@ -167,49 +181,6 @@ func (p *Player) updateState() error {
 	return err
 }
 
-// update stamina by current state
-func (p *Player) updateStamina() {
-	switch p.current {
-	case move.Dash:
-		p.stamina.Consumes(2)
-	case move.Walk:
-		p.stamina.Consumes(1)
-	case move.Ascending:
-		p.stamina.Consumes(1)
-	case move.Descending:
-		p.stamina.Consumes(1)
-	default:
-		// nothing to do
-	}
-}
-
-func (p *Player) updatePosition() {
-	// todo: 固定値での移動ではなくキャラごと、stateごとの初速度と加速度から算出される速度で移動させる
-	switch p.current {
-	case move.Walk:
-		p.velocity.X = 1.0
-		p.velocity.Y = 0.0
-		p.animation.AddStep(1)
-	case move.Dash:
-		p.velocity.X = 2.0
-		p.velocity.Y = 0.0
-		p.animation.AddStep(2)
-	case move.Ascending:
-		p.velocity.X = 1.0
-		p.velocity.Y = -2.0
-		p.animation.AddStep(1)
-	case move.Descending:
-		p.velocity.X = 1.0
-		p.velocity.Y = 2.0
-		p.animation.AddStep(1)
-	default:
-		// Don't move
-	}
-	p.position.Add(p.velocity)
-	p.op.GeoM.Translate(0.0, p.velocity.Y)
-	p.rect.Add(view.Vector{X: 0.0, Y: p.velocity.Y})
-}
-
 // Draw draws the character image.
 func (p *Player) Draw(screen *ebiten.Image) {
 	// TODO: ダッシュ中とか奥義中とか状態に応じて多少前後しつつ、ほぼ画面中央に描画したい
@@ -217,13 +188,13 @@ func (p *Player) Draw(screen *ebiten.Image) {
 }
 
 // GetPosition return the current position of this player.
-func (p *Player) GetPosition() view.Vector {
+func (p *Player) GetPosition() *view.Vector {
 	return p.position
 }
 
-// GetVelocity returns the velocity of this playable character.
-func (p *Player) GetVelocity() view.Vector {
-	return p.velocity
+// GetScrollVelocity returns the velocity to scroll field parts.
+func (p *Player) GetScrollVelocity() *view.Vector {
+	return p.scrollV
 }
 
 // GetStamina returns the stamina value fo this character.
@@ -242,8 +213,8 @@ func (p *Player) BeBlocked(blocked bool) {
 }
 
 // Eat eats foods and restore stamina value by argument value.
-func (p *Player) Eat(stamina int) {
-	p.stamina.Restore(stamina)
+func (p *Player) Eat(foodVol int) {
+	p.stamina.Add(foodVol)
 }
 
 // Close closes the inner resources.

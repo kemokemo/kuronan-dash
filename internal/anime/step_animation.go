@@ -11,7 +11,7 @@ type StepAnimation struct {
 	durationSteps   int
 	maxFrameNum     int
 	currentFrameNum int
-	walkedSteps     int
+	walkedSteps     float64
 }
 
 // NewStepAnimation returns a new StepAnimation generated with args.
@@ -25,7 +25,7 @@ func NewStepAnimation(frames []*ebiten.Image, duration int) *StepAnimation {
 
 // AddStep adds steps information. If your character moved, please
 // call this function with steps information.
-func (s *StepAnimation) AddStep(steps int) {
+func (s *StepAnimation) AddStep(steps float64) {
 	s.walkedSteps += steps
 }
 
@@ -34,9 +34,9 @@ func (s *StepAnimation) AddStep(steps int) {
 // If the sum of steps is grater than the DurationSteps, this function will
 // return the next frame.
 func (s *StepAnimation) GetCurrentFrame() *ebiten.Image {
-	if s.walkedSteps > s.durationSteps {
+	if int(s.walkedSteps) > s.durationSteps {
 		s.currentFrameNum++
-		s.walkedSteps = 0
+		s.walkedSteps = 0.0
 	}
 	if s.currentFrameNum < 0 || s.maxFrameNum-1 < s.currentFrameNum {
 		s.currentFrameNum = 0

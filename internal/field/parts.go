@@ -11,7 +11,7 @@ type Parts struct {
 	image    *ebiten.Image
 	op       *ebiten.DrawImageOptions
 	position view.Vector
-	velocity view.Vector
+	v0       *view.Vector
 }
 
 // Initialize initializes the object.
@@ -19,20 +19,18 @@ type Parts struct {
 //   img: the image to draw
 //   pos: the initial position
 //   vel: the velocity to move this object
-func (p *Parts) Initialize(img *ebiten.Image, pos, vel view.Vector) {
+func (p *Parts) Initialize(img *ebiten.Image, pos, vel *view.Vector) {
 	p.image = img
-	p.velocity = vel
-
+	p.v0 = &view.Vector{X: vel.X, Y: vel.Y}
 	p.op = &ebiten.DrawImageOptions{}
 	p.op.GeoM.Translate(pos.X, pos.Y)
 }
 
 // Update updates the position and velocity of this object.
 //  args:
-//   charaV: the velocity of the player character
-func (p *Parts) Update(charaV view.Vector) {
-	// Calculate relative speed with player only in horizontal direction
-	p.op.GeoM.Translate(p.velocity.X-charaV.X, p.velocity.Y)
+//   scrollV: the velocity to scroll this field parts.
+func (p *Parts) Update(scrollV *view.Vector) {
+	p.op.GeoM.Translate(p.v0.X+scrollV.X, p.v0.Y+scrollV.Y)
 }
 
 // Draw draws this object to the screen.

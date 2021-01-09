@@ -13,12 +13,12 @@ type ScrollableObject interface {
 	//   img: the image to draw
 	//   pos: the initial position
 	//   vel: the velocity to move this object
-	Initialize(img *ebiten.Image, pos, vel view.Vector)
+	Initialize(img *ebiten.Image, pos, vel *view.Vector)
 
 	// Update updates the position and velocity of this object.
 	//  args:
-	//   charaV: the velocity of the player character
-	Update(charaV view.Vector)
+	//   scrollV: the velocity to scroll field parts.
+	Update(scrollV *view.Vector)
 
 	// Draw draws this object to the screen.
 	Draw(screen *ebiten.Image)

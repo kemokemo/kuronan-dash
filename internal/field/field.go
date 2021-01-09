@@ -10,8 +10,8 @@ type Field interface {
 	// Initialize initializes the all of field parts.
 	Initialize()
 
-	// Update updates the internal state and position with the player's velocity.
-	Update(v view.Vector)
+	// Update updates the all field parts position with the scroll velocity.
+	Update(scroll *view.Vector)
 
 	// DrawFarther draws the field parts farther than the player from the user's point of view.
 	DrawFarther(screen *ebiten.Image)

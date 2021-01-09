@@ -63,9 +63,10 @@ func (l *Lanes) Descend() bool {
 	return true
 }
 
-// IsReachedTarget returns wchich the player reached the target.
-func (l *Lanes) IsReachedTarget(height float64) bool {
-	if (l.state == Ascending && l.heights[l.target] >= height) ||
+// IsReachedTarget returns which the player reached the target.
+// ふわっと着地するため、上昇中はレーンの高さ以下で且つ速度が下向きの時に変更した。
+func (l *Lanes) IsReachedTarget(height float64, vY float64) bool {
+	if (l.state == Ascending && l.heights[l.target] <= height && vY > 0) ||
 		(l.state == Descending && l.heights[l.target] <= height) {
 		l.state = Dash
 		l.current = l.target

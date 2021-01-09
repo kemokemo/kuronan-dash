@@ -34,7 +34,7 @@ func TestStaminaConsumes(t *testing.T) {
 				endurance: tt.fields.endurance,
 				valRate:   tt.fields.valRate,
 			}
-			s.Consumes(tt.args.val)
+			s.consumes(tt.args.val)
 			got := s.GetStamina()
 			if got != tt.want {
 				t.Errorf("GetStamina() = %v, want %v", got, tt.want)
@@ -91,7 +91,7 @@ func TestStamina_Restore(t *testing.T) {
 				endurance: tt.fields.endurance,
 				valRate:   tt.fields.valRate,
 			}
-			s.Restore(tt.args.val)
+			s.Add(tt.args.val)
 			got := s.GetStamina()
 			if got != tt.want {
 				t.Errorf("GetStamina() = %v, want %v", got, tt.want)

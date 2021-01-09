@@ -19,7 +19,7 @@ type Onigiri struct {
 //   img: the image to draw
 //   pos: the initial position
 //   vel: the velocity to move this object
-func (o *Onigiri) Initialize(img *ebiten.Image, pos view.Vector, vel view.Vector) {
+func (o *Onigiri) Initialize(img *ebiten.Image, pos *view.Vector, vel *view.Vector) {
 	o.image = img
 	o.stamina = 20
 	o.eaten = false
@@ -35,13 +35,13 @@ func (o *Onigiri) Initialize(img *ebiten.Image, pos view.Vector, vel view.Vector
 
 // Update updates the position and velocity of this object.
 //  args:
-//   charaV: the velocity of the player character
-func (o *Onigiri) Update(charaV view.Vector) {
+//   scrollV: the velocity to scroll this field parts.
+func (o *Onigiri) Update(scrollV *view.Vector) {
 	if o.eaten {
 		return
 	}
-	o.op.GeoM.Translate(-charaV.X, 0)
-	o.rect.Add(view.Vector{X: -charaV.X, Y: 0.0})
+	o.op.GeoM.Translate(scrollV.X, scrollV.Y)
+	o.rect.Add(scrollV)
 }
 
 // Draw draws this object to the screen.

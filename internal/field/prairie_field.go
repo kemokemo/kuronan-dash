@@ -17,8 +17,7 @@ type PrairieField struct {
 	closerParts  []ScrollableObject
 	obstacles    []Obstacle
 	foods        []Food
-
-	viewLane view.Viewport
+	viewLane     *view.Viewport
 }
 
 // Initialize initializes all resources to draw.
@@ -28,7 +27,7 @@ func (p *PrairieField) Initialize() {
 	p.createParts()
 
 	p.tile = images.TilePrairie
-	p.viewLane = view.Viewport{}
+	p.viewLane = &view.Viewport{}
 	p.viewLane.SetSize(p.tile.Size())
 	p.viewLane.SetVelocity(gameSpeed)
 	p.viewLane.SetLoop(true)
@@ -101,15 +100,15 @@ func (p *PrairieField) createParts() {
 }
 
 // Update moves viewport for the all field parts.
-func (p *PrairieField) Update(v view.Vector) {
-	p.viewLane.SetVelocity(v.X)
+func (p *PrairieField) Update(scrollV *view.Vector) {
+	p.viewLane.SetVelocity(scrollV.X)
 	p.viewLane.Move(view.Left)
 
 	for i := range p.fartherParts {
-		p.fartherParts[i].Update(v)
+		p.fartherParts[i].Update(scrollV)
 	}
 	for i := range p.closerParts {
-		p.closerParts[i].Update(v)
+		p.closerParts[i].Update(scrollV)
 	}
 }
 

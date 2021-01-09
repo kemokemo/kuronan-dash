@@ -14,7 +14,7 @@ func NewHitRectangle(min, max Vector) *HitRectangle {
 }
 
 // Add adds the v to the rectangle to check hits.
-func (hr HitRectangle) Add(v Vector) {
+func (hr HitRectangle) Add(v *Vector) {
 	hr.min.X += v.X
 	hr.min.Y += v.Y
 	hr.max.X += v.X
