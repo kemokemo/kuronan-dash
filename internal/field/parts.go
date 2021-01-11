@@ -8,10 +8,9 @@ import (
 
 // Parts is the field parts.
 type Parts struct {
-	image    *ebiten.Image
-	op       *ebiten.DrawImageOptions
-	position view.Vector
-	v0       *view.Vector
+	image *ebiten.Image
+	op    *ebiten.DrawImageOptions
+	v0    *view.Vector
 }
 
 // Initialize initializes the object.

@@ -23,3 +23,10 @@ type ScrollableObject interface {
 	// Draw draws this object to the screen.
 	Draw(screen *ebiten.Image)
 }
+
+// ScrollInfo is the info to initialize the ScrollableObject/
+type ScrollInfo struct {
+	img *ebiten.Image
+	pos *view.Vector
+	vel *view.Vector
+}

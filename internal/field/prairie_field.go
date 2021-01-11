@@ -17,20 +17,38 @@ type PrairieField struct {
 	closerParts  []ScrollableObject
 	obstacles    []Obstacle
 	foods        []Food
-	viewLane     *view.Viewport
+	lanes        []*Lane
 }
 
 // Initialize initializes all resources to draw.
 func (p *PrairieField) Initialize() {
 	p.bg = images.SkyBackground
-
-	p.createParts()
-
 	p.tile = images.TilePrairie
-	p.viewLane = &view.Viewport{}
-	p.viewLane.SetSize(p.tile.Size())
-	p.viewLane.SetVelocity(gameSpeed)
-	p.viewLane.SetLoop(true)
+	p.createLanes()
+	p.createParts()
+}
+
+func (p *PrairieField) createLanes() {
+	w, _ := images.TilePrairie.Size()
+	width := float64(w)
+	infos := []ScrollInfo{
+		{images.TilePrairie, &view.Vector{X: 0.0, Y: firstLaneHeight}, &view.Vector{X: 0.0, Y: 0.0}},
+		{images.TilePrairie, &view.Vector{X: width, Y: firstLaneHeight}, &view.Vector{X: 0.0, Y: 0.0}},
+		{images.TilePrairie, &view.Vector{X: 2.0 * width, Y: firstLaneHeight}, &view.Vector{X: 0.0, Y: 0.0}},
+
+		{images.TilePrairie, &view.Vector{X: 0.0, Y: secondLaneHeight}, &view.Vector{X: 0.0, Y: 0.0}},
+		{images.TilePrairie, &view.Vector{X: width, Y: secondLaneHeight}, &view.Vector{X: 0.0, Y: 0.0}},
+		{images.TilePrairie, &view.Vector{X: 2.0 * width, Y: secondLaneHeight}, &view.Vector{X: 0.0, Y: 0.0}},
+
+		{images.TilePrairie, &view.Vector{X: 0.0, Y: thirdLaneHeight}, &view.Vector{X: 0.0, Y: 0.0}},
+		{images.TilePrairie, &view.Vector{X: width, Y: thirdLaneHeight}, &view.Vector{X: 0.0, Y: 0.0}},
+		{images.TilePrairie, &view.Vector{X: 2.0 * width, Y: thirdLaneHeight}, &view.Vector{X: 0.0, Y: 0.0}},
+	}
+	for i := range infos {
+		l := &Lane{}
+		l.Initialize(infos[i].img, infos[i].pos, infos[i].vel)
+		p.lanes = append(p.lanes, l)
+	}
 }
 
 // create all field parts to draw.
@@ -101,9 +119,9 @@ func (p *PrairieField) createParts() {
 
 // Update moves viewport for the all field parts.
 func (p *PrairieField) Update(scrollV *view.Vector) {
-	p.viewLane.SetVelocity(scrollV.X)
-	p.viewLane.Move(view.Left)
-
+	for i := range p.lanes {
+		p.lanes[i].Update(scrollV)
+	}
 	for i := range p.fartherParts {
 		p.fartherParts[i].Update(scrollV)
 	}
@@ -123,16 +141,8 @@ func (p *PrairieField) DrawFarther(screen *ebiten.Image) {
 	}
 
 	// レーンを描画
-	wP, _ := images.TilePrairie.Size()
-	x16, y16 := p.viewLane.Position()
-	offsetX, offsetY := float64(x16)/16, float64(y16)/16
-	for _, h := range LaneHeights {
-		for i := 0; i < repeat; i++ {
-			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(float64(wP*i), float64(h))
-			op.GeoM.Translate(offsetX, offsetY)
-			screen.DrawImage(p.tile, op)
-		}
+	for i := range p.lanes {
+		p.lanes[i].Draw(screen)
 	}
 }
 
