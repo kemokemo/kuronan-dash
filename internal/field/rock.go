@@ -5,7 +5,7 @@ import (
 
 	"github.com/kemokemo/kuronan-dash/internal/view"
 
-	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 // Position offset to make it look like it's on the lane
@@ -52,11 +52,10 @@ func (r *Rock) Update(charaV view.Vector) {
 }
 
 // Draw draws this object to the screen.
-func (r *Rock) Draw(screen *ebiten.Image, offset image.Point) error {
+func (r *Rock) Draw(screen *ebiten.Image, offset image.Point) {
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(r.position.X-float64(offset.X), r.position.Y-float64(offset.Y))
-
-	return screen.DrawImage(r.image, op)
+	screen.DrawImage(r.image, op)
 }
 
 // SetHardness sets the hardness of this obstacle.

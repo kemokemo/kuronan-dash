@@ -1,12 +1,14 @@
 package music
 
 import (
-	"github.com/hajimehoshi/ebiten/audio"
-	"github.com/hajimehoshi/ebiten/audio/mp3"
+	"bytes"
+
+	"github.com/hajimehoshi/ebiten/v2/audio"
+	"github.com/hajimehoshi/ebiten/v2/audio/mp3"
 )
 
 func loadPlayer(b []byte) (*audio.Player, error) {
-	m, err := mp3.Decode(AudioContext, audio.BytesReadSeekCloser(b))
+	m, err := mp3.Decode(AudioContext, bytes.NewReader(b))
 	if err != nil {
 		return nil, err
 	}

@@ -1,14 +1,14 @@
 package scenes
 
 import (
-	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 // Scene is interface for the all scenes.
 type Scene interface {
 	Initialize() error
 	Update(state *GameState) error
-	Draw(screen *ebiten.Image) error
-	StartMusic() error
+	Draw(screen *ebiten.Image)
+	StartMusic()
 	StopMusic() error
 }

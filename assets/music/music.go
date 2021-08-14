@@ -3,7 +3,7 @@ package music
 import (
 	"fmt"
 
-	"github.com/hajimehoshi/ebiten/audio"
+	"github.com/hajimehoshi/ebiten/v2/audio"
 )
 
 const sampleRate = 44100
@@ -18,13 +18,8 @@ var (
 )
 
 // LoadAudioContext load audio context.
-func LoadAudioContext() error {
-	var err error
-	AudioContext, err = audio.NewContext(sampleRate)
-	if err != nil {
-		return err
-	}
-	return nil
+func LoadAudioContext() {
+	AudioContext = audio.NewContext(sampleRate)
 }
 
 // LoadMusic loads all music.

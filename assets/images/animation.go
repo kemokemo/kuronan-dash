@@ -5,7 +5,7 @@ import (
 	"image"
 	_ "image/png" // to load png images
 
-	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 // frames for the animation
@@ -65,10 +65,7 @@ func loadFrames(br []*bytes.Reader) ([]*ebiten.Image, error) {
 		if err != nil {
 			return nil, err
 		}
-		frame, err := ebiten.NewImageFromImage(img, ebiten.FilterDefault)
-		if err != nil {
-			return nil, err
-		}
+		frame := ebiten.NewImageFromImage(img)
 		frames = append(frames, frame)
 	}
 

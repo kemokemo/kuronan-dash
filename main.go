@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/v2"
 	kuronandash "github.com/kemokemo/kuronan-dash/internal"
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
@@ -32,8 +32,9 @@ func run() int {
 		}
 	}()
 
-	err = ebiten.Run(game.Update, view.ScreenWidth, view.ScreenHeight,
-		1, "Kuronan Dash!")
+	ebiten.SetWindowSize(view.ScreenWidth, view.ScreenHeight)
+	ebiten.SetWindowTitle("Kuronan Dash!")
+	err = ebiten.RunGame(game)
 	if err != nil {
 		log.Println("failed to run:", err)
 		return exitFailed

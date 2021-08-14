@@ -5,7 +5,7 @@ import (
 	"image"
 	_ "image/png" // to load png images
 
-	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 func loadStandingImages() error {
@@ -32,5 +32,5 @@ func loadSingleImage(b []byte) (*ebiten.Image, error) {
 	if err != nil {
 		return nil, err
 	}
-	return ebiten.NewImageFromImage(img, ebiten.FilterDefault)
+	return ebiten.NewImageFromImage(img), nil
 }

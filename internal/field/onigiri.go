@@ -3,7 +3,7 @@ package field
 import (
 	"image"
 
-	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
 
@@ -50,13 +50,13 @@ func (o *Onigiri) Update(charaV view.Vector) {
 }
 
 // Draw draws this object to the screen.
-func (o *Onigiri) Draw(screen *ebiten.Image, offset image.Point) error {
+func (o *Onigiri) Draw(screen *ebiten.Image, offset image.Point) {
 	if o.eaten {
-		return nil
+		return
 	}
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(o.position.X-float64(offset.X), o.position.Y-float64(offset.Y))
-	return screen.DrawImage(o.image, op)
+	screen.DrawImage(o.image, op)
 }
 
 // IsCollided returns whether this obstacle is collided the arg.

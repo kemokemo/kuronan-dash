@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"image"
 
-	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/assets/messages"
 	"github.com/kemokemo/kuronan-dash/assets/se"
@@ -257,12 +257,12 @@ func (p *Player) updatePosition() {
 }
 
 // Draw draws the character image.
-func (p *Player) Draw(screen *ebiten.Image) error {
+func (p *Player) Draw(screen *ebiten.Image) {
 	// TODO: ダッシュ中とか奥義中とか状態に応じて多少前後しつつ、ほぼ画面中央に描画したい
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(view.ScreenWidth/4, p.position.Y)
 	p.offset.X = (int)(p.position.X - view.ScreenWidth/4)
-	return screen.DrawImage(p.animation.GetCurrentFrame(), op)
+	screen.DrawImage(p.animation.GetCurrentFrame(), op)
 }
 
 // GetPosition return the current position of this player.

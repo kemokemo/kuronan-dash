@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 func TestMain(m *testing.M) {

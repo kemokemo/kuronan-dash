@@ -1,14 +1,13 @@
 package scenes
 
 import (
-	"fmt"
 	"image"
 	"image/color"
 	"log"
 
-	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/inpututil"
-	"github.com/hajimehoshi/ebiten/text"
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/hajimehoshi/ebiten/v2/text"
 	"golang.org/x/image/font"
 
 	"github.com/kemokemo/kuronan-dash/assets/fonts"
@@ -86,13 +85,8 @@ func (s *SelectScene) Initialize() error {
 func (s *SelectScene) Update(state *GameState) error {
 	s.bgViewPort.Move(view.UpperRight)
 
-	if ebiten.IsRunningSlowly() {
-		return nil
-	}
-
 	s.checkSelectorChanged()
-	if state.Input.StateForKey(ebiten.KeySpace) == 1 ||
-		input.AnyGamepadAbstractButtonPressed(state.Input) {
+	if input.TriggeredOne() {
 		chara.Selected = s.charaList[s.selector]
 		state.SceneManager.GoTo(&Stage01Scene{})
 	}
@@ -114,25 +108,15 @@ func (s *SelectScene) checkSelectorChanged() {
 }
 
 // Draw draws background and characters.
-func (s *SelectScene) Draw(screen *ebiten.Image) error {
-	err := s.drawBackground(screen)
-	if err != nil {
-		return fmt.Errorf("failed to draw the select screen background,%v", err)
-	}
-
+func (s *SelectScene) Draw(screen *ebiten.Image) {
+	s.drawBackground(screen)
 	text.Draw(screen, "さゆう の カーソルキー で キャラクター を えらんで スペースキー を おしてね！",
 		fonts.GamerFontM, windowMargin, windowMargin+5, color.Black)
-
 	s.drawWindows(screen)
-
-	err = s.drawCharacters(screen)
-	if err != nil {
-		return fmt.Errorf("failed to draw the select screen characters,%v", err)
-	}
-	return nil
+	s.drawCharacters(screen)
 }
 
-func (s *SelectScene) drawBackground(screen *ebiten.Image) error {
+func (s *SelectScene) drawBackground(screen *ebiten.Image) {
 	x16, y16 := s.bgViewPort.Position()
 	offsetX, offsetY := float64(x16)/16, float64(y16)/16
 
@@ -145,13 +129,9 @@ func (s *SelectScene) drawBackground(screen *ebiten.Image) error {
 			screenWidth, _ := screen.Size()
 			op.GeoM.Translate(float64(screenWidth)-float64(w*(i+1)), float64(h*j))
 			op.GeoM.Translate(offsetX, offsetY)
-			err := screen.DrawImage(s.bg, op)
-			if err != nil {
-				return err
-			}
+			screen.DrawImage(s.bg, op)
 		}
 	}
-	return nil
 }
 
 func (s *SelectScene) drawWindows(screen *ebiten.Image) {
@@ -165,22 +145,18 @@ func (s *SelectScene) drawWindows(screen *ebiten.Image) {
 	}
 }
 
-func (s *SelectScene) drawCharacters(screen *ebiten.Image) error {
+func (s *SelectScene) drawCharacters(screen *ebiten.Image) {
 	for i := range s.charaList {
-		err := s.drawChara(screen, i)
-		if err != nil {
-			return err
-		}
+		s.drawChara(screen, i)
 		s.drawMessage(screen, i)
 	}
-	return nil
 }
 
-func (s *SelectScene) drawChara(screen *ebiten.Image, i int) error {
+func (s *SelectScene) drawChara(screen *ebiten.Image, i int) {
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Scale(scale, scale) // important: you have to scale before translating.
 	op.GeoM.Translate(s.takeHorizontalCenterPosition(i))
-	return screen.DrawImage(s.charaList[i].StandingImage, op)
+	screen.DrawImage(s.charaList[i].StandingImage, op)
 }
 
 func (s *SelectScene) takeHorizontalCenterPosition(i int) (x, y float64) {
@@ -219,8 +195,8 @@ func (s *SelectScene) takeTextPosition(i int) image.Point {
 }
 
 // StartMusic starts playing music
-func (s *SelectScene) StartMusic() error {
-	return s.disc.Play()
+func (s *SelectScene) StartMusic() {
+	s.disc.Play()
 }
 
 // StopMusic stops playing music

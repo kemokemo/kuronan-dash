@@ -1,8 +1,10 @@
 package se
 
 import (
-	"github.com/hajimehoshi/ebiten/audio"
-	"github.com/hajimehoshi/ebiten/audio/wav"
+	"bytes"
+
+	"github.com/hajimehoshi/ebiten/v2/audio"
+	"github.com/hajimehoshi/ebiten/v2/audio/wav"
 	"github.com/kemokemo/kuronan-dash/assets/music"
 )
 
@@ -18,7 +20,7 @@ func (p *Player) Play() error {
 		if err != nil {
 			return err
 		}
-		return p.player.Play()
+		p.player.Play()
 	}
 	return nil
 }
@@ -29,7 +31,7 @@ func (p *Player) Close() error {
 }
 
 func loadPlayer(b []byte) (*Player, error) {
-	s, err := wav.Decode(music.AudioContext, audio.BytesReadSeekCloser(b))
+	s, err := wav.Decode(music.AudioContext, bytes.NewReader(b))
 	if err != nil {
 		return nil, err
 	}

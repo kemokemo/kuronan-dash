@@ -3,9 +3,8 @@ package ui
 import (
 	"image"
 	"image/color"
-	"log"
 
-	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 // FrameWindow is a struct to draw a window with frame.
@@ -31,27 +30,15 @@ func NewFrameWindow(x, y, width, height, frameWidth int) (*FrameWindow, error) {
 			Max: image.Point{X: x + width, Y: y + height},
 		},
 	}
-	var err error
-	fw.innerImg, err = ebiten.NewImage(width, height, ebiten.FilterDefault)
-	if err != nil {
-		return nil, err
-	}
-	err = fw.innerImg.Fill(color.White)
-	if err != nil {
-		return nil, err
-	}
+
+	fw.innerImg = ebiten.NewImage(width, height)
+	fw.innerImg.Fill(color.White)
 	fw.innerOp = &ebiten.DrawImageOptions{}
 	fw.innerOp.GeoM.Translate(float64(x), float64(y))
 
 	if frameWidth > 0 {
-		fw.frameImg, err = ebiten.NewImage(width+frameWidth*2, height+frameWidth*2, ebiten.FilterDefault)
-		if err != nil {
-			return nil, err
-		}
-		err = fw.frameImg.Fill(color.White)
-		if err != nil {
-			return nil, err
-		}
+		fw.frameImg = ebiten.NewImage(width+frameWidth*2, height+frameWidth*2)
+		fw.frameImg.Fill(color.White)
 		fw.frameDarkOp = &ebiten.DrawImageOptions{}
 		fw.frameDarkOp.GeoM.Translate(float64(x-frameWidth), float64(y-frameWidth))
 		fw.frameLightOp = &ebiten.DrawImageOptions{}
@@ -85,17 +72,10 @@ func (w *FrameWindow) SetBlink(enableBlink bool) {
 
 // DrawWindow draws this window.
 func (w *FrameWindow) DrawWindow(screen *ebiten.Image) {
-	var err error
 	if w.frameImg != nil {
-		err = screen.DrawImage(w.frameImg, w.getFrameOp())
-		if err != nil {
-			log.Println("failed to draw the frame image", err)
-		}
+		screen.DrawImage(w.frameImg, w.getFrameOp())
 	}
-	err = screen.DrawImage(w.innerImg, w.innerOp)
-	if err != nil {
-		log.Println("failed to draw the inner image", err)
-	}
+	screen.DrawImage(w.innerImg, w.innerOp)
 }
 
 func (w *FrameWindow) getFrameOp() *ebiten.DrawImageOptions {

@@ -1,19 +1,18 @@
 package kuronandash
 
 import (
-	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/v2"
 
 	"github.com/kemokemo/kuronan-dash/assets"
 
 	"github.com/kemokemo/kuronan-dash/internal/character"
-	"github.com/kemokemo/kuronan-dash/internal/input"
 	"github.com/kemokemo/kuronan-dash/internal/scenes"
+	"github.com/kemokemo/kuronan-dash/internal/view"
 )
 
 // Game controls all things in the screen.
 type Game struct {
 	scenes *scenes.SceneManager
-	input  input.Input
 }
 
 // NewGame returns a new game instance.
@@ -29,10 +28,7 @@ func NewGame(ver string) (*Game, error) {
 		return nil, err
 	}
 
-	sm, err := scenes.NewSceneManager(ver)
-	if err != nil {
-		return nil, err
-	}
+	sm := scenes.NewSceneManager(ver)
 	sm.GoTo(&scenes.TitleScene{})
 
 	return &Game{
@@ -40,21 +36,20 @@ func NewGame(ver string) (*Game, error) {
 	}, nil
 }
 
-// Close closes inner resources.
-func (g *Game) Close() error {
-	return assets.CloseAssets()
+func (g *Game) Update() error {
+	return g.scenes.Update()
 }
 
 // Update is an implements to draw screens.
-func (g *Game) Update(screen *ebiten.Image) error {
-	g.input.Update()
-	if err := g.scenes.Update(&g.input); err != nil {
-		return err
-	}
-	// First of all, updates all status.
-	if ebiten.IsRunningSlowly() {
-		return nil
-	}
+func (g *Game) Draw(screen *ebiten.Image) {
 	g.scenes.Draw(screen)
-	return nil
+}
+
+func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
+	return view.ScreenWidth, view.ScreenHeight
+}
+
+// Close closes inner resources.
+func (g *Game) Close() error {
+	return assets.CloseAssets()
 }

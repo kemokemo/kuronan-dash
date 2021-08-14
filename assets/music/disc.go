@@ -1,7 +1,7 @@
 package music
 
 import (
-	"github.com/hajimehoshi/ebiten/audio"
+	"github.com/hajimehoshi/ebiten/v2/audio"
 )
 
 // Disc is a music player
@@ -16,20 +16,17 @@ func (d *Disc) Close() error {
 }
 
 // Play plays a preselected disc.
-func (d *Disc) Play() error {
-	return d.player.Play()
+func (d *Disc) Play() {
+	d.player.Play()
 }
 
 // Pause pauses music.
-func (d *Disc) Pause() error {
-	return d.player.Pause()
+func (d *Disc) Pause() {
+	d.player.Pause()
 }
 
 // Stop stops music. (pause and rewind)
 func (d *Disc) Stop() error {
-	err := d.player.Pause()
-	if err != nil {
-		return err
-	}
+	d.player.Pause()
 	return d.player.Rewind()
 }

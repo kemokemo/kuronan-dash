@@ -5,7 +5,7 @@ import (
 
 	"github.com/kemokemo/kuronan-dash/internal/view"
 
-	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 // Parts is the interface of the field part.
@@ -36,8 +36,8 @@ func (p *Parts) Update(charaV view.Vector) {
 }
 
 // Draw draws this object to the screen.
-func (p *Parts) Draw(screen *ebiten.Image, offset image.Point) error {
+func (p *Parts) Draw(screen *ebiten.Image, offset image.Point) {
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(p.position.X-float64(offset.X), p.position.Y-float64(offset.Y))
-	return screen.DrawImage(p.image, op)
+	screen.DrawImage(p.image, op)
 }

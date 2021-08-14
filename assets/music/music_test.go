@@ -7,13 +7,9 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	err := LoadAudioContext()
-	if err != nil {
-		fmt.Println("failed to LoadAudioContext:", err)
-		return
-	}
+	LoadAudioContext()
 
-	err = LoadMusic()
+	err := LoadMusic()
 	if err != nil {
 		fmt.Println("failed to LoadMusic:", err)
 		return

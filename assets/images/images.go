@@ -3,7 +3,7 @@ package images
 import (
 	_ "image/png" // to load png images
 
-	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 // background

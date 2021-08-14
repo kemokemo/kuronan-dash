@@ -1,12 +1,12 @@
-// Copy from github.com/hajimehoshi/ebiten/example/blocks
+// Copy from github.com/hajimehoshi/ebiten/v2/example/blocks
 
 package scenes
 
 import (
 	"image/color"
 
-	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/text"
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/text"
 
 	"github.com/kemokemo/kuronan-dash/assets/fonts"
 	"github.com/kemokemo/kuronan-dash/assets/images"
@@ -40,11 +40,7 @@ func (s *TitleScene) Initialize() error {
 
 // Update updates the status of this scene.
 func (s *TitleScene) Update(state *GameState) error {
-	if state.Input.StateForKey(ebiten.KeySpace) == 1 {
-		state.SceneManager.GoTo(&SelectScene{})
-		return nil
-	}
-	if input.AnyGamepadAbstractButtonPressed(state.Input) {
+	if input.TriggeredOne() {
 		state.SceneManager.GoTo(&SelectScene{})
 		return nil
 	}
@@ -52,18 +48,17 @@ func (s *TitleScene) Update(state *GameState) error {
 }
 
 // Draw draws background and characters.
-func (s *TitleScene) Draw(r *ebiten.Image) error {
+func (s *TitleScene) Draw(r *ebiten.Image) {
 	op := &ebiten.DrawImageOptions{}
 	r.DrawImage(s.bg, op)
 	text.Draw(r, versionInfo, fonts.GamerFontS, int(s.verPos.X), int(s.verPos.Y), color.White)
 	text.Draw(r, "くろなんダッシュ", fonts.GamerFontLL, int(s.titlePos.X), int(s.titlePos.Y), color.Black)
 	text.Draw(r, "Space をおして はじめよう!", fonts.GamerFontM, int(s.msgPos.X), int(s.msgPos.Y), color.Black)
-	return nil
 }
 
 // StartMusic starts playing music
-func (s *TitleScene) StartMusic() error {
-	return s.disc.Play()
+func (s *TitleScene) StartMusic() {
+	s.disc.Play()
 }
 
 // StopMusic stops playing music

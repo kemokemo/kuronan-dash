@@ -1,4 +1,4 @@
-// Copy from github.com/hajimehoshi/ebiten/example/blocks
+// Copy from github.com/hajimehoshi/ebiten/v2/example/blocks
 
 package scenes
 
@@ -7,8 +7,8 @@ import (
 	"image/color"
 	"log"
 
-	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/text"
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/text"
 
 	"github.com/kemokemo/kuronan-dash/assets/fonts"
 	"github.com/kemokemo/kuronan-dash/assets/messages"
@@ -16,6 +16,7 @@ import (
 
 	chara "github.com/kemokemo/kuronan-dash/internal/character"
 	"github.com/kemokemo/kuronan-dash/internal/field"
+	"github.com/kemokemo/kuronan-dash/internal/input"
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
 
@@ -51,29 +52,29 @@ func (s *Stage01Scene) Update(state *GameState) error {
 	var err error
 	switch s.state {
 	case wait:
-		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
+		if input.TriggeredOne() {
 			s.state = run
 			s.player.Start()
 		}
 	case run:
-		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
+		if input.TriggeredOne() {
 			s.state = pause
 			s.player.Pause()
 		} else {
 			err = s.run()
 		}
 	case pause:
-		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
+		if input.TriggeredOne() {
 			s.state = run
 			s.player.ReStart()
 		}
 	case stageClear:
-		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
+		if input.TriggeredOne() {
 			// TODO: goto next stage :-)
 			state.SceneManager.GoTo(&TitleScene{})
 		}
 	case gameover:
-		if state.Input.StateForKey(ebiten.KeySpace) == 1 {
+		if input.TriggeredOne() {
 			state.SceneManager.GoTo(&TitleScene{})
 		}
 	default:
@@ -112,26 +113,13 @@ func (s *Stage01Scene) run() error {
 }
 
 // Draw draws background and characters.
-func (s *Stage01Scene) Draw(screen *ebiten.Image) error {
+func (s *Stage01Scene) Draw(screen *ebiten.Image) {
 	pOffset := s.player.GetOffset()
-	err := s.field.DrawFarther(screen, pOffset)
-	if err != nil {
-		return fmt.Errorf("failed to draw the farther field parts,%v", err)
-	}
-
-	err = s.player.Draw(screen)
-	if err != nil {
-		return fmt.Errorf("failed to draw a character,%v", err)
-	}
-
-	err = s.field.DrawCloser(screen, pOffset)
-	if err != nil {
-		return fmt.Errorf("failed to draw the closer field parts,%v", err)
-	}
-
+	s.field.DrawFarther(screen, pOffset)
+	s.player.Draw(screen)
+	s.field.DrawCloser(screen, pOffset)
 	s.drawUI(screen)
 	s.drawWithState(screen)
-	return nil
 }
 
 // description
@@ -177,8 +165,8 @@ func (s *Stage01Scene) Close() error {
 }
 
 // StartMusic starts playing music
-func (s *Stage01Scene) StartMusic() error {
-	return s.disc.Play()
+func (s *Stage01Scene) StartMusic() {
+	s.disc.Play()
 }
 
 // StopMusic stops playing music

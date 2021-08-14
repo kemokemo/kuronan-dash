@@ -3,7 +3,7 @@ package character
 import (
 	"time"
 
-	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 // TimeAnimation is an animation.

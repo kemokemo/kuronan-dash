@@ -4,6 +4,6 @@ go 1.13
 
 require (
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
-	github.com/hajimehoshi/ebiten v1.11.0-alpha.4.0.20200216132532-dc96d2545748
-	golang.org/x/image v0.0.0-20191009234506-e7c1f5e7dbb8
+	github.com/hajimehoshi/ebiten/v2 v2.1.4
+	golang.org/x/image v0.0.0-20210220032944-ac19c3e999fb
 )

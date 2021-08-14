@@ -1,10 +1,9 @@
 package field
 
 import (
-	"fmt"
 	"image"
 
-	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
@@ -117,19 +116,13 @@ func (p *PrairieField) Update(v view.Vector) {
 }
 
 // DrawFarther draws the farther field parts.
-func (p *PrairieField) DrawFarther(screen *ebiten.Image, pOffset image.Point) error {
+func (p *PrairieField) DrawFarther(screen *ebiten.Image, pOffset image.Point) {
 	// 背景を描画
-	err := screen.DrawImage(p.bg, &ebiten.DrawImageOptions{})
-	if err != nil {
-		return fmt.Errorf("failed to draw a prairie background,%v", err)
-	}
+	screen.DrawImage(p.bg, &ebiten.DrawImageOptions{})
 
 	// レーンよりも遠くのパーツを描画
 	for i := range p.fartherParts {
-		err := p.fartherParts[i].Draw(screen, pOffset)
-		if err != nil {
-			return fmt.Errorf("failed to draw fartherParts,%v", err)
-		}
+		p.fartherParts[i].Draw(screen, pOffset)
 	}
 
 	// レーンを描画
@@ -141,29 +134,19 @@ func (p *PrairieField) DrawFarther(screen *ebiten.Image, pOffset image.Point) er
 			op := &ebiten.DrawImageOptions{}
 			op.GeoM.Translate(float64(wP*i), float64(h))
 			op.GeoM.Translate(offsetX, offsetY)
-			err := screen.DrawImage(p.tile, op)
-			if err != nil {
-				return fmt.Errorf("failed to draw the prairie field,%v", err)
-			}
+			screen.DrawImage(p.tile, op)
 		}
 	}
-
-	return nil
 }
 
 // DrawCloser draws the closer field part.
-func (p *PrairieField) DrawCloser(screen *ebiten.Image, pOffset image.Point) error {
+func (p *PrairieField) DrawCloser(screen *ebiten.Image, pOffset image.Point) {
 	// レーンよりも手前のパーツを描画
 
 	/// 近くの草むら
 	for i := range p.closerParts {
-		err := p.closerParts[i].Draw(screen, pOffset)
-		if err != nil {
-			return fmt.Errorf("failed to draw closerParts,%v", err)
-		}
+		p.closerParts[i].Draw(screen, pOffset)
 	}
-
-	return nil
 }
 
 // IsCollidedWithObstacles returns whether the r is collided with this item.

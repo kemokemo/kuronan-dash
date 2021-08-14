@@ -18,10 +18,7 @@ func LoadAssets() error {
 	}
 
 	// before loading music and sound effects, need to load audio context.
-	err = music.LoadAudioContext()
-	if err != nil {
-		return err
-	}
+	music.LoadAudioContext()
 
 	err = music.LoadMusic()
 	if err != nil {
