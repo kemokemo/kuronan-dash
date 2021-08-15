@@ -50,13 +50,13 @@ WIP
 Go Ver. 1.13以上が必要です。`Go Modules`の仕組みを使っています。`kuronan-dash`バイナリを実行するとゲーム画面が開きます。
 
 ```sh
-$ go build
+go build
 ```
 
 WebAssemblyへとビルドしてブラウザで遊ぶこともできます。以下のようにビルドして、`public/index.html`をブラウザで開いてみてください。
 
 ```sh
-$ GOOS=js GOARCH=wasm go build -o public/kuronan-dash.wasm
+GOOS=js GOARCH=wasm go build -o public/kuronan-dash.wasm
 ```
 
 ## 作者
