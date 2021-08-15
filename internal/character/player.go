@@ -2,7 +2,6 @@ package character
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/kemokemo/kuronan-dash/assets/se"
@@ -101,10 +100,6 @@ func (p *Player) Update() {
 	p.animation.AddStep(p.charaPosV.X)
 	p.op.GeoM.Translate(p.charaDrawV.X, p.charaDrawV.Y)
 	p.rect.Add(p.charaDrawV)
-
-	// todo
-	log.Printf("state:%v, posV-Y:%v, drawV-Y:%v", p.current, p.charaPosV.Y, p.charaDrawV.Y)
-	log.Printf("pos:%v, drawPos:%v", p.stateMachine.GetPosition(), p.op.GeoM.String())
 }
 
 // Draw draws the character image.
