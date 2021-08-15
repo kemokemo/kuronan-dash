@@ -28,8 +28,8 @@ type Field interface {
 }
 
 const (
-	// Position fieldOffset to make it look like it's on the lane
-	fieldOffset = 2.0
+	// FieldOffset is the offset to make it look like it's on the lane.
+	FieldOffset = 1.8
 
 	// rectOffset is the offset for field parts to check collision with player
 	rectOffset = 2.0

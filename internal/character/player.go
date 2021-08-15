@@ -2,10 +2,12 @@ package character
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/kemokemo/kuronan-dash/assets/se"
 	"github.com/kemokemo/kuronan-dash/internal/anime"
+	"github.com/kemokemo/kuronan-dash/internal/field"
 	"github.com/kemokemo/kuronan-dash/internal/move"
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
@@ -21,27 +23,24 @@ type Player struct {
 
 	// Update each time based on the internal status and other information
 	op         *ebiten.DrawImageOptions
-	position   *view.Vector
-	pDriver    *move.PlayerDriver
+	vc         move.VelocityController
 	scrollV    *view.Vector
 	charaPosV  *view.Vector
 	charaDrawV *view.Vector
 	rect       *view.HitRectangle
 
 	// Initialization is required before starting the stage.
-	lanes    move.Lanes
-	blocked  bool
-	previous move.State
-	current  move.State
-	stamina  *Stamina
+	stateMachine move.StateMachine
+	previous     move.State
+	current      move.State
+	stamina      *Stamina
 }
 
 // InitializeWithLanesInfo sets the lanes information.
 // The player can run on the lane or move between lanes based on the lane drawing height information received in the argument.
 func (p *Player) InitializeWithLanesInfo(heights []float64) error {
-	p.blocked = false
-	p.previous = move.Walk
-	p.current = move.Walk
+	p.previous = move.Pause
+	p.current = move.Dash
 	p.stamina.Initialize()
 
 	cH := []float64{}
@@ -50,27 +49,25 @@ func (p *Player) InitializeWithLanesInfo(heights []float64) error {
 		cH = append(cH, heights[i]-float64(h))
 	}
 
-	p.lanes = move.Lanes{}
-	err := p.lanes.SetHeights(cH)
+	p.stateMachine = move.NewStateMachine()
+	err := p.stateMachine.SetHeights(cH)
 	if err != nil {
 		return err
 	}
 
 	// set the player at the top lane.
-	initialY := float64(cH[0])
-	offset := 3.0
+	initialY := float64(cH[0]) + field.FieldOffset
+	rectOffset := 3.0
 
-	p.position = &view.Vector{X: view.DrawPosition, Y: initialY}
 	p.charaPosV = &view.Vector{X: 0.0, Y: 0.0}
 	p.scrollV = &view.Vector{X: 0.0, Y: 0.0}
-	p.pDriver = move.NewPlayerDriver()
 	p.op = &ebiten.DrawImageOptions{}
 	p.op.GeoM.Translate(view.DrawPosition, initialY)
 
 	w, h := p.StandingImage.Size()
 	p.rect = view.NewHitRectangle(
-		view.Vector{X: view.DrawPosition + offset, Y: initialY + offset},
-		view.Vector{X: view.DrawPosition + float64(w) - offset, Y: initialY + float64(h) - offset})
+		view.Vector{X: view.DrawPosition + rectOffset, Y: initialY + rectOffset},
+		view.Vector{X: view.DrawPosition + float64(w) - rectOffset, Y: initialY + float64(h) - rectOffset})
 
 	return nil
 }
@@ -95,90 +92,19 @@ func (p *Player) ReStart() {
 }
 
 // Update updates the character regarding the user input.
-func (p *Player) Update() error {
-	err := p.updateState()
-	if err != nil {
-		return err
-	}
+func (p *Player) Update() {
+	p.current = p.stateMachine.Update(p.stamina.GetStamina(), p.charaPosV)
 
 	p.stamina.Consumes(p.current)
-
-	p.pDriver.Update(p.current)
-	p.scrollV, p.charaPosV, p.charaDrawV = p.pDriver.GetVelocity()
+	p.scrollV, p.charaPosV, p.charaDrawV = p.vc.GetVelocity(p.current)
 
 	p.animation.AddStep(p.charaPosV.X)
-	p.position.Add(p.charaPosV)
 	p.op.GeoM.Translate(p.charaDrawV.X, p.charaDrawV.Y)
 	p.rect.Add(p.charaDrawV)
 
-	return nil
-}
-
-func (p *Player) updateState() error {
-	var err error
-	// TODO: ユーザーのキー入力、キャラクターの位置、障害物との衝突有無などを総合的に判断するStateManageがほしい。
-	switch p.current {
-	case move.Pause:
-		return err
-	case move.Ascending, move.Descending:
-		// TODO: I really want to go back to the previous movement before the ascending or descending motion.
-		if p.lanes.IsReachedTarget(p.position.Y, p.charaPosV.Y) {
-			p.current = move.Dash
-		}
-	default:
-		// update state by user input
-		if ebiten.IsKeyPressed(ebiten.KeyUp) || ebiten.GamepadAxis(0, 1) <= -0.5 {
-			if !p.lanes.IsTop() {
-				if p.lanes.Ascend() {
-					p.previous = p.current
-					p.current = move.Ascending
-					err = p.jumpSe.Play()
-					if err != nil {
-						err = fmt.Errorf("failed to play se: %v", err)
-					}
-				}
-			}
-			return err
-		}
-		if ebiten.IsKeyPressed(ebiten.KeyDown) || ebiten.GamepadAxis(0, 1) >= 0.5 {
-			if !p.lanes.IsBottom() {
-				if p.lanes.Descend() {
-					p.previous = p.current
-					p.current = move.Descending
-					err = p.dropSe.Play()
-					if err != nil {
-						err = fmt.Errorf("failed to play se: %v", err)
-					}
-				}
-			}
-			return err
-		}
-
-		// update state by stamina
-		if p.stamina.GetStamina() <= 0 {
-			p.current = move.Walk
-		}
-
-		// update state by blocked status
-		if p.blocked {
-			if p.current == move.Walk {
-				return err
-			}
-			p.previous = p.current
-			p.current = move.Walk
-		} else {
-			if p.current == move.Dash {
-				return err
-			}
-			p.previous = p.current
-			if p.stamina.GetStamina() > 0 {
-				p.current = move.Dash
-			} else {
-				p.current = move.Walk
-			}
-		}
-	}
-	return err
+	// todo
+	log.Printf("state:%v, posV-Y:%v, drawV-Y:%v", p.current, p.charaPosV.Y, p.charaDrawV.Y)
+	log.Printf("pos:%v, drawPos:%v", p.stateMachine.GetPosition(), p.op.GeoM.String())
 }
 
 // Draw draws the character image.
@@ -189,7 +115,7 @@ func (p *Player) Draw(screen *ebiten.Image) {
 
 // GetPosition return the current position of this player.
 func (p *Player) GetPosition() *view.Vector {
-	return p.position
+	return p.stateMachine.GetPosition()
 }
 
 // GetScrollVelocity returns the velocity to scroll field parts.
@@ -208,8 +134,8 @@ func (p *Player) GetRectangle() *view.HitRectangle {
 }
 
 // BeBlocked puts the player in a position where the path is blocked by an obstacle.
-func (p *Player) BeBlocked(blocked bool) {
-	p.blocked = blocked
+func (p *Player) BeBlocked(isBlocked bool) {
+	p.stateMachine.SetBlockState(isBlocked)
 }
 
 // Eat eats foods and restore stamina value by argument value.

@@ -27,7 +27,7 @@ func (r *Rock) Initialize(img *ebiten.Image, pos, vel *view.Vector) {
 	r.v1 = &view.Vector{X: vel.X, Y: vel.Y}
 
 	r.op = &ebiten.DrawImageOptions{}
-	r.op.GeoM.Translate(pos.X, pos.Y-float64(fieldOffset))
+	r.op.GeoM.Translate(pos.X, pos.Y+FieldOffset)
 
 	w, h := img.Size()
 	r.rect = view.NewHitRectangle(

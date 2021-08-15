@@ -25,7 +25,7 @@ func (o *Onigiri) Initialize(img *ebiten.Image, pos *view.Vector, vel *view.Vect
 	o.eaten = false
 
 	o.op = &ebiten.DrawImageOptions{}
-	o.op.GeoM.Translate(pos.X, pos.Y-fieldOffset)
+	o.op.GeoM.Translate(pos.X, pos.Y+FieldOffset)
 
 	w, h := img.Size()
 	o.rect = view.NewHitRectangle(

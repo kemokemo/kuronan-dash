@@ -48,8 +48,7 @@ func (s *Stage01Scene) Initialize() error {
 }
 
 // Update updates the status of this scene.
-func (s *Stage01Scene) Update(state *GameState) error {
-	var err error
+func (s *Stage01Scene) Update(state *GameState) {
 	switch s.state {
 	case wait:
 		if input.TriggeredOne() {
@@ -61,7 +60,7 @@ func (s *Stage01Scene) Update(state *GameState) error {
 			s.state = pause
 			s.player.Pause()
 		} else {
-			err = s.run()
+			s.run()
 		}
 	case pause:
 		if input.TriggeredOne() {
@@ -80,16 +79,14 @@ func (s *Stage01Scene) Update(state *GameState) error {
 	default:
 		log.Println("unknown state of Stage01Scene:", s.state)
 	}
-	return err
 }
 
 // run works with 'run' state.
-func (s *Stage01Scene) run() error {
+func (s *Stage01Scene) run() {
 	s.time--
 	isTimeUp := s.time <= 0
 	isArriveGoal := s.player.GetPosition().X-view.DrawPosition > s.goalX
 
-	var err error
 	if isArriveGoal {
 		s.state = stageClear
 		s.player.Pause()
@@ -97,11 +94,7 @@ func (s *Stage01Scene) run() error {
 		s.state = gameOver
 		s.player.Pause()
 	} else {
-		err = s.player.Update()
-		if err != nil {
-			log.Println("failed to update the player:", err)
-			return err
-		}
+		s.player.Update()
 		s.field.Update(s.player.GetScrollVelocity())
 
 		// TODO: プレイヤーの攻撃が障害物に当たっているか判定しつつ、当たっていればダメージを加える処理
@@ -110,7 +103,6 @@ func (s *Stage01Scene) run() error {
 		s.player.BeBlocked(s.field.IsCollidedWithObstacles(pRect))
 		s.player.Eat(s.field.EatFoods(pRect))
 	}
-	return err
 }
 
 // Draw draws background and characters.

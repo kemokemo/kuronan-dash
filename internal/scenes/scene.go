@@ -7,7 +7,7 @@ import (
 // Scene is interface for the all scenes.
 type Scene interface {
 	Initialize() error
-	Update(state *GameState) error
+	Update(state *GameState)
 	Draw(screen *ebiten.Image)
 	StartMusic()
 	StopMusic() error

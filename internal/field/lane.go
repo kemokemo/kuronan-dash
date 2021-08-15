@@ -1,12 +1,9 @@
 package field
 
 import (
-	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
-
-// lane information to draw
-const repeat = 3
 
 const (
 	firstLaneHeight  = 200.0
@@ -57,6 +54,6 @@ func (l *Lane) Update(scrollV *view.Vector) {
 }
 
 // Draw draws this object to the screen.
-func (l *Lane) Draw(screen *ebiten.Image) error {
-	return screen.DrawImage(l.image, l.op)
+func (l *Lane) Draw(screen *ebiten.Image) {
+	screen.DrawImage(l.image, l.op)
 }

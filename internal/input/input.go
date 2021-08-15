@@ -8,3 +8,11 @@ import (
 func TriggeredOne() bool {
 	return inpututil.IsKeyJustReleased(ebiten.KeySpace)
 }
+
+func TriggeredUp() bool {
+	return inpututil.IsKeyJustReleased(ebiten.KeyArrowUp)
+}
+
+func TriggeredDown() bool {
+	return inpututil.IsKeyJustReleased(ebiten.KeyArrowDown)
+}

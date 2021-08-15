@@ -5,6 +5,7 @@ import (
 	"github.com/kemokemo/kuronan-dash/assets/messages"
 	"github.com/kemokemo/kuronan-dash/assets/se"
 	"github.com/kemokemo/kuronan-dash/internal/anime"
+	"github.com/kemokemo/kuronan-dash/internal/move"
 )
 
 // player characters
@@ -26,6 +27,7 @@ func NewPlayers() error {
 		jumpSe:        se.Jump,
 		dropSe:        se.Drop,
 		stamina:       NewStamina(130, 6),
+		vc:            move.NewKuronaVc(),
 	}
 
 	Koma = &Player{
@@ -35,6 +37,7 @@ func NewPlayers() error {
 		jumpSe:        se.Jump,
 		dropSe:        se.Drop,
 		stamina:       NewStamina(160, 11),
+		vc:            move.NewKomaVc(),
 	}
 
 	Shishimaru = &Player{
@@ -44,6 +47,7 @@ func NewPlayers() error {
 		jumpSe:        se.Jump,
 		dropSe:        se.Drop,
 		stamina:       NewStamina(200, 17),
+		vc:            move.NewShishimaruVc(),
 	}
 
 	Selected = Kurona

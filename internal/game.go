@@ -37,7 +37,8 @@ func NewGame(ver string) (*Game, error) {
 }
 
 func (g *Game) Update() error {
-	return g.scenes.Update()
+	g.scenes.Update()
+	return nil
 }
 
 // Update is an implements to draw screens.
