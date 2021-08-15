@@ -6,3 +6,8 @@ const (
 	// ScreenHeight is the height of scenes.
 	ScreenHeight = 720
 )
+
+var (
+	// DrawPosition is the position to draw the main character
+	DrawPosition = float64(ScreenWidth / 4)
+)

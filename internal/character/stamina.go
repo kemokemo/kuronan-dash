@@ -1,5 +1,7 @@
 package character
 
+import "github.com/kemokemo/kuronan-dash/internal/move"
+
 // Stamina manages the consumption and recovery of stamina.
 type Stamina struct {
 	max       int
@@ -27,7 +29,18 @@ func (s *Stamina) Initialize() {
 // Consumes encourages a decrease in stamina by the value specified in the argument.
 // The actual stamina is reduced when the consumption is greater than the "endurance".
 // The stamina value does not go below zero.
-func (s *Stamina) Consumes(val int) {
+func (s *Stamina) Consumes(state move.State) {
+	switch state {
+	case move.Dash:
+		s.consumes(2)
+	case move.Walk, move.Ascending, move.Descending:
+		s.consumes(1)
+	default:
+		// not consume stamina.
+	}
+}
+
+func (s *Stamina) consumes(val int) {
 	s.valRate -= val
 	if s.valRate <= 0 {
 		if s.val > 0 {
@@ -37,9 +50,9 @@ func (s *Stamina) Consumes(val int) {
 	}
 }
 
-// Restore restores the stamina to the value specified in the argument.
+// Add restores the stamina to the value specified in the argument.
 // However, it will not restore more than the maximum value.
-func (s *Stamina) Restore(val int) {
+func (s *Stamina) Add(val int) {
 	v := s.val + val
 	if v > s.max {
 		s.val = s.max

@@ -33,19 +33,19 @@ func NewSceneManager(ver string) *SceneManager {
 }
 
 // Update updates the status of this scene.
-func (s *SceneManager) Update() error {
+func (s *SceneManager) Update() {
 	if s.transitionCount == 0 {
-		return s.current.Update(&GameState{
+		s.current.Update(&GameState{
 			SceneManager: s,
 		})
+		return
 	}
 	s.transitionCount--
 	if s.transitionCount > 0 {
-		return nil
+		return
 	}
 	s.current = s.next
 	s.next = nil
-	return nil
 }
 
 // Draw draws background and characters. This function play music too.

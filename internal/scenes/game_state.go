@@ -13,5 +13,5 @@ const (
 	run
 	pause
 	stageClear
-	gameover
+	gameOver
 )

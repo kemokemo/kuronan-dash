@@ -1,5 +1,7 @@
 package view
 
+import "math"
+
 // Viewport is the view of the player's view.
 type Viewport struct {
 	// position
@@ -7,7 +9,7 @@ type Viewport struct {
 
 	// width ,height and velocity to move
 	w, h int
-	v    float64
+	v    int
 
 	// loop settings
 	loop       bool
@@ -24,7 +26,7 @@ func (p *Viewport) SetSize(w, h int) {
 
 // SetVelocity sets the velocity of this viewport.
 func (p *Viewport) SetVelocity(v float64) {
-	p.v = v
+	p.v = int(math.Abs(v))
 }
 
 // SetLoop sets the loop or not flag.
@@ -36,8 +38,8 @@ func (p *Viewport) SetLoop(loop bool) {
 // Move moves the view of this Viewport.
 func (p *Viewport) Move(d Direction) {
 	x, y := getDirectionValue(d)
-	p.x += int(float64(x) * float64(p.w) * p.v / 32.0)
-	p.y += int(float64(y) * float64(p.h) * p.v / 32.0)
+	p.x += x * p.w * p.v / 32
+	p.y += y * p.h * p.v / 32
 	if p.loop {
 		p.x %= p.maxW
 		p.y %= p.maxH

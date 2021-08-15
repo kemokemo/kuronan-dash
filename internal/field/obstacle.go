@@ -1,6 +1,8 @@
 package field
 
-import "image"
+import (
+	"github.com/kemokemo/kuronan-dash/internal/view"
+)
 
 // Obstacle is the obstacles falling on the field.
 type Obstacle interface {
@@ -16,5 +18,5 @@ type Obstacle interface {
 	IsBroken() bool
 
 	// IsCollided returns whether this obstacle is collided the arg.
-	IsCollided(r image.Rectangle) bool
+	IsCollided(hr *view.HitRectangle) bool
 }

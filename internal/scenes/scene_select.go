@@ -82,7 +82,7 @@ func (s *SelectScene) Initialize() error {
 }
 
 // Update updates the status of this scene.
-func (s *SelectScene) Update(state *GameState) error {
+func (s *SelectScene) Update(state *GameState) {
 	s.bgViewPort.Move(view.UpperRight)
 
 	s.checkSelectorChanged()
@@ -90,8 +90,6 @@ func (s *SelectScene) Update(state *GameState) error {
 		chara.Selected = s.charaList[s.selector]
 		state.SceneManager.GoTo(&Stage01Scene{})
 	}
-
-	return nil
 }
 
 func (s *SelectScene) checkSelectorChanged() {

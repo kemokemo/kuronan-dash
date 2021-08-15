@@ -7,9 +7,7 @@ type Vector struct {
 }
 
 // Add returns the added vector.
-func (v *Vector) Add(vec Vector) Vector {
-	return Vector{
-		X: v.X + vec.X,
-		Y: v.Y + vec.Y,
-	}
+func (v *Vector) Add(vec *Vector) {
+	v.X += vec.X
+	v.Y += vec.Y
 }

@@ -39,12 +39,10 @@ func (s *TitleScene) Initialize() error {
 }
 
 // Update updates the status of this scene.
-func (s *TitleScene) Update(state *GameState) error {
+func (s *TitleScene) Update(state *GameState) {
 	if input.TriggeredOne() {
 		state.SceneManager.GoTo(&SelectScene{})
-		return nil
 	}
-	return nil
 }
 
 // Draw draws background and characters.

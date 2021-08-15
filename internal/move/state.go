@@ -1,13 +1,13 @@
-package character
+package move
 
 // State describes the state of a character.
 type State int
 
 // States
 const (
-	Pause State = iota
+	Dash State = iota
 	Walk
-	Dash
 	Ascending
 	Descending
+	Pause
 )
