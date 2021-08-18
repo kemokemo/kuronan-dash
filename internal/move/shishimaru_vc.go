@@ -22,30 +22,34 @@ type ShishimaruVc struct {
 	gravity        float64
 	jumpV0         float64
 	dropV0         float64
+	currentState   State
 	prevState      State
 	elapsed        float64
 	deltaX, deltaY float64
 }
 
-// GetVelocity returns the velocity to scroll the field parts and to update the character position.
-func (svc *ShishimaruVc) GetVelocity(s State) (*view.Vector, *view.Vector, *view.Vector) {
+func (svc *ShishimaruVc) SetState(s State) {
+	svc.prevState = svc.currentState
+	svc.currentState = s
+
 	if svc.prevState == s {
 		svc.elapsed += elapsedStep
 	} else {
-		svc.prevState = s
 		svc.elapsed = 0.0
 	}
+}
 
-	svc.decideVbyState(s)
+// GetVelocity returns the velocity to scroll the field parts and to update the character position.
+func (svc *ShishimaruVc) GetVelocity() (*view.Vector, *view.Vector, *view.Vector) {
+	svc.decideVbyState()
 	svc.updateVelocity()
-
 	return svc.scrollV, svc.charaPosV, svc.charaDrawV
 }
 
 // TODO: キャラクターごとに個性を出す部分
 // ダッシュから歩きに変わる時のX方向の速度の落ち方、上がり方もキャラごとに特性が出せたら素敵。
-func (svc *ShishimaruVc) decideVbyState(s State) {
-	switch s {
+func (svc *ShishimaruVc) decideVbyState() {
+	switch svc.currentState {
 	case Walk:
 		svc.deltaX = 1.0
 		svc.deltaY = 0.0

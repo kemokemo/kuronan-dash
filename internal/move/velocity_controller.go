@@ -8,6 +8,9 @@ const (
 
 // VelocityController calcurate velocity of characters.
 type VelocityController interface {
+	// SetState sets the current state to this object.
+	SetState(s State)
+
 	// GetVelocity returns the velocities to scroll screen, move character's internal position, move character's drawing position.
-	GetVelocity(s State) (scrollV, charaPosV, charaDrawV *view.Vector)
+	GetVelocity() (scrollV, charaPosV, charaDrawV *view.Vector)
 }

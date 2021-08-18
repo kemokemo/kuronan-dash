@@ -8,7 +8,7 @@ import (
 // Field is the interface to draw the field.
 type Field interface {
 	// Initialize initializes the all of field parts.
-	Initialize()
+	Initialize(lanes *Lanes)
 
 	// Update updates the all field parts position with the scroll velocity.
 	Update(scroll *view.Vector)

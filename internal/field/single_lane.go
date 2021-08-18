@@ -5,17 +5,9 @@ import (
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
 
-const (
-	firstLaneHeight  = 200.0
-	secondLaneHeight = firstLaneHeight + 170.0
-	thirdLaneHeight  = secondLaneHeight + 170.0
-)
-
-// LaneHeights is the height array to draw lanes.
-var LaneHeights = []float64{firstLaneHeight, secondLaneHeight, thirdLaneHeight}
-
-// Lane is the scrollable object to implement the lanes.
-type Lane struct {
+// SingleLane is the scrollable object to implement the lanes.
+// Mainly for seamlessly updating and drawing locations, and drawing individual lanes.
+type SingleLane struct {
 	image *ebiten.Image
 	op    *ebiten.DrawImageOptions
 	pos   *view.Vector
@@ -28,7 +20,7 @@ type Lane struct {
 //   img: the image to draw
 //   pos: the initial position
 //   vel: the velocity to move this object
-func (l *Lane) Initialize(img *ebiten.Image, pos *view.Vector, vel *view.Vector) {
+func (l *SingleLane) Initialize(img *ebiten.Image, pos *view.Vector, vel *view.Vector) {
 	l.image = img
 	l.op = &ebiten.DrawImageOptions{}
 	l.op.GeoM.Translate(pos.X, pos.Y)
@@ -42,7 +34,7 @@ func (l *Lane) Initialize(img *ebiten.Image, pos *view.Vector, vel *view.Vector)
 // Update updates the position and velocity of this object.
 //  args:
 //   scrollV: the velocity to scroll field parts.
-func (l *Lane) Update(scrollV *view.Vector) {
+func (l *SingleLane) Update(scrollV *view.Vector) {
 	l.pos.Add(scrollV)
 	l.op.GeoM.Translate(scrollV.X, scrollV.Y)
 
@@ -54,6 +46,6 @@ func (l *Lane) Update(scrollV *view.Vector) {
 }
 
 // Draw draws this object to the screen.
-func (l *Lane) Draw(screen *ebiten.Image) {
+func (l *SingleLane) Draw(screen *ebiten.Image) {
 	screen.DrawImage(l.image, l.op)
 }

@@ -24,30 +24,34 @@ type KuronaVc struct {
 	gravity        float64
 	jumpV0         float64
 	dropV0         float64
+	currentState   State
 	prevState      State
 	elapsed        float64
 	deltaX, deltaY float64
 }
 
-// GetVelocity returns the velocity to scroll the field parts and to update the character position.
-func (kvc *KuronaVc) GetVelocity(s State) (*view.Vector, *view.Vector, *view.Vector) {
+func (kvc *KuronaVc) SetState(s State) {
+	kvc.prevState = kvc.currentState
+	kvc.currentState = s
+
 	if kvc.prevState == s {
 		kvc.elapsed += elapsedStep
 	} else {
-		kvc.prevState = s
 		kvc.elapsed = 0.0
 	}
+}
 
-	kvc.decideVbyState(s)
+// GetVelocity returns the velocity to scroll the field parts and to update the character position.
+func (kvc *KuronaVc) GetVelocity() (*view.Vector, *view.Vector, *view.Vector) {
+	kvc.decideVbyState()
 	kvc.updateVelocity()
-
 	return kvc.scrollV, kvc.charaPosV, kvc.charaDrawV
 }
 
 // TODO: キャラクターごとに個性を出す部分
 // ダッシュから歩きに変わる時のX方向の速度の落ち方、上がり方もキャラごとに特性が出せたら素敵。
-func (kvc *KuronaVc) decideVbyState(s State) {
-	switch s {
+func (kvc *KuronaVc) decideVbyState() {
+	switch kvc.currentState {
 	case Walk:
 		kvc.deltaX = 1.0
 		kvc.deltaY = 0.0

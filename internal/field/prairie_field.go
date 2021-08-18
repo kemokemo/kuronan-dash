@@ -17,38 +17,15 @@ type PrairieField struct {
 	closerParts  []ScrollableObject
 	obstacles    []Obstacle
 	foods        []Food
-	lanes        []*Lane
+	lanes        *Lanes
 }
 
 // Initialize initializes all resources to draw.
-func (p *PrairieField) Initialize() {
+func (p *PrairieField) Initialize(lanes *Lanes) {
 	p.bg = images.SkyBackground
 	p.tile = images.TilePrairie
-	p.createLanes()
+	p.lanes = lanes
 	p.createParts()
-}
-
-func (p *PrairieField) createLanes() {
-	w, _ := images.TilePrairie.Size()
-	width := float64(w)
-	infos := []ScrollInfo{
-		{images.TilePrairie, &view.Vector{X: 0.0, Y: firstLaneHeight}, &view.Vector{X: 0.0, Y: 0.0}},
-		{images.TilePrairie, &view.Vector{X: width, Y: firstLaneHeight}, &view.Vector{X: 0.0, Y: 0.0}},
-		{images.TilePrairie, &view.Vector{X: 2.0 * width, Y: firstLaneHeight}, &view.Vector{X: 0.0, Y: 0.0}},
-
-		{images.TilePrairie, &view.Vector{X: 0.0, Y: secondLaneHeight}, &view.Vector{X: 0.0, Y: 0.0}},
-		{images.TilePrairie, &view.Vector{X: width, Y: secondLaneHeight}, &view.Vector{X: 0.0, Y: 0.0}},
-		{images.TilePrairie, &view.Vector{X: 2.0 * width, Y: secondLaneHeight}, &view.Vector{X: 0.0, Y: 0.0}},
-
-		{images.TilePrairie, &view.Vector{X: 0.0, Y: thirdLaneHeight}, &view.Vector{X: 0.0, Y: 0.0}},
-		{images.TilePrairie, &view.Vector{X: width, Y: thirdLaneHeight}, &view.Vector{X: 0.0, Y: 0.0}},
-		{images.TilePrairie, &view.Vector{X: 2.0 * width, Y: thirdLaneHeight}, &view.Vector{X: 0.0, Y: 0.0}},
-	}
-	for i := range infos {
-		l := &Lane{}
-		l.Initialize(infos[i].img, infos[i].pos, infos[i].vel)
-		p.lanes = append(p.lanes, l)
-	}
 }
 
 // create all field parts to draw.
@@ -71,7 +48,7 @@ func (p *PrairieField) createParts() {
 		{images.Grass3, genPosField, genPosSet{10, 900, 3000}, genVel, genVelSet{-1.1, 0.0, false}},
 	}
 	for _, asset := range assets {
-		array := genParts(asset.img, asset.gpf, asset.gps, asset.gvf, asset.gvs)
+		array := genParts(asset.img, p.lanes.GetLaneHeights(), asset.gpf, asset.gps, asset.gvf, asset.gvs)
 		for i := range array {
 			p.fartherParts = append(p.fartherParts, array[i])
 		}
@@ -82,7 +59,7 @@ func (p *PrairieField) createParts() {
 		{images.Onigiri, genPosField, genPosSet{30, 1000, 550}, genVel, genVelSet{0.0, 0.0, false}},
 	}
 	for _, asset := range assets {
-		array := genOnigiri(asset.img, asset.gpf, asset.gps, asset.gvf, asset.gvs)
+		array := genOnigiri(asset.img, p.lanes.GetLaneHeights(), asset.gpf, asset.gps, asset.gvf, asset.gvs)
 		for i := range array {
 			p.closerParts = append(p.closerParts, array[i])
 			p.foods = append(p.foods, array[i])
@@ -94,7 +71,7 @@ func (p *PrairieField) createParts() {
 		{images.RockNormal, genPosField, genPosSet{30, 300, 1000}, genVel, genVelSet{0.0, 0.0, false}},
 	}
 	for _, asset := range assets {
-		array := genRocks(asset.img, asset.gpf, asset.gps, asset.gvf, asset.gvs)
+		array := genRocks(asset.img, p.lanes.GetLaneHeights(), asset.gpf, asset.gps, asset.gvf, asset.gvs)
 		for i := range array {
 			if randBool() {
 				p.fartherParts = append(p.fartherParts, array[i])
@@ -110,7 +87,7 @@ func (p *PrairieField) createParts() {
 		{images.Grass3, genPosField, genPosSet{10, 900, 3000}, genVel, genVelSet{-1 * gameSpeed, 0.0, false}},
 	}
 	for _, asset := range assets {
-		array := genParts(asset.img, asset.gpf, asset.gps, asset.gvf, asset.gvs)
+		array := genParts(asset.img, p.lanes.GetLaneHeights(), asset.gpf, asset.gps, asset.gvf, asset.gvs)
 		for i := range array {
 			p.closerParts = append(p.closerParts, array[i])
 		}
@@ -119,9 +96,7 @@ func (p *PrairieField) createParts() {
 
 // Update moves viewport for the all field parts.
 func (p *PrairieField) Update(scrollV *view.Vector) {
-	for i := range p.lanes {
-		p.lanes[i].Update(scrollV)
-	}
+	p.lanes.Update(scrollV)
 	for i := range p.fartherParts {
 		p.fartherParts[i].Update(scrollV)
 	}
@@ -141,9 +116,7 @@ func (p *PrairieField) DrawFarther(screen *ebiten.Image) {
 	}
 
 	// レーンを描画
-	for i := range p.lanes {
-		p.lanes[i].Draw(screen)
-	}
+	p.lanes.Draw(screen)
 }
 
 // DrawCloser draws the closer field part.
