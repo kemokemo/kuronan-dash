@@ -37,13 +37,17 @@ func (s *Stage01Scene) Initialize() error {
 	s.timeLimit = 600
 	s.time = s.timeLimit
 	s.disc = music.Stage01
+
 	s.player = chara.Selected
-	err := s.player.InitializeWithLanesInfo(field.LaneHeights)
+	lanes := field.NewLanes(field.PrairieLane)
+	err := s.player.InitializeWithLanes(lanes)
 	if err != nil {
 		return err
 	}
+
 	s.field = &field.PrairieField{}
-	s.field.Initialize()
+	s.field.Initialize(lanes)
+
 	return nil
 }
 

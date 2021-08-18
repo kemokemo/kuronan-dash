@@ -24,12 +24,14 @@ type Player struct {
 	op         *ebiten.DrawImageOptions
 	vc         move.VelocityController
 	scrollV    *view.Vector
+	tempPosV   *view.Vector
 	charaPosV  *view.Vector
+	tempDrawV  *view.Vector
 	charaDrawV *view.Vector
 	rect       *view.HitRectangle
 
 	// Initialization is required before starting the stage.
-	stateMachine move.StateMachine
+	stateMachine *move.StateMachine
 	previous     move.State
 	current      move.State
 	stamina      *Stamina
@@ -37,33 +39,28 @@ type Player struct {
 
 // InitializeWithLanesInfo sets the lanes information.
 // The player can run on the lane or move between lanes based on the lane drawing height information received in the argument.
-func (p *Player) InitializeWithLanesInfo(heights []float64) error {
+func (p *Player) InitializeWithLanes(lanes *field.Lanes) error {
 	p.previous = move.Pause
 	p.current = move.Dash
 	p.stamina.Initialize()
 
-	cH := []float64{}
-	_, h := p.StandingImage.Size()
-	for i := 0; i < len(heights); i++ {
-		cH = append(cH, heights[i]-float64(h))
-	}
-
-	p.stateMachine = move.NewStateMachine()
-	err := p.stateMachine.SetHeights(cH)
+	var err error
+	p.stateMachine, err = move.NewStateMachine(lanes)
 	if err != nil {
 		return err
 	}
 
 	// set the player at the top lane.
-	initialY := float64(cH[0]) + field.FieldOffset
-	rectOffset := 3.0
+	w, h := p.StandingImage.Size()
 
+	initialY := lanes.GetTargetLaneHeight() - float64(h) + field.FieldOffset
 	p.charaPosV = &view.Vector{X: 0.0, Y: 0.0}
+	p.charaDrawV = &view.Vector{X: 0.0, Y: 0.0}
 	p.scrollV = &view.Vector{X: 0.0, Y: 0.0}
 	p.op = &ebiten.DrawImageOptions{}
 	p.op.GeoM.Translate(view.DrawPosition, initialY)
 
-	w, h := p.StandingImage.Size()
+	rectOffset := 3.0
 	p.rect = view.NewHitRectangle(
 		view.Vector{X: view.DrawPosition + rectOffset, Y: initialY + rectOffset},
 		view.Vector{X: view.DrawPosition + float64(w) - rectOffset, Y: initialY + float64(h) - rectOffset})
@@ -92,14 +89,29 @@ func (p *Player) ReStart() {
 
 // Update updates the character regarding the user input.
 func (p *Player) Update() {
-	p.current = p.stateMachine.Update(p.stamina.GetStamina(), p.charaPosV)
+	// ひとつ前に更新したStateをもとに、次に動くべき速度を入手
+	p.vc.SetState(p.current)
+	p.scrollV, p.tempPosV, p.tempDrawV = p.vc.GetVelocity()
 
+	// 次に動くべき速度から次のStateを決定
+	// State更新処理で判明した、レーンにめり込まないようにするためのオフセットを入手
+	p.current = p.stateMachine.Update(p.stamina.GetStamina(), p.charaPosV)
 	p.stamina.Consumes(p.current)
-	p.scrollV, p.charaPosV, p.charaDrawV = p.vc.GetVelocity(p.current)
+
+	// 次に動くべき速度にオフセットを適用
+	p.updateVelWithOffset(p.stateMachine.GetOffsetV())
 
 	p.animation.AddStep(p.charaPosV.X)
 	p.op.GeoM.Translate(p.charaDrawV.X, p.charaDrawV.Y)
 	p.rect.Add(p.charaDrawV)
+}
+
+func (p *Player) updateVelWithOffset(offsetV *view.Vector) {
+	p.charaPosV.X = p.tempPosV.X
+	p.charaPosV.Y = p.tempPosV.Y + offsetV.Y
+
+	p.charaDrawV.X = p.tempDrawV.X
+	p.charaDrawV.Y = p.tempDrawV.Y + offsetV.Y
 }
 
 // Draw draws the character image.
@@ -150,4 +162,9 @@ func (p *Player) Close() error {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
 	return err
+}
+
+func (p *Player) GetHeight() float64 {
+	_, h := p.StandingImage.Size()
+	return float64(h)
 }

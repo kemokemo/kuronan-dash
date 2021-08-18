@@ -22,30 +22,34 @@ type KomaVc struct {
 	gravity        float64
 	jumpV0         float64
 	dropV0         float64
+	currentState   State
 	prevState      State
 	elapsed        float64
 	deltaX, deltaY float64
 }
 
-// GetVelocity returns the velocity to scroll the field parts and to update the character position.
-func (mvc *KomaVc) GetVelocity(s State) (*view.Vector, *view.Vector, *view.Vector) {
-	if mvc.prevState == s {
-		mvc.elapsed += elapsedStep
+func (kvc *KomaVc) SetState(s State) {
+	kvc.prevState = kvc.currentState
+	kvc.currentState = s
+
+	if kvc.prevState == s {
+		kvc.elapsed += elapsedStep
 	} else {
-		mvc.prevState = s
-		mvc.elapsed = 0.0
+		kvc.elapsed = 0.0
 	}
+}
 
-	mvc.decideVbyState(s)
+// GetVelocity returns the velocity to scroll the field parts and to update the character position.
+func (mvc *KomaVc) GetVelocity() (*view.Vector, *view.Vector, *view.Vector) {
+	mvc.decideVbyState()
 	mvc.updateVelocity()
-
 	return mvc.scrollV, mvc.charaPosV, mvc.charaDrawV
 }
 
 // TODO: キャラクターごとに個性を出す部分
 // ダッシュから歩きに変わる時のX方向の速度の落ち方、上がり方もキャラごとに特性が出せたら素敵。
-func (mvc *KomaVc) decideVbyState(s State) {
-	switch s {
+func (mvc *KomaVc) decideVbyState() {
+	switch mvc.currentState {
 	case Walk:
 		mvc.deltaX = 1.0
 		mvc.deltaY = 0.0
