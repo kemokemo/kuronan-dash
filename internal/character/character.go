@@ -26,7 +26,7 @@ func NewPlayers() error {
 		animation:     anime.NewStepAnimation(images.KuronaAnimation, 5),
 		jumpSe:        se.Jump,
 		dropSe:        se.Drop,
-		stamina:       NewStamina(130, 6),
+		stamina:       NewStamina(90, 6),
 		vc:            move.NewKuronaVc(),
 	}
 
@@ -36,7 +36,7 @@ func NewPlayers() error {
 		animation:     anime.NewStepAnimation(images.KomaAnimation, 5),
 		jumpSe:        se.Jump,
 		dropSe:        se.Drop,
-		stamina:       NewStamina(160, 11),
+		stamina:       NewStamina(100, 11),
 		vc:            move.NewKomaVc(),
 	}
 
@@ -46,7 +46,7 @@ func NewPlayers() error {
 		animation:     anime.NewStepAnimation(images.ShishimaruAnimation, 5),
 		jumpSe:        se.Jump,
 		dropSe:        se.Drop,
-		stamina:       NewStamina(200, 17),
+		stamina:       NewStamina(120, 17),
 		vc:            move.NewShishimaruVc(),
 	}
 

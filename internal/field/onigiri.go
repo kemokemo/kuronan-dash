@@ -21,7 +21,7 @@ type Onigiri struct {
 //   vel: the velocity to move this object
 func (o *Onigiri) Initialize(img *ebiten.Image, pos *view.Vector, vel *view.Vector) {
 	o.image = img
-	o.stamina = 20
+	o.stamina = 5
 	o.eaten = false
 
 	o.op = &ebiten.DrawImageOptions{}

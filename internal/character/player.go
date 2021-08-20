@@ -35,6 +35,7 @@ type Player struct {
 	previous     move.State
 	current      move.State
 	stamina      *Stamina
+	sumTicks     float64
 }
 
 // InitializeWithLanesInfo sets the lanes information.
@@ -96,7 +97,12 @@ func (p *Player) Update() {
 	// 次に動くべき速度から次のStateを決定
 	// State更新処理で判明した、レーンにめり込まないようにするためのオフセットを入手
 	p.current = p.stateMachine.Update(p.stamina.GetStamina(), p.charaPosV)
-	p.stamina.Consumes(p.current)
+
+	p.sumTicks += 1.0 / ebiten.CurrentTPS()
+	if p.sumTicks >= 0.05 {
+		p.sumTicks = 0.0
+		p.stamina.Consumes(p.current)
+	}
 
 	// 次に動くべき速度にオフセットを適用
 	p.updateVelWithOffset(p.stateMachine.GetOffsetV())

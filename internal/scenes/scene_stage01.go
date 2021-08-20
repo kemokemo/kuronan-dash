@@ -29,12 +29,13 @@ type Stage01Scene struct {
 	goalX     float64
 	timeLimit int // second
 	time      int // second
+	sumTicks  float64
 }
 
 // Initialize initializes all resources.
 func (s *Stage01Scene) Initialize() error {
-	s.goalX = 900.0
-	s.timeLimit = 600
+	s.goalX = 1500.0
+	s.timeLimit = 90
 	s.time = s.timeLimit
 	s.disc = music.Stage01
 
@@ -87,7 +88,12 @@ func (s *Stage01Scene) Update(state *GameState) {
 
 // run works with 'run' state.
 func (s *Stage01Scene) run() {
-	s.time--
+	s.sumTicks += 1.0 / ebiten.CurrentTPS()
+	if s.sumTicks >= 1.0 {
+		s.sumTicks = 0.0
+		s.time--
+	}
+
 	isTimeUp := s.time <= 0
 	isArriveGoal := s.player.GetPosition().X-view.DrawPosition > s.goalX
 
