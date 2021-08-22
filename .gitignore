@@ -22,3 +22,6 @@ vendor/*
 
 # assets
 _assets/*
+
+# build result
+public/kuronan-dash.wasm
