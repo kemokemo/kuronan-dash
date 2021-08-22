@@ -57,9 +57,9 @@ GOOS=js GOARCH=wasm go build -o public/kuronan-dash.wasm
 
 ```sh
 miniweb -p 9000 public
-
-# 上記を実行した場合、ブラウザで http://localhost:9000/ を開きましょう。
 ```
+
+上記を実行した場合、ブラウザで `http://localhost:9000/` を開きましょう。
 
 ### ゲームの仕様と実装状況のメモ
 
