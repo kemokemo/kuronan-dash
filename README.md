@@ -1,6 +1,6 @@
 # 黒菜んダッシュ :dash:
 
-[![License](https://img.shields.io/github/license/kemokemo/kuronan-dash)](https://opensource.org/licenses/Apache-2.0) [![Build Status](https://travis-ci.org/kemokemo/kuronan-dash.svg?branch=master)](https://travis-ci.org/kemokemo/kuronan-dash) [![Go Version](https://img.shields.io/github/go-mod/go-version/kemokemo/kuronan-dash)](https://github.com/kemokemo/kuronan-dash/blob/master/go.mod) [![Go Report Card](https://goreportcard.com/badge/github.com/kemokemo/kuronan-dash)](https://goreportcard.com/report/github.com/kemokemo/kuronan-dash) [![LatestVersion](https://img.shields.io/github/v/release/kemokemo/kuronan-dash?color=8783f7)](https://github.com/kemokemo/kuronan-dash/releases/latest) [![OpenIssues](https://img.shields.io/github/issues-raw/kemokemo/kuronan-dash?color=fca438)](https://github.com/kemokemo/kuronan-dash/issues) ![Deploy GitHub pages](https://github.com/kemokemo/kuronan-dash/workflows/Deploy%20GitHub%20pages/badge.svg)
+[![License](https://img.shields.io/github/license/kemokemo/kuronan-dash)](https://opensource.org/licenses/Apache-2.0) [![Build Status](https://travis-ci.org/kemokemo/kuronan-dash.svg?branch=main)](https://travis-ci.org/kemokemo/kuronan-dash) [![Go Version](https://img.shields.io/github/go-mod/go-version/kemokemo/kuronan-dash)](https://github.com/kemokemo/kuronan-dash/blob/main/go.mod) [![Go Report Card](https://goreportcard.com/badge/github.com/kemokemo/kuronan-dash)](https://goreportcard.com/report/github.com/kemokemo/kuronan-dash) [![LatestVersion](https://img.shields.io/github/v/release/kemokemo/kuronan-dash?color=8783f7)](https://github.com/kemokemo/kuronan-dash/releases/latest) [![OpenIssues](https://img.shields.io/github/issues-raw/kemokemo/kuronan-dash?color=fca438)](https://github.com/kemokemo/kuronan-dash/issues) ![Deploy GitHub pages](https://github.com/kemokemo/kuronan-dash/workflows/Deploy%20GitHub%20pages/badge.svg)
 
 ## 概要
 
@@ -89,7 +89,7 @@ miniweb -p 9000 public
 
 ## ライセンス
 
-:orange_book: [Apache License Version 2.0](https://github.com/kemokemo/kuronan-dash/blob/master/LICENSE)
+:orange_book: [Apache License Version 2.0](https://github.com/kemokemo/kuronan-dash/blob/main/LICENSE)
 
 ソースコードだけでなく、`assets`ディレクトリ以下の画像や音楽、効果音データなども上記のライセンスです。なお、フォントは[患者長ひっくさん](https://twitter.com/hicchicc)の[ザ・ストロングゲーマー](http://www17.plala.or.jp/xxxxxxx/00ff/)フォントを使わせていただいています。
 
