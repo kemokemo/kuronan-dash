@@ -21,7 +21,6 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
           stable: true
-        run: go version
 
       - name: Checkout
         uses: actions/checkout@v2
