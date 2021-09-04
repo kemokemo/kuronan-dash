@@ -1,0 +1,84 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        go: ['1.17.x']
+    name: Test with Go ${{ matrix.go }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    env:
+      DISPLAY: ':99.0'
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go }}
+          stable: true
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install libasound2-dev libgl1-mesa-dev libxcursor-dev libxi-dev libxinerama-dev libxrandr-dev libxxf86vm-dev
+
+      - name: Xvfb
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+
+      - name: build for ubuntu
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+          CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -ldflags="-X 'main.Revision=$(git rev-parse --short HEAD)'" -o kuronan-dash_linux_amd64
+
+      - name: release ubuntu binary
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: |
+            kuronan-dash_linux_amd64
+            LICENSE
+            README.md
+
+      - name: build for windows
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
+          CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build -ldflags="-X 'main.Revision=$(git rev-parse --short HEAD)'" -o kuronan-dash_windows_amd64.exe
+
+      - name: release windows binary
+        if: ${{ matrix.os == 'windows-latest' }}
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: |
+            kuronan-dash_windows_amd64.exe
+
+      - name: build for macos
+        if: ${{ matrix.os == 'macos-latest' }}
+        run: |
+          CGO_ENABLED=1 go build -ldflags="-X 'main.Revision=$(git rev-parse --short HEAD)'" -o kuronan-dash_macOS_amd64
+      
+      - name: release macos binary
+        if: ${{ matrix.os == 'macos-latest' }}
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: |
+            kuronan-dash_macOS_amd64

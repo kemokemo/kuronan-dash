@@ -1,22 +1,28 @@
 name: Deploy GitHub pages
+
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   deploy:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: use golang
+      - name: Setup Go
         uses: actions/setup-go@v2
         with:
-          go-version: '1.16.7'
-      - run: go version
-      - name: build WebAssembly
+          go-version: '1.17.x'
+          stable: true
+        run: go version
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build WebAssembly
         run: GOOS=js GOARCH=wasm go build -ldflags="-X 'main.Revision=$(git rev-parse --short HEAD)'" -o public/kuronan-dash.wasm
-      - name: Deploy
+
+      - name: Deploy GitHub pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
