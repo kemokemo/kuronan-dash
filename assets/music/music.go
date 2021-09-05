@@ -6,7 +6,8 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/audio"
 )
 
-const sampleRate = 44100
+// SampleRate is the sampling rate of music and se.
+const SampleRate = 44100
 
 // AudioContext is the context for the all audios.
 var AudioContext *audio.Context
@@ -19,7 +20,7 @@ var (
 
 // LoadAudioContext load audio context.
 func LoadAudioContext() {
-	AudioContext = audio.NewContext(sampleRate)
+	AudioContext = audio.NewContext(SampleRate)
 }
 
 // LoadMusic loads all music.

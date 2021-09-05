@@ -88,7 +88,10 @@ func (s *SelectScene) Update(state *GameState) {
 	s.checkSelectorChanged()
 	if input.TriggeredOne() {
 		chara.Selected = s.charaList[s.selector]
-		state.SceneManager.GoTo(&Stage01Scene{})
+		err := state.SceneManager.GoTo(&Stage01Scene{})
+		if err != nil {
+			log.Println("failed to got Stage01Scene: ", err)
+		}
 	}
 }
 

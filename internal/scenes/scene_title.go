@@ -4,6 +4,7 @@ package scenes
 
 import (
 	"image/color"
+	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
@@ -41,7 +42,10 @@ func (s *TitleScene) Initialize() error {
 // Update updates the status of this scene.
 func (s *TitleScene) Update(state *GameState) {
 	if input.TriggeredOne() {
-		state.SceneManager.GoTo(&SelectScene{})
+		err := state.SceneManager.GoTo(&SelectScene{})
+		if err != nil {
+			log.Println("failed to go to the select scene: ", err)
+		}
 	}
 }
 

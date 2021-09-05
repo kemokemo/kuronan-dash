@@ -31,7 +31,7 @@ func (p *Player) Close() error {
 }
 
 func loadPlayer(b []byte) (*Player, error) {
-	s, err := wav.Decode(music.AudioContext, bytes.NewReader(b))
+	s, err := wav.DecodeWithSampleRate(music.SampleRate, bytes.NewReader(b))
 	if err != nil {
 		return nil, err
 	}

@@ -86,13 +86,21 @@ func (sm *StateMachine) keyCheck(vY float64) {
 		if sm.lanes.GoToUpperLane() {
 			sm.previous = sm.current
 			sm.current = Ascending
-			sm.jumpSe.Play() // TODO: error handling
+
+			err := sm.jumpSe.Play()
+			if err != nil {
+				log.Println("failed to play jump SE: ", err)
+			}
 		}
 	} else if input.TriggeredDown() {
 		if sm.lanes.GoToLowerLane() {
 			sm.previous = sm.current
 			sm.current = Descending
-			sm.dropSe.Play() // TODO: error handling
+
+			err := sm.dropSe.Play()
+			if err != nil {
+				log.Println("failed to play drop SE: ", err)
+			}
 		}
 	}
 }

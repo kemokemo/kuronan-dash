@@ -8,7 +8,7 @@ import (
 )
 
 func loadPlayer(b []byte) (*audio.Player, error) {
-	m, err := mp3.Decode(AudioContext, bytes.NewReader(b))
+	m, err := mp3.DecodeWithSampleRate(SampleRate, bytes.NewReader(b))
 	if err != nil {
 		return nil, err
 	}

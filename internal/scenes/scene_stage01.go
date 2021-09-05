@@ -75,11 +75,17 @@ func (s *Stage01Scene) Update(state *GameState) {
 	case stageClear:
 		if input.TriggeredOne() {
 			// TODO: goto next stage :-)
-			state.SceneManager.GoTo(&TitleScene{})
+			err := state.SceneManager.GoTo(&TitleScene{})
+			if err != nil {
+				log.Println("failed to go to the 2nd stage: ", err)
+			}
 		}
 	case gameOver:
 		if input.TriggeredOne() {
-			state.SceneManager.GoTo(&TitleScene{})
+			err := state.SceneManager.GoTo(&TitleScene{})
+			if err != nil {
+				log.Println("failed to go to the title screen: ", err)
+			}
 		}
 	default:
 		log.Println("unknown state of Stage01Scene:", s.state)
@@ -125,7 +131,7 @@ func (s *Stage01Scene) Draw(screen *ebiten.Image) {
 }
 
 // description
-func (s *Stage01Scene) drawUI(screen *ebiten.Image) error {
+func (s *Stage01Scene) drawUI(screen *ebiten.Image) {
 	text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
 		fonts.GamerFontS, 12, 35, color.White)
 
@@ -137,8 +143,6 @@ func (s *Stage01Scene) drawUI(screen *ebiten.Image) error {
 
 	text.Draw(screen, fmt.Sprintf("すすんだきょり/ゴールいち: %.1f / %.1f", s.player.GetPosition().X-view.DrawPosition, s.goalX),
 		fonts.GamerFontS, 300, 60, color.White)
-
-	return nil
 }
 
 func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {

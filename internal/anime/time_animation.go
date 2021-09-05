@@ -33,7 +33,7 @@ func NewTimeAnimation(frames []*ebiten.Image, duration float64) *TimeAnimation {
 // If the elapsed time is grater than the DurationSecond, this function
 // will return the next frame.
 func (t *TimeAnimation) GetCurrentFrame() *ebiten.Image {
-	t.elapsed = time.Now().Sub(t.switchedTime).Seconds()
+	t.elapsed = float64(time.Since(t.switchedTime).Seconds())
 	if t.elapsed >= t.durationSecond {
 		t.currentFrameNum++
 		t.switchedTime = time.Now()
