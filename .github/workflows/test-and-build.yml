@@ -48,8 +48,7 @@ jobs:
       - name: go test
         run: |
           go test -v ./...
-          env GOOS=js GOARCH=wasm go test -v ./...
-
+      
   build:
     strategy:
       matrix:
@@ -96,4 +95,4 @@ jobs:
       - name: build for macos
         if: ${{ matrix.os == 'macos-latest' }}
         run: |
-          CGO_ENABLED=1 go build -ldflags="-X 'main.Revision=$(git rev-parse --short HEAD)'" -o release/kuronan-dash_macOS_amd64
+          CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build -ldflags="-X 'main.Revision=$(git rev-parse --short HEAD)'" -o release/kuronan-dash_macOS_amd64
