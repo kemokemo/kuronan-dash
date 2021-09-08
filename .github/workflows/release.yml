@@ -72,7 +72,7 @@ jobs:
       - name: build for macos
         if: ${{ matrix.os == 'macos-latest' }}
         run: |
-          CGO_ENABLED=1 go build -ldflags="-X 'main.Revision=$(git rev-parse --short HEAD)'" -o kuronan-dash_macOS_amd64
+          CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build -ldflags="-X 'main.Revision=$(git rev-parse --short HEAD)'" -o kuronan-dash_macOS_amd64
       
       - name: release macos binary
         if: ${{ matrix.os == 'macos-latest' }}
