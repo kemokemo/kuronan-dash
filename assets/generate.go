@@ -2,7 +2,6 @@ package assets
 
 /* package images */
 // Background
-//go:generate file2byteslice -package=images -input=../_assets/images/title_bg.png -output=./images/title_bg.go -var=title_bg_png
 //go:generate file2byteslice -package=images -input=../_assets/images/select_background.png -output=./images/select_bg.go -var=select_bg_png
 //go:generate file2byteslice -package=images -input=../_assets/images/sky_background.png -output=./images/sky_bg.go -var=sky_bg_png
 
