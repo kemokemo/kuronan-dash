@@ -21,7 +21,7 @@
 
 ### プレイ方法
 
-[最新版のリリースページ](https://github.com/kemokemo/kuronan-dash/releases/tag/v0.0.4)からお使いのOSに応じた実行ファイルをダウンロードして実行してください。[こちらのページ](https://kemokemo.github.io/kuronan-dash/)で、ブラウザ上で遊ぶこともできます。
+[最新版のリリースページ](https://github.com/kemokemo/kuronan-dash/releases/latest)からお使いのOSに応じた実行ファイルをダウンロードして実行してください。[こちらのページ](https://kemokemo.github.io/kuronan-dash/)で、ブラウザ上で遊ぶこともできます。
 
 ### 操作方法
 
@@ -91,7 +91,7 @@ miniweb -p 9000 public
 
 :orange_book: [Apache License Version 2.0](https://github.com/kemokemo/kuronan-dash/blob/main/LICENSE)
 
-ソースコードだけでなく、`assets`ディレクトリ以下の画像や音楽、効果音データなども上記のライセンスです。なお、フォントは[患者長ひっくさん](https://twitter.com/hicchicc)の[ザ・ストロングゲーマー](http://www17.plala.or.jp/xxxxxxx/00ff/)フォントを使わせていただいています。
+ソースコードだけでなく、`assets`ディレクトリ以下の画像や音楽、効果音データなども上記のライセンスです。なお、フォントは[患者長ひっくさん](https://twitter.com/hicchicc)の[ザ・ストロングゲーマー](http://www17.plala.or.jp/xxxxxxx/00ff/)フォントを使わせていただいています。素晴らしいフォントです。
 
 ## スペシャルサンクス
 

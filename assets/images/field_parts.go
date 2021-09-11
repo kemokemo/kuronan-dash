@@ -4,7 +4,7 @@ func loadFieldparts() error {
 	var err error
 
 	// Prairie field
-	TilePrairie, err = loadSingleImage(tilePrairie_png)
+	TilePrairie, err = loadSingleImage(tile_prairie_png)
 	if err != nil {
 		return err
 	}
@@ -20,11 +20,11 @@ func loadFieldparts() error {
 	if err != nil {
 		return err
 	}
-	MountainNear, err = loadSingleImage(mountainNear_png)
+	MountainNear, err = loadSingleImage(mountain_near_png)
 	if err != nil {
 		return err
 	}
-	MountainFar, err = loadSingleImage(mountainFar_png)
+	MountainFar, err = loadSingleImage(mountain_far_png)
 	if err != nil {
 		return err
 	}

@@ -11,6 +11,7 @@ import (
 
 	"github.com/kemokemo/kuronan-dash/assets/fonts"
 	"github.com/kemokemo/kuronan-dash/assets/images"
+	"github.com/kemokemo/kuronan-dash/assets/messages"
 	"github.com/kemokemo/kuronan-dash/assets/music"
 	"github.com/kemokemo/kuronan-dash/internal/input"
 	"github.com/kemokemo/kuronan-dash/internal/view"
@@ -54,7 +55,7 @@ func (s *TitleScene) Draw(r *ebiten.Image) {
 	op := &ebiten.DrawImageOptions{}
 	r.DrawImage(s.bg, op)
 	text.Draw(r, versionInfo, fonts.GamerFontS, int(s.verPos.X), int(s.verPos.Y), color.White)
-	text.Draw(r, "Spaceキー を おしてね!", fonts.GamerFontL, int(s.msgPos.X), int(s.msgPos.Y), color.Black)
+	text.Draw(r, messages.TitleStart, fonts.GamerFontL, int(s.msgPos.X), int(s.msgPos.Y), color.Black)
 }
 
 // StartMusic starts playing music
