@@ -11,6 +11,7 @@ import (
 
 	"github.com/kemokemo/kuronan-dash/assets/fonts"
 	"github.com/kemokemo/kuronan-dash/assets/images"
+	"github.com/kemokemo/kuronan-dash/assets/messages"
 	"github.com/kemokemo/kuronan-dash/assets/music"
 	"github.com/kemokemo/kuronan-dash/internal/input"
 	"github.com/kemokemo/kuronan-dash/internal/view"
@@ -35,7 +36,7 @@ func (s *TitleScene) Initialize() error {
 		Y: 80}
 	s.msgPos = view.Vector{
 		X: float64(view.ScreenWidth/2) - 170,
-		Y: float64(view.ScreenHeight/2) - 48}
+		Y: float64(view.ScreenHeight/2) + 50}
 	return nil
 }
 
@@ -54,8 +55,7 @@ func (s *TitleScene) Draw(r *ebiten.Image) {
 	op := &ebiten.DrawImageOptions{}
 	r.DrawImage(s.bg, op)
 	text.Draw(r, versionInfo, fonts.GamerFontS, int(s.verPos.X), int(s.verPos.Y), color.White)
-	text.Draw(r, "くろなんダッシュ", fonts.GamerFontLL, int(s.titlePos.X), int(s.titlePos.Y), color.Black)
-	text.Draw(r, "Space をおして はじめよう!", fonts.GamerFontM, int(s.msgPos.X), int(s.msgPos.Y), color.Black)
+	text.Draw(r, messages.TitleStart, fonts.GamerFontL, int(s.msgPos.X), int(s.msgPos.Y), color.Black)
 }
 
 // StartMusic starts playing music

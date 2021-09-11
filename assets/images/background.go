@@ -3,15 +3,15 @@ package images
 func loadBackground() error {
 	var err error
 
-	TitleBackground, err = loadSingleImage(title_bg_png)
+	TitleBackground, err = loadSingleImage(bg_title_png)
 	if err != nil {
 		return err
 	}
-	SelectBackground, err = loadSingleImage(select_bg_png)
+	SelectBackground, err = loadSingleImage(bg_select_png)
 	if err != nil {
 		return err
 	}
-	SkyBackground, err = loadSingleImage(sky_bg_png)
+	SkyBackground, err = loadSingleImage(bg_prairie_png)
 	if err != nil {
 		return err
 	}
