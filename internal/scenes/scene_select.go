@@ -41,6 +41,7 @@ type SelectScene struct {
 	disc       *music.Disc
 	charaList  []*chara.Player
 	windowList []*ui.FrameWindow
+	msgWindow  *ui.MessageWindow
 	selector   int
 	fontNormal font.Face
 }
@@ -60,12 +61,9 @@ func (s *SelectScene) Initialize() error {
 
 	s.windowList = make([]*ui.FrameWindow, len(s.charaList))
 	for i := range s.charaList {
-		win, err := ui.NewFrameWindow(
+		win := ui.NewFrameWindow(
 			windowMargin+(windowWidth+windowSpacing)*int(i),
-			windowMargin*2, windowWidth, windowHeight, frameWidth)
-		if err != nil {
-			log.Println("failed to create a new frame window:", err)
-		}
+			windowMargin*2+60, windowWidth, windowHeight, frameWidth)
 		win.SetColors(
 			color.RGBA{64, 64, 64, 255},
 			color.RGBA{192, 192, 192, 255},
@@ -77,6 +75,12 @@ func (s *SelectScene) Initialize() error {
 		s.windowList[i] = win
 	}
 	s.fontNormal = fonts.GamerFontM
+
+	s.msgWindow = ui.NewMessageWindow(windowMargin, windowMargin+13, view.ScreenWidth-windowMargin*2, 42, frameWidth)
+	s.msgWindow.SetColors(
+		color.RGBA{64, 64, 64, 255},
+		color.RGBA{192, 192, 192, 255},
+		color.RGBA{33, 228, 68, 255})
 
 	return nil
 }
@@ -111,8 +115,6 @@ func (s *SelectScene) checkSelectorChanged() {
 // Draw draws background and characters.
 func (s *SelectScene) Draw(screen *ebiten.Image) {
 	s.drawBackground(screen)
-	text.Draw(screen, "さゆう の カーソルキー で キャラクター を えらんで スペースキー を おしてね！",
-		fonts.GamerFontM, windowMargin, windowMargin+5, color.Black)
 	s.drawWindows(screen)
 	s.drawCharacters(screen)
 }
@@ -144,6 +146,8 @@ func (s *SelectScene) drawWindows(screen *ebiten.Image) {
 		}
 		s.windowList[i].DrawWindow(screen)
 	}
+
+	s.msgWindow.DrawWindow(screen, "さゆう の カーソルキー で キャラクター を えらんで スペースキー を おしてね！")
 }
 
 func (s *SelectScene) drawCharacters(screen *ebiten.Image) {

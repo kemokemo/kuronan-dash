@@ -23,7 +23,7 @@ type FrameWindow struct {
 //
 // The width and height are used for the inner region excluding the frame.
 // If 0 is set to the frameWidth, the frame will not be drawn.
-func NewFrameWindow(x, y, width, height, frameWidth int) (*FrameWindow, error) {
+func NewFrameWindow(x, y, width, height, frameWidth int) *FrameWindow {
 	fw := FrameWindow{
 		rect: image.Rectangle{
 			Min: image.Point{X: x, Y: y},
@@ -44,7 +44,7 @@ func NewFrameWindow(x, y, width, height, frameWidth int) (*FrameWindow, error) {
 		fw.frameLightOp = &ebiten.DrawImageOptions{}
 		fw.frameLightOp.GeoM.Translate(float64(x-frameWidth), float64(y-frameWidth))
 	}
-	return &fw, nil
+	return &fw
 }
 
 // GetWindowRect returns the rectangle of this window.

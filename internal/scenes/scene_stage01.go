@@ -133,22 +133,22 @@ func (s *Stage01Scene) Draw(screen *ebiten.Image) {
 // description
 func (s *Stage01Scene) drawUI(screen *ebiten.Image) {
 	text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
-		fonts.GamerFontS, 12, 35, color.White)
+		fonts.GamerFontS, 12, view.ScreenHeight-60, color.White)
 
 	text.Draw(screen, fmt.Sprintf("スタミナ: %v", s.player.GetStamina()),
-		fonts.GamerFontS, 12, 60, color.White)
+		fonts.GamerFontS, 12, view.ScreenHeight-35, color.White)
 
 	text.Draw(screen, fmt.Sprintf("タイム: %v", s.time),
-		fonts.GamerFontS, 160, 60, color.White)
+		fonts.GamerFontS, 160, view.ScreenHeight-35, color.White)
 
 	text.Draw(screen, fmt.Sprintf("すすんだきょり/ゴールいち: %.1f / %.1f", s.player.GetPosition().X-view.DrawPosition, s.goalX),
-		fonts.GamerFontS, 300, 60, color.White)
+		fonts.GamerFontS, 300, view.ScreenHeight-35, color.White)
 }
 
 func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 	switch s.state {
 	case wait:
-		text.Draw(screen, messages.GameStart, fonts.GamerFontL, view.ScreenWidth/2-250, view.ScreenHeight/2, color.White)
+		text.Draw(screen, messages.GameStart, fonts.GamerFontL, view.ScreenWidth/2-300, view.ScreenHeight/2, color.White)
 	case pause:
 		text.Draw(screen, messages.GamePause, fonts.GamerFontL, view.ScreenWidth/2-150, view.ScreenHeight/2, color.White)
 	case stageClear:
