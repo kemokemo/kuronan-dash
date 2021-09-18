@@ -3,6 +3,7 @@ package ui
 import (
 	"image"
 	"image/color"
+	"strings"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
@@ -88,23 +89,30 @@ func (mw *MessageWindow) DrawWindow(screen *ebiten.Image, msg string) {
 func (mw *MessageWindow) drawMessage(screen *ebiten.Image, msg string) {
 	// todo:
 	fontSize := 20
-	margin := 30
 	lineSpacing := 2
+	rowRunesNum := (mw.rect.Max.X - mw.rect.Min.X) / 15
 
-	runes := []rune(msg)
-	splitlen := (mw.rect.Max.X - mw.rect.Min.X - margin) / fontSize
 	startPoint := mw.takeTextPosition()
-
 	lineNum := 1
-	for i := 0; i < len(runes); i += splitlen {
-		x := startPoint.X
-		y := startPoint.Y + (fontSize+lineSpacing)*lineNum
-		if i+splitlen < len(runes) {
-			text.Draw(screen, string(runes[i:(i+splitlen)]), mw.font, x, y, color.White)
-		} else {
-			text.Draw(screen, string(runes[i:]), mw.font, x, y, color.White)
+	x := startPoint.X
+	y := startPoint.Y
+	rowMsg := ""
+
+	rows := strings.Split(msg, "\n")
+	for _, row := range rows {
+		runes := []rune(row)
+
+		for i := 0; i < len(runes); i += (rowRunesNum - 1) {
+			y = y + fontSize + lineSpacing
+			if i+rowRunesNum < len(runes) {
+				rowMsg = string(runes[i : i+rowRunesNum-1])
+			} else {
+				rowMsg = string(runes[i:])
+			}
+			text.Draw(screen, rowMsg, mw.font, x, y, color.White)
+
+			lineNum++
 		}
-		lineNum++
 	}
 }
 
