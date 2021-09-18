@@ -17,6 +17,7 @@ import (
 	chara "github.com/kemokemo/kuronan-dash/internal/character"
 	"github.com/kemokemo/kuronan-dash/internal/field"
 	"github.com/kemokemo/kuronan-dash/internal/input"
+	"github.com/kemokemo/kuronan-dash/internal/ui"
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
 
@@ -30,6 +31,8 @@ type Stage01Scene struct {
 	timeLimit int // second
 	time      int // second
 	sumTicks  float64
+	msgWindow *ui.MessageWindow
+	uiMsg     string
 }
 
 // Initialize initializes all resources.
@@ -48,6 +51,19 @@ func (s *Stage01Scene) Initialize() error {
 
 	s.field = &field.PrairieField{}
 	s.field.Initialize(lanes)
+
+	heights := lanes.GetLaneHeights()
+	lowerLaneY := heights[len(heights)-1]
+	s.msgWindow = ui.NewMessageWindow(
+		300,
+		int(lowerLaneY)+windowMargin+5,
+		680,
+		view.ScreenHeight-windowMargin*2-int(lowerLaneY),
+		frameWidth)
+	s.msgWindow.SetColors(
+		color.RGBA{64, 64, 64, 255},
+		color.RGBA{192, 192, 192, 255},
+		color.RGBA{33, 228, 68, 255})
 
 	return nil
 }
@@ -132,23 +148,22 @@ func (s *Stage01Scene) Draw(screen *ebiten.Image) {
 
 // description
 func (s *Stage01Scene) drawUI(screen *ebiten.Image) {
+	s.uiMsg = fmt.Sprintf("スタミナ: %v\nタイム: 　%v\nすすんだきょり: %.1f\nゴールのいち: 　%.1f",
+		s.player.GetStamina(),
+		s.time,
+		s.player.GetPosition().X-view.DrawPosition,
+		s.goalX,
+	)
+	s.msgWindow.DrawWindow(screen, s.uiMsg)
+
 	text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
-		fonts.GamerFontS, 12, 35, color.White)
-
-	text.Draw(screen, fmt.Sprintf("スタミナ: %v", s.player.GetStamina()),
-		fonts.GamerFontS, 12, 60, color.White)
-
-	text.Draw(screen, fmt.Sprintf("タイム: %v", s.time),
-		fonts.GamerFontS, 160, 60, color.White)
-
-	text.Draw(screen, fmt.Sprintf("すすんだきょり/ゴールいち: %.1f / %.1f", s.player.GetPosition().X-view.DrawPosition, s.goalX),
-		fonts.GamerFontS, 300, 60, color.White)
+		fonts.GamerFontS, 12, view.ScreenHeight-10, color.White)
 }
 
 func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 	switch s.state {
 	case wait:
-		text.Draw(screen, messages.GameStart, fonts.GamerFontL, view.ScreenWidth/2-250, view.ScreenHeight/2, color.White)
+		text.Draw(screen, messages.GameStart, fonts.GamerFontL, view.ScreenWidth/2-300, view.ScreenHeight/2, color.White)
 	case pause:
 		text.Draw(screen, messages.GamePause, fonts.GamerFontL, view.ScreenWidth/2-150, view.ScreenHeight/2, color.White)
 	case stageClear:
