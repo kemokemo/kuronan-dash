@@ -4,6 +4,7 @@ import (
 	"image"
 	"image/color"
 	"log"
+	"strings"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -173,22 +174,28 @@ func (s *SelectScene) takeHorizontalCenterPosition(i int) (x, y float64) {
 }
 
 func (s *SelectScene) drawMessage(screen *ebiten.Image, i int) {
-	runes := []rune(s.charaList[i].Description)
 	rect := s.windowList[i].GetWindowRect()
-	splitlen := (rect.Max.X - rect.Min.X - margin) / fontSize
+	splitlen := (rect.Max.X - rect.Min.X) / fontSize
 	startPoint := s.takeTextPosition(i)
-
 	lineNum := 1
-	for i := 0; i < len(runes); i += splitlen {
-		x := startPoint.X
-		y := startPoint.Y + (fontSize+lineSpacing)*lineNum
-		if i+splitlen < len(runes) {
-			text.Draw(screen, string(runes[i:(i+splitlen)]), s.fontNormal, x, y, color.White)
-		} else {
-			text.Draw(screen, string(runes[i:]), s.fontNormal, x, y, color.White)
+
+	rows := strings.Split(s.charaList[i].Description, "\n")
+	x := startPoint.X
+	y := startPoint.Y
+	for _, row := range rows {
+		runes := []rune(row)
+
+		for i := 0; i < len(runes); i += splitlen {
+			y = y + fontSize + lineSpacing
+			if i+splitlen < len(runes) {
+				text.Draw(screen, string(runes[i:(i+splitlen)]), s.fontNormal, x, y, color.White)
+			} else {
+				text.Draw(screen, string(runes[i:]), s.fontNormal, x, y, color.White)
+			}
+			lineNum++
 		}
-		lineNum++
 	}
+
 }
 
 func (s *SelectScene) takeTextPosition(i int) image.Point {
