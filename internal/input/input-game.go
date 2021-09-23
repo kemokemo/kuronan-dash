@@ -30,6 +30,7 @@ func (gi *GameInputChecker) TriggeredStart() bool {
 }
 
 func (gi *GameInputChecker) TriggeredPause() bool {
+	// todo: マウスの右クリックでPauseじゃなくて、別途Pauseボタンを設けて、それを押したらという動作にしたい
 	return inpututil.IsKeyJustReleased(ebiten.KeySpace) || inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonRight)
 }
 
