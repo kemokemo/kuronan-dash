@@ -24,6 +24,7 @@ type TitleScene struct {
 	verPos   view.Vector
 	titlePos view.Vector
 	msgPos   view.Vector
+	iChecker input.InputChecker
 }
 
 // Initialize initializes all resources.
@@ -37,12 +38,14 @@ func (s *TitleScene) Initialize() error {
 	s.msgPos = view.Vector{
 		X: float64(view.ScreenWidth/2) - 170,
 		Y: float64(view.ScreenHeight/2) + 50}
+	s.iChecker = &input.TitleInputChecker{}
 	return nil
 }
 
 // Update updates the status of this scene.
 func (s *TitleScene) Update(state *GameState) {
-	if input.TriggeredOne() {
+	s.iChecker.Update()
+	if s.iChecker.TriggeredStart() {
 		err := state.SceneManager.GoTo(&SelectScene{})
 		if err != nil {
 			log.Println("failed to go to the select scene: ", err)

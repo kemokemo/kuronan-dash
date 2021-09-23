@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"golang.org/x/image/font"
 
@@ -45,6 +44,7 @@ type SelectScene struct {
 	msgWindow  *ui.MessageWindow
 	selector   int
 	fontNormal font.Face
+	iChecker   input.InputChecker
 }
 
 // Initialize initializes all resources.
@@ -60,6 +60,7 @@ func (s *SelectScene) Initialize() error {
 	windowWidth = (view.ScreenWidth - windowSpacing*2 - windowMargin*2) / len(s.charaList)
 	windowHeight = view.ScreenHeight - windowMargin*2 - 100
 
+	winRectArray := []image.Rectangle{}
 	s.windowList = make([]*ui.FrameWindow, len(s.charaList))
 	for i := range s.charaList {
 		win := ui.NewFrameWindow(
@@ -74,7 +75,13 @@ func (s *SelectScene) Initialize() error {
 			win.SetBlink(true)
 		}
 		s.windowList[i] = win
+		winRectArray = append(winRectArray, win.GetWindowRect())
 	}
+
+	s.iChecker = &input.SelectInputChecker{
+		RectArray: winRectArray,
+	}
+
 	s.fontNormal = fonts.GamerFontM
 
 	s.msgWindow = ui.NewMessageWindow(windowMargin, windowMargin+13, view.ScreenWidth-windowMargin*2, 42, frameWidth)
@@ -88,10 +95,11 @@ func (s *SelectScene) Initialize() error {
 
 // Update updates the status of this scene.
 func (s *SelectScene) Update(state *GameState) {
+	s.iChecker.Update()
 	s.bgViewPort.Move(view.UpperRight)
 
 	s.checkSelectorChanged()
-	if input.TriggeredOne() {
+	if s.iChecker.TriggeredStart() {
 		chara.Selected = s.charaList[s.selector]
 		err := state.SceneManager.GoTo(&Stage01Scene{})
 		if err != nil {
@@ -101,12 +109,12 @@ func (s *SelectScene) Update(state *GameState) {
 }
 
 func (s *SelectScene) checkSelectorChanged() {
-	if inpututil.IsKeyJustPressed(ebiten.KeyRight) {
+	if s.iChecker.TriggeredRight() {
 		if int(s.selector) < len(s.windowList)-1 {
 			s.selector++
 		}
 	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyLeft) {
+	if s.iChecker.TriggeredLeft() {
 		if int(s.selector) > 0 {
 			s.selector--
 		}

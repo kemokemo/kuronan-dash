@@ -2,6 +2,7 @@ package move
 
 import (
 	"fmt"
+	"image"
 	"log"
 
 	"github.com/kemokemo/kuronan-dash/assets/se"
@@ -20,6 +21,7 @@ type StateMachine struct {
 	dropSe    *se.Player
 	lanes     *field.Lanes
 	offset    *view.Vector
+	iChecker  input.InputChecker
 }
 
 func NewStateMachine(lanes *field.Lanes) (*StateMachine, error) {
@@ -42,16 +44,25 @@ func NewStateMachine(lanes *field.Lanes) (*StateMachine, error) {
 	return &sm, nil
 }
 
+func (sm *StateMachine) SetInputChecker(laneRectArray []image.Rectangle) {
+	sm.iChecker = &input.PlayerInputChecker{
+		RectArray: laneRectArray,
+	}
+}
+
 // Update updates the state.
 func (sm *StateMachine) Update(stamina int, charaPosV *view.Vector) State {
 	sm.pos.Add(charaPosV)
 	sm.offset.Y = 0.0
 
+	sm.updateWithStaminaAndMove(stamina, charaPosV)
+	sm.updateWithKey(charaPosV.Y)
+
+	return sm.current
+}
+
+func (sm *StateMachine) updateWithStaminaAndMove(stamina int, charaPosV *view.Vector) {
 	switch sm.current {
-	case Pause:
-		if input.TriggeredOne() {
-			sm.current = sm.previous
-		}
 	case Ascending:
 		if sm.IsReachedUpperLane(charaPosV.Y) {
 			sm.current = sm.previous
@@ -65,42 +76,44 @@ func (sm *StateMachine) Update(stamina int, charaPosV *view.Vector) State {
 			sm.previous = Dash
 			sm.current = Walk
 		}
-		sm.keyCheck(charaPosV.Y)
 	case Walk:
 		if stamina > 0 {
 			sm.previous = Walk
 			sm.current = Dash
 		}
-		sm.keyCheck(charaPosV.Y)
 	default:
 		log.Println("unknown state: ", sm.current)
 	}
-	return sm.current
 }
 
-func (sm *StateMachine) keyCheck(vY float64) {
-	if input.TriggeredOne() {
-		sm.previous = sm.current
-		sm.current = Pause
-	} else if input.TriggeredUp() {
-		if sm.lanes.GoToUpperLane() {
-			sm.previous = sm.current
-			sm.current = Ascending
+func (sm *StateMachine) updateWithKey(vY float64) {
+	if !(sm.current == Dash) && !(sm.current == Walk) {
+		return
+	}
 
-			err := sm.jumpSe.Play()
-			if err != nil {
-				log.Println("failed to play jump SE: ", err)
-			}
+	sm.iChecker.Update()
+
+	if sm.iChecker.TriggeredUp() {
+		if !sm.lanes.GoToUpperLane() {
+			return
 		}
-	} else if input.TriggeredDown() {
-		if sm.lanes.GoToLowerLane() {
-			sm.previous = sm.current
-			sm.current = Descending
 
-			err := sm.dropSe.Play()
-			if err != nil {
-				log.Println("failed to play drop SE: ", err)
-			}
+		sm.previous = sm.current
+		sm.current = Ascending
+		err := sm.jumpSe.Play()
+		if err != nil {
+			log.Println("failed to play jump SE: ", err)
+		}
+	} else if sm.iChecker.TriggeredDown() {
+		if !sm.lanes.GoToLowerLane() {
+			return
+		}
+
+		sm.previous = sm.current
+		sm.current = Descending
+		err := sm.dropSe.Play()
+		if err != nil {
+			log.Println("failed to play drop SE: ", err)
 		}
 	}
 }

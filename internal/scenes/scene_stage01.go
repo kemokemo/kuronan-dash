@@ -4,6 +4,7 @@ package scenes
 
 import (
 	"fmt"
+	"image"
 	"image/color"
 	"log"
 
@@ -33,6 +34,7 @@ type Stage01Scene struct {
 	sumTicks  float64
 	msgWindow *ui.MessageWindow
 	uiMsg     string
+	iChecker  input.InputChecker
 }
 
 // Initialize initializes all resources.
@@ -65,31 +67,47 @@ func (s *Stage01Scene) Initialize() error {
 		color.RGBA{192, 192, 192, 255},
 		color.RGBA{33, 228, 68, 255})
 
+	laneRectArray := []image.Rectangle{}
+	previousHeight := 0
+	for index := range heights {
+		laneRectArray = append(laneRectArray,
+			image.Rectangle{
+				Min: image.Point{X: 0, Y: previousHeight},
+				Max: image.Point{X: view.ScreenWidth, Y: int(heights[index])},
+			},
+		)
+		previousHeight = int(heights[index])
+	}
+	s.iChecker = &input.GameInputChecker{}
+	s.player.SetInputChecker(laneRectArray)
+
 	return nil
 }
 
 // Update updates the status of this scene.
 func (s *Stage01Scene) Update(state *GameState) {
+	s.iChecker.Update()
+
 	switch s.state {
 	case wait:
-		if input.TriggeredOne() {
+		if s.iChecker.TriggeredStart() {
 			s.state = run
 			s.player.Start()
 		}
 	case run:
-		if input.TriggeredOne() {
+		if s.iChecker.TriggeredPause() {
 			s.state = pause
 			s.player.Pause()
 		} else {
 			s.run()
 		}
 	case pause:
-		if input.TriggeredOne() {
+		if s.iChecker.TriggeredStart() {
 			s.state = run
 			s.player.ReStart()
 		}
 	case stageClear:
-		if input.TriggeredOne() {
+		if s.iChecker.TriggeredStart() {
 			// TODO: goto next stage :-)
 			err := state.SceneManager.GoTo(&TitleScene{})
 			if err != nil {
@@ -97,7 +115,7 @@ func (s *Stage01Scene) Update(state *GameState) {
 			}
 		}
 	case gameOver:
-		if input.TriggeredOne() {
+		if s.iChecker.TriggeredStart() {
 			err := state.SceneManager.GoTo(&TitleScene{})
 			if err != nil {
 				log.Println("failed to go to the title screen: ", err)

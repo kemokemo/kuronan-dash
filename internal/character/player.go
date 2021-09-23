@@ -2,6 +2,7 @@ package character
 
 import (
 	"fmt"
+	"image"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/kemokemo/kuronan-dash/assets/se"
@@ -67,6 +68,10 @@ func (p *Player) InitializeWithLanes(lanes *field.Lanes) error {
 		view.Vector{X: view.DrawPosition + float64(w) - rectOffset, Y: initialY + float64(h) - rectOffset})
 
 	return nil
+}
+
+func (p *Player) SetInputChecker(laneRectArray []image.Rectangle) {
+	p.stateMachine.SetInputChecker(laneRectArray)
 }
 
 // Start starts playing.
