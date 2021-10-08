@@ -44,6 +44,14 @@ func loadFieldparts() error {
 	if err != nil {
 		return err
 	}
+	PauseButton, err = loadSingleImage(pause_button_png)
+	if err != nil {
+		return err
+	}
+	StartButton, err = loadSingleImage(start_button_png)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

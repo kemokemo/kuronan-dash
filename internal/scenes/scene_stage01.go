@@ -12,9 +12,11 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/text"
 
 	"github.com/kemokemo/kuronan-dash/assets/fonts"
+	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/assets/messages"
 	"github.com/kemokemo/kuronan-dash/assets/music"
 
+	vpad "github.com/kemokemo/ebiten-virtualpad"
 	chara "github.com/kemokemo/kuronan-dash/internal/character"
 	"github.com/kemokemo/kuronan-dash/internal/field"
 	"github.com/kemokemo/kuronan-dash/internal/input"
@@ -35,6 +37,8 @@ type Stage01Scene struct {
 	msgWindow *ui.MessageWindow
 	uiMsg     string
 	iChecker  input.InputChecker
+	startBtn  vpad.TriggerButton
+	pauseBtn  vpad.TriggerButton
 }
 
 // Initialize initializes all resources.
@@ -78,8 +82,13 @@ func (s *Stage01Scene) Initialize() error {
 		)
 		previousHeight = int(heights[index])
 	}
-	s.iChecker = &input.GameInputChecker{}
 	s.player.SetInputChecker(laneRectArray)
+
+	s.startBtn = vpad.NewTriggerButton(images.StartButton, vpad.JustReleased, vpad.SelectColor)
+	s.startBtn.SetLocation(view.ScreenWidth/2-64, view.ScreenHeight/2-64)
+	s.pauseBtn = vpad.NewTriggerButton(images.PauseButton, vpad.JustReleased, vpad.SelectColor)
+	s.pauseBtn.SetLocation(view.ScreenWidth-58, 48)
+	s.iChecker = &input.GameInputChecker{StartBtn: s.startBtn, PauseBtn: s.pauseBtn}
 
 	return nil
 }
@@ -179,16 +188,23 @@ func (s *Stage01Scene) drawUI(screen *ebiten.Image) {
 }
 
 func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
+	// TODO: StartとPauseのボタンは見えてないだけで、該当する場所を押せばボタンはトリガーされる。弊害がありそうなら処置する。
 	switch s.state {
 	case wait:
-		text.Draw(screen, messages.GameStart, fonts.GamerFontL, view.ScreenWidth/2-300, view.ScreenHeight/2, color.White)
+		text.Draw(screen, messages.GameStart, fonts.GamerFontL, view.ScreenWidth/2-300, view.ScreenHeight/2+90, color.White)
+		s.startBtn.Draw(screen)
 	case pause:
-		text.Draw(screen, messages.GamePause, fonts.GamerFontL, view.ScreenWidth/2-150, view.ScreenHeight/2, color.White)
+		text.Draw(screen, messages.GamePause, fonts.GamerFontL, view.ScreenWidth/2-150, view.ScreenHeight/2+90, color.White)
+		s.startBtn.Draw(screen)
+	case run:
+		s.pauseBtn.Draw(screen)
 	case stageClear:
-		text.Draw(screen, messages.GameStageClear, fonts.GamerFontL, view.ScreenWidth/2-200, view.ScreenHeight/2-25, color.White)
-		text.Draw(screen, messages.GameStageClear2, fonts.GamerFontL, view.ScreenWidth/2-300, view.ScreenHeight/2+25, color.White)
+		text.Draw(screen, messages.GameStageClear, fonts.GamerFontL, view.ScreenWidth/2-200, view.ScreenHeight/2-70, color.White)
+		text.Draw(screen, messages.GameStageClear2, fonts.GamerFontL, view.ScreenWidth/2-300, view.ScreenHeight/2+90, color.White)
+		s.startBtn.Draw(screen)
 	case gameOver:
 		text.Draw(screen, messages.GameOver, fonts.GamerFontL, view.ScreenWidth/2-420, view.ScreenHeight/2, color.White)
+		s.startBtn.Draw(screen)
 	default:
 		// nothing to draw
 	}

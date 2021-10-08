@@ -32,6 +32,12 @@ var (
 	Onigiri *ebiten.Image
 )
 
+// UI parts
+var (
+	PauseButton *ebiten.Image
+	StartButton *ebiten.Image
+)
+
 // character standing image
 var (
 	KuronaStanding     *ebiten.Image
