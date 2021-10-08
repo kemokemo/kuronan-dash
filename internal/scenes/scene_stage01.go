@@ -43,7 +43,7 @@ type Stage01Scene struct {
 
 // Initialize initializes all resources.
 func (s *Stage01Scene) Initialize() error {
-	s.goalX = 1500.0
+	s.goalX = 3000.0
 	s.timeLimit = 90
 	s.time = s.timeLimit
 	s.disc = music.Stage01
@@ -84,9 +84,9 @@ func (s *Stage01Scene) Initialize() error {
 	}
 	s.player.SetInputChecker(laneRectArray)
 
-	s.startBtn = vpad.NewTriggerButton(images.StartButton, vpad.JustReleased, vpad.SelectColor)
+	s.startBtn = vpad.NewTriggerButton(images.StartButton, vpad.JustPressed, vpad.SelectColor)
 	s.startBtn.SetLocation(view.ScreenWidth/2-64, view.ScreenHeight/2-64)
-	s.pauseBtn = vpad.NewTriggerButton(images.PauseButton, vpad.JustReleased, vpad.SelectColor)
+	s.pauseBtn = vpad.NewTriggerButton(images.PauseButton, vpad.JustPressed, vpad.SelectColor)
 	s.pauseBtn.SetLocation(view.ScreenWidth-58, 48)
 	s.iChecker = &input.GameInputChecker{StartBtn: s.startBtn, PauseBtn: s.pauseBtn}
 
@@ -137,8 +137,8 @@ func (s *Stage01Scene) Update(state *GameState) {
 
 // run works with 'run' state.
 func (s *Stage01Scene) run() {
-	s.sumTicks += 1.0 / ebiten.CurrentTPS()
-	if s.sumTicks >= 1.0 {
+	s.sumTicks += ebiten.CurrentTPS()
+	if s.sumTicks >= 3600 {
 		s.sumTicks = 0.0
 		s.time--
 	}
