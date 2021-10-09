@@ -1,6 +1,8 @@
 package images
 
-import _ "embed"
+import (
+	_ "embed"
+)
 
 var (
 	//go:embed bg_title.png
@@ -75,6 +77,12 @@ var (
 
 	//go:embed onigiri.png
 	onigiri_png []byte
+
 	//go:embed rock_normal.png
 	rock_normal_png []byte
+
+	//go:embed button_pause.png
+	pause_button_png []byte
+	//go:embed button_start.png
+	start_button_png []byte
 )

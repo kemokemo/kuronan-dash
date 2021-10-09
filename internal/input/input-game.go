@@ -3,11 +3,18 @@ package input
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	vpad "github.com/kemokemo/ebiten-virtualpad"
 )
 
-type GameInputChecker struct{}
+type GameInputChecker struct {
+	StartBtn vpad.TriggerButton
+	PauseBtn vpad.TriggerButton
+}
 
-func (gi *GameInputChecker) Update() {}
+func (gi *GameInputChecker) Update() {
+	gi.StartBtn.Update()
+	gi.PauseBtn.Update()
+}
 
 func (gi *GameInputChecker) TriggeredUp() bool {
 	return false
@@ -26,12 +33,11 @@ func (gi *GameInputChecker) TriggeredRight() bool {
 }
 
 func (gi *GameInputChecker) TriggeredStart() bool {
-	return inpututil.IsKeyJustReleased(ebiten.KeySpace) || inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft)
+	return inpututil.IsKeyJustReleased(ebiten.KeySpace) || gi.StartBtn.IsTriggered()
 }
 
 func (gi *GameInputChecker) TriggeredPause() bool {
-	// todo: マウスの右クリックでPauseじゃなくて、別途Pauseボタンを設けて、それを押したらという動作にしたい
-	return inpututil.IsKeyJustReleased(ebiten.KeySpace) || inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonRight)
+	return inpututil.IsKeyJustReleased(ebiten.KeySpace) || gi.PauseBtn.IsTriggered()
 }
 
 func (gi *GameInputChecker) TriggeredAttack() bool {

@@ -36,7 +36,7 @@ func loadPlayer(b []byte) (*Player, error) {
 		return nil, err
 	}
 
-	p, err := audio.NewPlayer(music.AudioContext, s)
+	p, err := music.AudioContext.NewPlayer(s)
 	if err != nil {
 		return nil, err
 	}
