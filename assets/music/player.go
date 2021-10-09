@@ -13,5 +13,5 @@ func loadPlayer(b []byte) (*audio.Player, error) {
 		return nil, err
 	}
 	s := audio.NewInfiniteLoop(m, m.Length())
-	return audio.NewPlayer(AudioContext, s)
+	return AudioContext.NewPlayer(s)
 }
