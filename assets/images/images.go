@@ -14,6 +14,12 @@ var (
 )
 
 // field parts
+// - general
+var (
+	Goal_back  *ebiten.Image
+	Goal_front *ebiten.Image
+)
+
 //  - prairie  field
 var (
 	TilePrairie  *ebiten.Image

@@ -3,6 +3,16 @@ package images
 func loadFieldparts() error {
 	var err error
 
+	// General
+	Goal_back, err = loadSingleImage(goal_back_png)
+	if err != nil {
+		return err
+	}
+	Goal_front, err = loadSingleImage(goal_front_png)
+	if err != nil {
+		return err
+	}
+
 	// Prairie field
 	TilePrairie, err = loadSingleImage(tile_prairie_png)
 	if err != nil {
@@ -44,6 +54,8 @@ func loadFieldparts() error {
 	if err != nil {
 		return err
 	}
+
+	// UI
 	PauseButton, err = loadSingleImage(pause_button_png)
 	if err != nil {
 		return err

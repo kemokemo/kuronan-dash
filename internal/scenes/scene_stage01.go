@@ -56,7 +56,7 @@ func (s *Stage01Scene) Initialize() error {
 	}
 
 	s.field = &field.PrairieField{}
-	s.field.Initialize(lanes)
+	s.field.Initialize(lanes, s.goalX)
 
 	heights := lanes.GetLaneHeights()
 	lowerLaneY := heights[len(heights)-1]

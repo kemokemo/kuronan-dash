@@ -18,18 +18,19 @@ type PrairieField struct {
 	obstacles    []Obstacle
 	foods        []Food
 	lanes        *Lanes
+	goals        []Goal
 }
 
 // Initialize initializes all resources to draw.
-func (p *PrairieField) Initialize(lanes *Lanes) {
+func (p *PrairieField) Initialize(lanes *Lanes, goalX float64) {
 	p.bg = images.SkyBackground
 	p.tile = images.TilePrairie
 	p.lanes = lanes
-	p.createParts()
+	p.createParts(goalX)
 }
 
 // create all field parts to draw.
-func (p *PrairieField) createParts() {
+func (p *PrairieField) createParts(goalX float64) {
 	// Farther parts
 	type ast struct {
 		img *ebiten.Image
@@ -92,6 +93,19 @@ func (p *PrairieField) createParts() {
 			p.closerParts = append(p.closerParts, array[i])
 		}
 	}
+
+	// Goal
+	w, h := images.Goal_back.Size()
+	for _, lh := range p.lanes.laneHeights {
+		goal := Goal{}
+		goal.Initialize(
+			images.Goal_back,
+			images.Goal_front,
+			&view.Vector{X: goalX + view.DrawPosition - float64(w)/4, Y: lh - float64(h) + 2},
+			&view.Vector{X: 0, Y: 0})
+		p.goals = append(p.goals, goal)
+	}
+
 }
 
 // Update moves viewport for the all field parts.
@@ -102,6 +116,9 @@ func (p *PrairieField) Update(scrollV *view.Vector) {
 	}
 	for i := range p.closerParts {
 		p.closerParts[i].Update(scrollV)
+	}
+	for i := range p.goals {
+		p.goals[i].Update(scrollV)
 	}
 }
 
@@ -117,6 +134,10 @@ func (p *PrairieField) DrawFarther(screen *ebiten.Image) {
 
 	// レーンを描画
 	p.lanes.Draw(screen)
+
+	for i := range p.goals {
+		p.goals[i].DrawBack(screen)
+	}
 }
 
 // DrawCloser draws the closer field part.
@@ -126,6 +147,10 @@ func (p *PrairieField) DrawCloser(screen *ebiten.Image) {
 	/// 近くの草むら
 	for i := range p.closerParts {
 		p.closerParts[i].Draw(screen)
+	}
+
+	for i := range p.goals {
+		p.goals[i].DrawFront(screen)
 	}
 }
 
