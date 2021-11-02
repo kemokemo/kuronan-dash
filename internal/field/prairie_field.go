@@ -6,9 +6,6 @@ import (
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
 
-// gameSpeed is the scroll speed for the lane to move.
-const gameSpeed = 2.0
-
 // PrairieField is the field of prairie.
 type PrairieField struct {
 	bg           *ebiten.Image
@@ -36,20 +33,19 @@ func (p *PrairieField) createParts(goalX float64) {
 		img *ebiten.Image
 		gpf genPosFunc
 		gps genPosSet
-		gvf genVelFunc
-		gvs genVelSet
+		kv  float64
 	}
 
 	assets := []ast{
-		{images.MountainFar, genPosField, genPosSet{3, 1280, 500}, genVel, genVelSet{-0.5, 0.0, false}},
-		{images.CloudFar, genPosAir, genPosSet{10, 2000, 2000}, genVel, genVelSet{-16.0, 0.0, true}},
-		{images.MountainNear, genPosField, genPosSet{3, 518, 500}, genVel, genVelSet{-1.0, 0.0, false}},
-		{images.CloudNear, genPosAir, genPosSet{10, 5000, 3000}, genVel, genVelSet{-16.0, 0.0, true}},
-		{images.Grass1, genPosField, genPosSet{10, 600, 2000}, genVel, genVelSet{-1.8, 0.0, false}},
-		{images.Grass3, genPosField, genPosSet{10, 900, 3000}, genVel, genVelSet{-1.1, 0.0, false}},
+		{images.MountainFar, genPosField, genPosSet{3, 1280, 500}, 0.2},
+		{images.CloudFar, genPosAir, genPosSet{10, 2000, 2000}, 0.3},
+		{images.MountainNear, genPosField, genPosSet{3, 518, 500}, 0.4},
+		{images.CloudNear, genPosAir, genPosSet{10, 5000, 3000}, 0.7},
+		{images.Grass1, genPosField, genPosSet{10, 600, 2000}, 0.8},
+		{images.Grass3, genPosField, genPosSet{10, 900, 3000}, 0.85},
 	}
 	for _, asset := range assets {
-		array := genParts(asset.img, p.lanes.GetLaneHeights(), asset.gpf, asset.gps, asset.gvf, asset.gvs)
+		array := genParts(asset.img, p.lanes.GetLaneHeights(), asset.gpf, asset.gps, asset.kv)
 		for i := range array {
 			p.fartherParts = append(p.fartherParts, array[i])
 		}
@@ -57,10 +53,10 @@ func (p *PrairieField) createParts(goalX float64) {
 
 	// Foods
 	assets = []ast{
-		{images.Onigiri, genPosField, genPosSet{30, 1000, 550}, genVel, genVelSet{0.0, 0.0, false}},
+		{images.Onigiri, genPosField, genPosSet{30, 1000, 550}, 1.0},
 	}
 	for _, asset := range assets {
-		array := genOnigiri(asset.img, p.lanes.GetLaneHeights(), asset.gpf, asset.gps, asset.gvf, asset.gvs)
+		array := genOnigiri(asset.img, p.lanes.GetLaneHeights(), asset.gpf, asset.gps, asset.kv)
 		for i := range array {
 			p.closerParts = append(p.closerParts, array[i])
 			p.foods = append(p.foods, array[i])
@@ -69,10 +65,10 @@ func (p *PrairieField) createParts(goalX float64) {
 
 	// Obstacles
 	assets = []ast{
-		{images.RockNormal, genPosField, genPosSet{30, 300, 1000}, genVel, genVelSet{0.0, 0.0, false}},
+		{images.RockNormal, genPosField, genPosSet{30, 300, 1000}, 1.0},
 	}
 	for _, asset := range assets {
-		array := genRocks(asset.img, p.lanes.GetLaneHeights(), asset.gpf, asset.gps, asset.gvf, asset.gvs)
+		array := genRocks(asset.img, p.lanes.GetLaneHeights(), asset.gpf, asset.gps, asset.kv)
 		for i := range array {
 			if randBool() {
 				p.fartherParts = append(p.fartherParts, array[i])
@@ -85,10 +81,10 @@ func (p *PrairieField) createParts(goalX float64) {
 
 	// Closer parts
 	assets = []ast{
-		{images.Grass3, genPosField, genPosSet{10, 900, 3000}, genVel, genVelSet{-1 * gameSpeed, 0.0, false}},
+		{images.Grass3, genPosField, genPosSet{10, 900, 3000}, 0.9},
 	}
 	for _, asset := range assets {
-		array := genParts(asset.img, p.lanes.GetLaneHeights(), asset.gpf, asset.gps, asset.gvf, asset.gvs)
+		array := genParts(asset.img, p.lanes.GetLaneHeights(), asset.gpf, asset.gps, asset.kv)
 		for i := range array {
 			p.closerParts = append(p.closerParts, array[i])
 		}

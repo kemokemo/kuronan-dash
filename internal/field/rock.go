@@ -11,8 +11,6 @@ type Rock struct {
 	image    *ebiten.Image
 	op       *ebiten.DrawImageOptions
 	rect     *view.HitRectangle
-	v0       *view.Vector
-	v1       *view.Vector
 	hardness float64
 }
 
@@ -21,10 +19,8 @@ type Rock struct {
 //   img: the image to draw
 //   pos: the initial position
 //   vel: the velocity to move this object
-func (r *Rock) Initialize(img *ebiten.Image, pos, vel *view.Vector) {
+func (r *Rock) Initialize(img *ebiten.Image, pos *view.Vector, kv float64) {
 	r.image = img
-	r.v0 = &view.Vector{X: vel.X, Y: vel.Y}
-	r.v1 = &view.Vector{X: vel.X, Y: vel.Y}
 
 	r.op = &ebiten.DrawImageOptions{}
 	r.op.GeoM.Translate(pos.X, pos.Y+FieldOffset)
@@ -39,11 +35,8 @@ func (r *Rock) Initialize(img *ebiten.Image, pos, vel *view.Vector) {
 //  args:
 //   scrollV: the velocity to scroll this field parts.
 func (r *Rock) Update(scrollV *view.Vector) {
-	// Calculate relative speed with player only in horizontal direction
-	r.v1.X = r.v0.X + scrollV.X
-	r.v1.Y = r.v0.Y + scrollV.Y
-	r.op.GeoM.Translate(r.v1.X, r.v1.Y)
-	r.rect.Add(r.v1)
+	r.op.GeoM.Translate(scrollV.X, scrollV.Y)
+	r.rect.Add(scrollV)
 }
 
 // Draw draws this object to the screen.
