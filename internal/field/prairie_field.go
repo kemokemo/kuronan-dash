@@ -38,9 +38,9 @@ func (p *PrairieField) createParts(goalX float64) {
 
 	assets := []ast{
 		{images.MountainFar, genPosField, genPosSet{3, 1280, 500}, 0.2},
-		{images.CloudFar, genPosAir, genPosSet{10, 2000, 2000}, 0.3},
+		{images.CloudFar, genPosAir, genPosSet{10, 2000, 500}, 0.3},
 		{images.MountainNear, genPosField, genPosSet{3, 518, 500}, 0.4},
-		{images.CloudNear, genPosAir, genPosSet{10, 5000, 3000}, 0.7},
+		{images.CloudNear, genPosAir, genPosSet{10, 3000, 400}, 0.7},
 		{images.Grass1, genPosField, genPosSet{10, 600, 2000}, 0.8},
 		{images.Grass3, genPosField, genPosSet{10, 900, 3000}, 0.85},
 	}
@@ -81,7 +81,7 @@ func (p *PrairieField) createParts(goalX float64) {
 
 	// Closer parts
 	assets = []ast{
-		{images.Grass3, genPosField, genPosSet{10, 900, 3000}, 0.9},
+		{images.Grass3, genPosField, genPosSet{10, 900, 3000}, 1.0},
 	}
 	for _, asset := range assets {
 		array := genParts(asset.img, p.lanes.GetLaneHeights(), asset.gpf, asset.gps, asset.kv)

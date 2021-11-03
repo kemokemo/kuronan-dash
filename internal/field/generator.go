@@ -20,7 +20,7 @@ func genPosField(height int, laneHeights []float64, g genPosSet) []*view.Vector 
 		for index := 0; index < g.amount; index++ {
 			r := rand.Float64()
 			pos := &view.Vector{
-				X: float64((index+1)*g.randomRough) + float64(g.randomFine)*r,
+				X: float64((index+1)*g.randomRough) + float64(g.randomFine)*(1-r),
 				Y: h - float64(height-1),
 			}
 			points = append(points, pos)
@@ -34,15 +34,19 @@ func genPosAir(h int, laneHeights []float64, g genPosSet) []*view.Vector {
 	var points []*view.Vector
 
 	rand.Seed(time.Now().UnixNano())
+	var upperH float64
+	polarity := -1.0
 	for _, h := range laneHeights {
 		for index := 0; index < g.amount; index++ {
 			r := rand.Float64()
 			pos := &view.Vector{
-				X: float64(g.randomRough) + float64(g.randomFine)*r,
-				Y: h - 40.0 - 100.0*r - float64(h/2),
+				X: float64(g.randomRough)*(1.0-r) + float64(g.randomFine)*r,
+				Y: h - (h-upperH)/2 + 45.0*r*polarity,
 			}
 			points = append(points, pos)
+			polarity *= -1.0
 		}
+		upperH = h
 	}
 	return points
 }
