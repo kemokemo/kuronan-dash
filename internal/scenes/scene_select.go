@@ -12,6 +12,7 @@ import (
 
 	"github.com/kemokemo/kuronan-dash/assets/fonts"
 	"github.com/kemokemo/kuronan-dash/assets/images"
+	"github.com/kemokemo/kuronan-dash/assets/messages"
 	"github.com/kemokemo/kuronan-dash/assets/music"
 	chara "github.com/kemokemo/kuronan-dash/internal/character"
 	"github.com/kemokemo/kuronan-dash/internal/input"
@@ -156,7 +157,7 @@ func (s *SelectScene) drawWindows(screen *ebiten.Image) {
 		s.windowList[i].DrawWindow(screen)
 	}
 
-	s.msgWindow.DrawWindow(screen, "さゆう の カーソルキー で キャラクター を えらんで スペースキー を おしてね！")
+	s.msgWindow.DrawWindow(screen, messages.SelectStart)
 }
 
 func (s *SelectScene) drawCharacters(screen *ebiten.Image) {

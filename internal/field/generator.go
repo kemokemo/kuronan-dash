@@ -20,7 +20,7 @@ func genPosField(height int, laneHeights []float64, g genPosSet) []*view.Vector 
 		for index := 0; index < g.amount; index++ {
 			r := rand.Float64()
 			pos := &view.Vector{
-				X: float64((index+1)*g.randomRough) + float64(g.randomFine)*r,
+				X: float64((index+1)*g.randomRough) + float64(g.randomFine)*(1-r),
 				Y: h - float64(height-1),
 			}
 			points = append(points, pos)
@@ -34,74 +34,60 @@ func genPosAir(h int, laneHeights []float64, g genPosSet) []*view.Vector {
 	var points []*view.Vector
 
 	rand.Seed(time.Now().UnixNano())
+	var upperH float64
+	polarity := -1.0
 	for _, h := range laneHeights {
 		for index := 0; index < g.amount; index++ {
 			r := rand.Float64()
 			pos := &view.Vector{
-				X: float64(g.randomRough) + float64(g.randomFine)*r,
-				Y: h - 40.0 - 100.0*r - float64(h/2),
+				X: float64(g.randomRough)*(1.0-r) + float64(g.randomFine)*r,
+				Y: h - (h-upperH)/2 + 45.0*r*polarity,
 			}
 			points = append(points, pos)
+			polarity *= -1.0
 		}
+		upperH = h
 	}
 	return points
 }
 
-// genVelFunc generates the velocity of an object.
-type genVelFunc func(g genVelSet) *view.Vector
-
-func genVel(g genVelSet) *view.Vector {
-	var vel *view.Vector
-	if g.random {
-		rand.Seed(time.Now().UnixNano())
-		r := rand.Float64()
-		vel = &view.Vector{X: g.x * r, Y: g.y * r}
-	} else {
-		vel = &view.Vector{X: g.x, Y: g.y}
-	}
-	return vel
-}
-
 // genParts generates scrollable objects.
-func genParts(img *ebiten.Image, laneHeights []float64, gpf genPosFunc, gps genPosSet, gvf genVelFunc, gvs genVelSet) []*Parts {
+func genParts(img *ebiten.Image, laneHeights []float64, gpf genPosFunc, gps genPosSet, kv float64) []*Parts {
 	var array []*Parts
 
 	_, hP := img.Size()
 	points := gpf(hP, laneHeights, gps)
 	for _, point := range points {
 		fp := &Parts{}
-		vel := gvf(gvs)
-		fp.Initialize(img, point, vel)
+		fp.Initialize(img, point, kv)
 		array = append(array, fp)
 	}
 	return array
 }
 
 // genOnigiri generates onigiri.
-func genOnigiri(img *ebiten.Image, laneHeights []float64, gpf genPosFunc, gps genPosSet, gvf genVelFunc, gvs genVelSet) []*Onigiri {
+func genOnigiri(img *ebiten.Image, laneHeights []float64, gpf genPosFunc, gps genPosSet, kv float64) []*Onigiri {
 	var array []*Onigiri
 
 	_, hP := img.Size()
 	points := gpf(hP, laneHeights, gps)
 	for _, point := range points {
 		oni := &Onigiri{}
-		vel := gvf(gvs)
-		oni.Initialize(img, point, vel)
+		oni.Initialize(img, point, kv)
 		array = append(array, oni)
 	}
 	return array
 }
 
 // genRocks generates scrollable objects.
-func genRocks(img *ebiten.Image, laneHeights []float64, gpf genPosFunc, gps genPosSet, gvf genVelFunc, gvs genVelSet) []*Rock {
+func genRocks(img *ebiten.Image, laneHeights []float64, gpf genPosFunc, gps genPosSet, kv float64) []*Rock {
 	var array []*Rock
 
 	_, hP := img.Size()
 	points := gpf(hP, laneHeights, gps)
 	for _, point := range points {
 		r := &Rock{}
-		vel := gvf(gvs)
-		r.Initialize(img, point, vel)
+		r.Initialize(img, point, kv)
 		array = append(array, r)
 	}
 	return array

@@ -19,7 +19,7 @@ type Onigiri struct {
 //   img: the image to draw
 //   pos: the initial position
 //   vel: the velocity to move this object
-func (o *Onigiri) Initialize(img *ebiten.Image, pos *view.Vector, vel *view.Vector) {
+func (o *Onigiri) Initialize(img *ebiten.Image, pos *view.Vector, kv float64) {
 	o.image = img
 	o.stamina = 5
 	o.eaten = false

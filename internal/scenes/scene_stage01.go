@@ -85,7 +85,7 @@ func (s *Stage01Scene) Initialize() error {
 	s.player.SetInputChecker(laneRectArray)
 
 	s.startBtn = vpad.NewTriggerButton(images.StartButton, vpad.JustPressed, vpad.SelectColor)
-	s.startBtn.SetLocation(view.ScreenWidth/2-64, view.ScreenHeight/2-64)
+	s.startBtn.SetLocation(view.ScreenWidth/2-64, view.ScreenHeight/2-128)
 	s.pauseBtn = vpad.NewTriggerButton(images.PauseButton, vpad.JustPressed, vpad.SelectColor)
 	s.pauseBtn.SetLocation(view.ScreenWidth-58, 48)
 	s.iChecker = &input.GameInputChecker{StartBtn: s.startBtn, PauseBtn: s.pauseBtn}
@@ -102,6 +102,7 @@ func (s *Stage01Scene) Update(state *GameState) {
 		if s.iChecker.TriggeredStart() {
 			s.state = run
 			s.player.Start()
+			s.disc.Play()
 		}
 	case run:
 		if s.iChecker.TriggeredPause() {
@@ -183,6 +184,10 @@ func (s *Stage01Scene) drawUI(screen *ebiten.Image) {
 	)
 	s.msgWindow.DrawWindow(screen, s.uiMsg)
 
+	if s.state == wait {
+		return
+	}
+
 	text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
 		fonts.GamerFontS, 12, view.ScreenHeight-10, color.White)
 }
@@ -191,16 +196,16 @@ func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 	// TODO: StartとPauseのボタンは見えてないだけで、該当する場所を押せばボタンはトリガーされる。弊害がありそうなら処置する。
 	switch s.state {
 	case wait:
-		text.Draw(screen, messages.GameStart, fonts.GamerFontL, view.ScreenWidth/2-300, view.ScreenHeight/2+90, color.White)
+		text.Draw(screen, messages.GameStart, fonts.GamerFontL, view.ScreenWidth/2-280, view.ScreenHeight/2+30, color.White)
 		s.startBtn.Draw(screen)
 	case pause:
-		text.Draw(screen, messages.GamePause, fonts.GamerFontL, view.ScreenWidth/2-150, view.ScreenHeight/2+90, color.White)
+		text.Draw(screen, messages.GamePause, fonts.GamerFontL, view.ScreenWidth/2-150, view.ScreenHeight/2+30, color.White)
 		s.startBtn.Draw(screen)
 	case run:
 		s.pauseBtn.Draw(screen)
 	case stageClear:
-		text.Draw(screen, messages.GameStageClear, fonts.GamerFontL, view.ScreenWidth/2-200, view.ScreenHeight/2-70, color.White)
-		text.Draw(screen, messages.GameStageClear2, fonts.GamerFontL, view.ScreenWidth/2-300, view.ScreenHeight/2+90, color.White)
+		text.Draw(screen, messages.GameStageClear, fonts.GamerFontL, view.ScreenWidth/2-200, view.ScreenHeight/2-134, color.White)
+		text.Draw(screen, messages.GameStageClear2, fonts.GamerFontL, view.ScreenWidth/2-500, view.ScreenHeight/2+30, color.White)
 		s.startBtn.Draw(screen)
 	case gameOver:
 		text.Draw(screen, messages.GameOver, fonts.GamerFontL, view.ScreenWidth/2-420, view.ScreenHeight/2, color.White)
@@ -221,7 +226,7 @@ func (s *Stage01Scene) Close() error {
 
 // StartMusic starts playing music
 func (s *Stage01Scene) StartMusic() {
-	s.disc.Play()
+	// start music when game state is changed from 'wait'.
 }
 
 // StopMusic stops playing music

@@ -7,13 +7,12 @@ import (
 
 // ScrollableObject is the object can move
 type ScrollableObject interface {
-
 	// Initialize initializes the object.
 	//  args:
 	//   img: the image to draw
 	//   pos: the initial position
-	//   vel: the velocity to move this object
-	Initialize(img *ebiten.Image, pos, vel *view.Vector)
+	//   kv: the factor to multiply the scroll speed when scrolling.
+	Initialize(img *ebiten.Image, pos *view.Vector, kv float64)
 
 	// Update updates the position and velocity of this object.
 	//  args:
@@ -22,6 +21,11 @@ type ScrollableObject interface {
 
 	// Draw draws this object to the screen.
 	Draw(screen *ebiten.Image)
+}
+
+type MovableObject interface {
+	// SetVelocity sets velocity at which this object will move by itself.
+	SetVelocity(vel *view.Vector)
 }
 
 // ScrollInfo is the info to initialize the ScrollableObject/

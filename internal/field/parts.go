@@ -10,17 +10,18 @@ import (
 type Parts struct {
 	image *ebiten.Image
 	op    *ebiten.DrawImageOptions
-	v0    *view.Vector
+	kv    float64
 }
 
 // Initialize initializes the object.
 //  args:
 //   img: the image to draw
 //   pos: the initial position
-//   vel: the velocity to move this object
-func (p *Parts) Initialize(img *ebiten.Image, pos, vel *view.Vector) {
+//   vel: the velocity at which this object moves autonomously.
+//   kv: the factor to multiply the scroll speed when scrolling.
+func (p *Parts) Initialize(img *ebiten.Image, pos *view.Vector, kv float64) {
 	p.image = img
-	p.v0 = &view.Vector{X: vel.X, Y: vel.Y}
+	p.kv = kv
 	p.op = &ebiten.DrawImageOptions{}
 	p.op.GeoM.Translate(pos.X, pos.Y)
 }
@@ -29,7 +30,7 @@ func (p *Parts) Initialize(img *ebiten.Image, pos, vel *view.Vector) {
 //  args:
 //   scrollV: the velocity to scroll this field parts.
 func (p *Parts) Update(scrollV *view.Vector) {
-	p.op.GeoM.Translate(p.v0.X+scrollV.X, p.v0.Y+scrollV.Y)
+	p.op.GeoM.Translate(p.kv*scrollV.X, p.kv*scrollV.Y)
 }
 
 // Draw draws this object to the screen.
