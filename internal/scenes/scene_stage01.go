@@ -184,6 +184,10 @@ func (s *Stage01Scene) drawUI(screen *ebiten.Image) {
 	)
 	s.msgWindow.DrawWindow(screen, s.uiMsg)
 
+	if s.state == wait {
+		return
+	}
+
 	text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
 		fonts.GamerFontS, 12, view.ScreenHeight-10, color.White)
 }
