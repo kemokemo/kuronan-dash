@@ -85,7 +85,7 @@ func (s *Stage01Scene) Initialize() error {
 	s.player.SetInputChecker(laneRectArray)
 
 	s.startBtn = vpad.NewTriggerButton(images.StartButton, vpad.JustPressed, vpad.SelectColor)
-	s.startBtn.SetLocation(view.ScreenWidth/2-64, view.ScreenHeight/2-64)
+	s.startBtn.SetLocation(view.ScreenWidth/2-64, view.ScreenHeight/2-128)
 	s.pauseBtn = vpad.NewTriggerButton(images.PauseButton, vpad.JustPressed, vpad.SelectColor)
 	s.pauseBtn.SetLocation(view.ScreenWidth-58, 48)
 	s.iChecker = &input.GameInputChecker{StartBtn: s.startBtn, PauseBtn: s.pauseBtn}
@@ -191,16 +191,16 @@ func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 	// TODO: StartとPauseのボタンは見えてないだけで、該当する場所を押せばボタンはトリガーされる。弊害がありそうなら処置する。
 	switch s.state {
 	case wait:
-		text.Draw(screen, messages.GameStart, fonts.GamerFontL, view.ScreenWidth/2-300, view.ScreenHeight/2+90, color.White)
+		text.Draw(screen, messages.GameStart, fonts.GamerFontL, view.ScreenWidth/2-280, view.ScreenHeight/2+30, color.White)
 		s.startBtn.Draw(screen)
 	case pause:
-		text.Draw(screen, messages.GamePause, fonts.GamerFontL, view.ScreenWidth/2-150, view.ScreenHeight/2+90, color.White)
+		text.Draw(screen, messages.GamePause, fonts.GamerFontL, view.ScreenWidth/2-150, view.ScreenHeight/2+30, color.White)
 		s.startBtn.Draw(screen)
 	case run:
 		s.pauseBtn.Draw(screen)
 	case stageClear:
-		text.Draw(screen, messages.GameStageClear, fonts.GamerFontL, view.ScreenWidth/2-200, view.ScreenHeight/2-70, color.White)
-		text.Draw(screen, messages.GameStageClear2, fonts.GamerFontL, view.ScreenWidth/2-300, view.ScreenHeight/2+90, color.White)
+		text.Draw(screen, messages.GameStageClear, fonts.GamerFontL, view.ScreenWidth/2-200, view.ScreenHeight/2-134, color.White)
+		text.Draw(screen, messages.GameStageClear2, fonts.GamerFontL, view.ScreenWidth/2-500, view.ScreenHeight/2+30, color.White)
 		s.startBtn.Draw(screen)
 	case gameOver:
 		text.Draw(screen, messages.GameOver, fonts.GamerFontL, view.ScreenWidth/2-420, view.ScreenHeight/2, color.White)

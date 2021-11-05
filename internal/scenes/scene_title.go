@@ -36,7 +36,7 @@ func (s *TitleScene) Initialize() error {
 		X: float64(view.ScreenWidth/2) - 200,
 		Y: 80}
 	s.msgPos = view.Vector{
-		X: float64(view.ScreenWidth/2) - 170,
+		X: float64(view.ScreenWidth/2) - 200,
 		Y: float64(view.ScreenHeight/2) + 50}
 	s.iChecker = &input.TitleInputChecker{}
 	return nil

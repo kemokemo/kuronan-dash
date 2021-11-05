@@ -37,10 +37,10 @@ func (p *PrairieField) createParts(goalX float64) {
 	}
 
 	assets := []ast{
-		{images.MountainFar, genPosField, genPosSet{3, 1280, 500}, 0.2},
-		{images.CloudFar, genPosAir, genPosSet{10, 2000, 500}, 0.3},
-		{images.MountainNear, genPosField, genPosSet{3, 518, 500}, 0.4},
-		{images.CloudNear, genPosAir, genPosSet{10, 3000, 400}, 0.7},
+		{images.MountainFar, genPosField, genPosSet{3, 1280, 500}, 0.1},
+		{images.CloudFar, genPosAir, genPosSet{10, 2000, 500}, 0.15},
+		{images.MountainNear, genPosField, genPosSet{3, 518, 500}, 0.2},
+		{images.CloudNear, genPosAir, genPosSet{10, 3000, 400}, 0.5},
 		{images.Grass1, genPosField, genPosSet{10, 600, 2000}, 0.8},
 		{images.Grass3, genPosField, genPosSet{10, 900, 3000}, 0.85},
 	}
