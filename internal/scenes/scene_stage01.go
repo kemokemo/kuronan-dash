@@ -102,6 +102,7 @@ func (s *Stage01Scene) Update(state *GameState) {
 		if s.iChecker.TriggeredStart() {
 			s.state = run
 			s.player.Start()
+			s.disc.Play()
 		}
 	case run:
 		if s.iChecker.TriggeredPause() {
@@ -221,7 +222,7 @@ func (s *Stage01Scene) Close() error {
 
 // StartMusic starts playing music
 func (s *Stage01Scene) StartMusic() {
-	s.disc.Play()
+	// start music when game state is changed from 'wait'.
 }
 
 // StopMusic stops playing music
