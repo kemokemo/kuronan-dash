@@ -1,5 +1,12 @@
 package images
 
+import (
+	"image/color"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/kemokemo/kuronan-dash/internal/view"
+)
+
 func loadBackground() error {
 	var err error
 
@@ -15,6 +22,9 @@ func loadBackground() error {
 	if err != nil {
 		return err
 	}
+
+	PauseLayer = ebiten.NewImage(view.ScreenWidth, view.ScreenHeight)
+	PauseLayer.Fill(color.RGBA{R: 40, G: 40, B: 40, A: 200})
 
 	return nil
 }

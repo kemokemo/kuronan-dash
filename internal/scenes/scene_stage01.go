@@ -39,6 +39,8 @@ type Stage01Scene struct {
 	iChecker  input.InputChecker
 	startBtn  vpad.TriggerButton
 	pauseBtn  vpad.TriggerButton
+	pauseBg   *ebiten.Image
+	pauseBgOp *ebiten.DrawImageOptions
 }
 
 // Initialize initializes all resources.
@@ -90,6 +92,9 @@ func (s *Stage01Scene) Initialize() error {
 	s.pauseBtn.SetLocation(view.ScreenWidth-58, 48)
 	s.iChecker = &input.GameInputChecker{StartBtn: s.startBtn, PauseBtn: s.pauseBtn}
 
+	s.pauseBg = images.PauseLayer
+	s.pauseBgOp = &ebiten.DrawImageOptions{}
+
 	return nil
 }
 
@@ -108,6 +113,7 @@ func (s *Stage01Scene) Update(state *GameState) {
 		if s.iChecker.TriggeredPause() {
 			s.state = pause
 			s.player.Pause()
+			s.disc.Pause()
 		} else {
 			s.run()
 		}
@@ -115,6 +121,7 @@ func (s *Stage01Scene) Update(state *GameState) {
 		if s.iChecker.TriggeredStart() {
 			s.state = run
 			s.player.ReStart()
+			s.disc.Play()
 		}
 	case stageClear:
 		if s.iChecker.TriggeredStart() {
@@ -150,9 +157,11 @@ func (s *Stage01Scene) run() {
 	if isArriveGoal {
 		s.state = stageClear
 		s.player.Pause()
+		s.disc.Pause()
 	} else if !isArriveGoal && isTimeUp {
 		s.state = gameOver
 		s.player.Pause()
+		s.disc.Pause()
 	} else {
 		s.player.Update()
 		s.field.Update(s.player.GetScrollVelocity())
@@ -183,31 +192,36 @@ func (s *Stage01Scene) drawUI(screen *ebiten.Image) {
 		s.goalX,
 	)
 	s.msgWindow.DrawWindow(screen, s.uiMsg)
-
-	if s.state == wait {
-		return
-	}
-
-	text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
-		fonts.GamerFontS, 12, view.ScreenHeight-10, color.White)
 }
 
 func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 	// TODO: StartとPauseのボタンは見えてないだけで、該当する場所を押せばボタンはトリガーされる。弊害がありそうなら処置する。
 	switch s.state {
 	case wait:
+		screen.DrawImage(s.pauseBg, s.pauseBgOp)
 		text.Draw(screen, messages.GameStart, fonts.GamerFontL, view.ScreenWidth/2-280, view.ScreenHeight/2+30, color.White)
 		s.startBtn.Draw(screen)
 	case pause:
+		text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
+			fonts.GamerFontS, 12, view.ScreenHeight-10, color.White)
+		screen.DrawImage(s.pauseBg, s.pauseBgOp)
 		text.Draw(screen, messages.GamePause, fonts.GamerFontL, view.ScreenWidth/2-150, view.ScreenHeight/2+30, color.White)
 		s.startBtn.Draw(screen)
 	case run:
 		s.pauseBtn.Draw(screen)
+		text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
+			fonts.GamerFontS, 12, view.ScreenHeight-10, color.White)
 	case stageClear:
+		text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
+			fonts.GamerFontS, 12, view.ScreenHeight-10, color.White)
+		screen.DrawImage(s.pauseBg, s.pauseBgOp)
 		text.Draw(screen, messages.GameStageClear, fonts.GamerFontL, view.ScreenWidth/2-200, view.ScreenHeight/2-134, color.White)
 		text.Draw(screen, messages.GameStageClear2, fonts.GamerFontL, view.ScreenWidth/2-500, view.ScreenHeight/2+30, color.White)
 		s.startBtn.Draw(screen)
 	case gameOver:
+		text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
+			fonts.GamerFontS, 12, view.ScreenHeight-10, color.White)
+		screen.DrawImage(s.pauseBg, s.pauseBgOp)
 		text.Draw(screen, messages.GameOver, fonts.GamerFontL, view.ScreenWidth/2-420, view.ScreenHeight/2, color.White)
 		s.startBtn.Draw(screen)
 	default:
