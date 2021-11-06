@@ -11,6 +11,8 @@ var (
 	TitleBackground  *ebiten.Image
 	SelectBackground *ebiten.Image
 	SkyBackground    *ebiten.Image
+
+	PauseLayer *ebiten.Image
 )
 
 // field parts

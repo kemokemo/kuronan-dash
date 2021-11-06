@@ -9,6 +9,7 @@ import (
 // PrairieField is the field of prairie.
 type PrairieField struct {
 	bg           *ebiten.Image
+	bgOp         *ebiten.DrawImageOptions
 	tile         *ebiten.Image
 	fartherParts []ScrollableObject
 	closerParts  []ScrollableObject
@@ -21,6 +22,7 @@ type PrairieField struct {
 // Initialize initializes all resources to draw.
 func (p *PrairieField) Initialize(lanes *Lanes, goalX float64) {
 	p.bg = images.SkyBackground
+	p.bgOp = &ebiten.DrawImageOptions{}
 	p.tile = images.TilePrairie
 	p.lanes = lanes
 	p.createParts(goalX)
@@ -121,7 +123,7 @@ func (p *PrairieField) Update(scrollV *view.Vector) {
 // DrawFarther draws the farther field parts.
 func (p *PrairieField) DrawFarther(screen *ebiten.Image) {
 	// 背景を描画
-	screen.DrawImage(p.bg, &ebiten.DrawImageOptions{})
+	screen.DrawImage(p.bg, p.bgOp)
 
 	// レーンよりも遠くのパーツを描画
 	for i := range p.fartherParts {
