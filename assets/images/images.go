@@ -44,6 +44,8 @@ var (
 var (
 	PauseButton *ebiten.Image
 	StartButton *ebiten.Image
+	UpButton    *ebiten.Image
+	DownButton  *ebiten.Image
 )
 
 // character standing image

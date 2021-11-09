@@ -85,6 +85,10 @@ var (
 	pause_button_png []byte
 	//go:embed button_start.png
 	start_button_png []byte
+	//go:embed UpButton.png
+	up_button_png []byte
+	//go:embed DownButton.png
+	down_button_png []byte
 
 	//go:embed goal_back.png
 	goal_back_png []byte

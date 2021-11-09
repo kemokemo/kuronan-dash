@@ -5,6 +5,7 @@ import (
 	"image"
 	"log"
 
+	vpad "github.com/kemokemo/ebiten-virtualpad"
 	"github.com/kemokemo/kuronan-dash/assets/se"
 	"github.com/kemokemo/kuronan-dash/internal/field"
 	"github.com/kemokemo/kuronan-dash/internal/input"
@@ -44,9 +45,11 @@ func NewStateMachine(lanes *field.Lanes) (*StateMachine, error) {
 	return &sm, nil
 }
 
-func (sm *StateMachine) SetInputChecker(laneRectArray []image.Rectangle) {
+func (sm *StateMachine) SetInputChecker(laneRectArray []image.Rectangle, upBtn, downBtn vpad.TriggerButton) {
 	sm.iChecker = &input.PlayerInputChecker{
 		RectArray: laneRectArray,
+		UpBtn:     upBtn,
+		DownBtn:   downBtn,
 	}
 }
 

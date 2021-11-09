@@ -64,6 +64,14 @@ func loadFieldparts() error {
 	if err != nil {
 		return err
 	}
+	UpButton, err = loadSingleImage(up_button_png)
+	if err != nil {
+		return err
+	}
+	DownButton, err = loadSingleImage(down_button_png)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

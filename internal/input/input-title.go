@@ -31,7 +31,9 @@ func (i *TitleInputChecker) TriggeredRight() bool {
 }
 
 func (i *TitleInputChecker) TriggeredStart() bool {
-	return inpututil.IsKeyJustReleased(ebiten.KeySpace) || inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft)
+	return inpututil.IsKeyJustReleased(ebiten.KeySpace) ||
+		inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) ||
+		len(inpututil.AppendJustPressedTouchIDs(nil)) > 0
 }
 
 func (i *TitleInputChecker) TriggeredPause() bool {
