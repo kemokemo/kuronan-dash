@@ -16,6 +16,8 @@ type PlayerInputChecker struct {
 	mousePos     image.Point
 	isUp         bool
 	isDown       bool
+	tIDs         []ebiten.TouchID
+	touchPos     image.Point
 }
 
 func (i *PlayerInputChecker) Update() {
@@ -38,6 +40,24 @@ func (i *PlayerInputChecker) Update() {
 				i.currentIndex++
 			}
 			return
+		}
+	}
+
+	// Touches
+	i.tIDs = inpututil.AppendJustPressedTouchIDs(nil)
+	for _, tID := range i.tIDs {
+		i.touchPos.X, i.touchPos.Y = ebiten.TouchPosition(tID)
+		for rIndex := range i.RectArray {
+			if !i.touchPos.In(i.RectArray[rIndex]) || rIndex == i.currentIndex {
+				continue
+			}
+			if i.currentIndex > rIndex {
+				i.isUp = true
+				i.currentIndex--
+			} else {
+				i.isDown = true
+				i.currentIndex++
+			}
 		}
 	}
 
