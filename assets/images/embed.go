@@ -81,6 +81,10 @@ var (
 	//go:embed rock_normal.png
 	rock_normal_png []byte
 
+	//go:embed CharaWindow.png
+	chara_window_png []byte
+	//go:embed CharaSelectButton.png
+	chara_select_button_png []byte
 	//go:embed button_pause.png
 	pause_button_png []byte
 	//go:embed button_start.png

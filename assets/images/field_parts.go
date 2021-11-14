@@ -56,6 +56,14 @@ func loadFieldparts() error {
 	}
 
 	// UI
+	CharaWindow, err = loadSingleImage(chara_window_png)
+	if err != nil {
+		return err
+	}
+	CharaSelectButton, err = loadSingleImage(chara_select_button_png)
+	if err != nil {
+		return err
+	}
 	PauseButton, err = loadSingleImage(pause_button_png)
 	if err != nil {
 		return err
