@@ -5,6 +5,7 @@ import (
 	"image"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	vpad "github.com/kemokemo/ebiten-virtualpad"
 	"github.com/kemokemo/kuronan-dash/assets/se"
 	"github.com/kemokemo/kuronan-dash/internal/anime"
 	"github.com/kemokemo/kuronan-dash/internal/field"
@@ -70,8 +71,8 @@ func (p *Player) InitializeWithLanes(lanes *field.Lanes) error {
 	return nil
 }
 
-func (p *Player) SetInputChecker(laneRectArray []image.Rectangle) {
-	p.stateMachine.SetInputChecker(laneRectArray)
+func (p *Player) SetInputChecker(laneRectArray []image.Rectangle, upBtn, downBtn vpad.TriggerButton) {
+	p.stateMachine.SetInputChecker(laneRectArray, upBtn, downBtn)
 }
 
 // Start starts playing.

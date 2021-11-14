@@ -10,6 +10,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"golang.org/x/image/font"
 
+	vpad "github.com/kemokemo/ebiten-virtualpad"
 	"github.com/kemokemo/kuronan-dash/assets/fonts"
 	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/assets/messages"
@@ -30,22 +31,21 @@ const (
 	lineSpacing   = 2
 )
 
-var (
-	windowWidth  int
-	windowHeight int
-)
-
 // SelectScene is the scene to select the player character.
 type SelectScene struct {
-	bg         *ebiten.Image
-	bgViewPort *view.Viewport
-	disc       *music.Disc
-	charaList  []*chara.Player
-	windowList []*ui.FrameWindow
-	msgWindow  *ui.MessageWindow
-	selector   int
-	fontNormal font.Face
-	iChecker   input.InputChecker
+	bg            *ebiten.Image
+	bgViewPort    *view.Viewport
+	disc          *music.Disc
+	msgWindow     *ui.MessageWindow
+	fontNormal    font.Face
+	iChecker      input.InputChecker
+	goButton      vpad.TriggerButton
+	charaList     []*chara.Player
+	winRectArray  []image.Rectangle
+	selectArray   []vpad.SelectButton
+	selectedIndex int
+	selectChanged bool
+	lenChara      int
 }
 
 // Initialize initializes all resources.
@@ -56,35 +56,33 @@ func (s *SelectScene) Initialize() error {
 	s.bgViewPort.SetVelocity(1.0)
 	s.bgViewPort.SetLoop(true)
 	s.disc = music.Title
+
 	s.charaList = []*chara.Player{chara.Kurona, chara.Koma, chara.Shishimaru}
+	s.lenChara = len(s.charaList)
+	s.winRectArray = make([]image.Rectangle, s.lenChara)
+	s.selectArray = make([]vpad.SelectButton, s.lenChara)
+	s.selectedIndex = 0
 
-	windowWidth = (view.ScreenWidth - windowSpacing*2 - windowMargin*2) / len(s.charaList)
-	windowHeight = view.ScreenHeight - windowMargin*2 - 100
-
-	winRectArray := []image.Rectangle{}
-	s.windowList = make([]*ui.FrameWindow, len(s.charaList))
-	for i := range s.charaList {
-		win := ui.NewFrameWindow(
-			windowMargin+(windowWidth+windowSpacing)*int(i),
-			windowMargin*2+60, windowWidth, windowHeight, frameWidth)
-		win.SetColors(
-			color.RGBA{64, 64, 64, 255},
-			color.RGBA{192, 192, 192, 255},
-			color.RGBA{33, 228, 68, 255})
-		if i == 0 {
-			s.selector = i
-			win.SetBlink(true)
+	iw, ih := images.CharaWindow.Size()
+	for i := range s.selectArray {
+		window := vpad.NewSelectButton(images.CharaWindow, vpad.JustPressed, vpad.SelectColor)
+		x := windowMargin + (iw+windowSpacing)*int(i)
+		y := windowMargin*2 + 60
+		window.SetLocation(x, y)
+		s.selectArray[i] = window
+		s.winRectArray[i] = image.Rectangle{
+			Min: image.Point{x, y},
+			Max: image.Point{x + iw, y + ih},
 		}
-		s.windowList[i] = win
-		winRectArray = append(winRectArray, win.GetWindowRect())
 	}
+	s.selectArray[s.selectedIndex].SetSelectState(true)
 
-	s.iChecker = &input.SelectInputChecker{
-		RectArray: winRectArray,
-	}
+	s.goButton = vpad.NewTriggerButton(images.CharaSelectButton, vpad.JustReleased, vpad.SelectColor)
+	s.goButton.SetLocation(view.ScreenWidth-220, view.ScreenHeight-80)
+
+	s.iChecker = &input.SelectInputChecker{}
 
 	s.fontNormal = fonts.GamerFontM
-
 	s.msgWindow = ui.NewMessageWindow(windowMargin, windowMargin+13, view.ScreenWidth-windowMargin*2, 42, frameWidth)
 	s.msgWindow.SetColors(
 		color.RGBA{64, 64, 64, 255},
@@ -96,36 +94,59 @@ func (s *SelectScene) Initialize() error {
 
 // Update updates the status of this scene.
 func (s *SelectScene) Update(state *GameState) {
-	s.iChecker.Update()
-	s.bgViewPort.Move(view.UpperRight)
+	s.selectChanged = false
 
-	s.checkSelectorChanged()
-	if s.iChecker.TriggeredStart() {
-		chara.Selected = s.charaList[s.selector]
+	s.iChecker.Update()
+	if s.iChecker.TriggeredLeft() {
+		if s.selectedIndex > 0 {
+			s.selectChanged = true
+			s.selectedIndex--
+		}
+	}
+	if s.iChecker.TriggeredRight() {
+		if s.selectedIndex < s.lenChara-1 {
+			s.selectChanged = true
+			s.selectedIndex++
+		}
+	}
+
+	for i := range s.selectArray {
+		s.selectArray[i].Update()
+		if s.selectChanged || !s.selectArray[i].IsSelected() {
+			continue
+		}
+		s.selectChanged = true
+		s.selectedIndex = i
+		chara.Selected = s.charaList[i]
+	}
+
+	for i := range s.selectArray {
+		if i == s.selectedIndex {
+			s.selectArray[i].SetSelectState(true)
+		} else {
+			s.selectArray[i].SetSelectState(false)
+		}
+	}
+
+	s.goButton.Update()
+	if s.goButton.IsTriggered() || s.iChecker.TriggeredStart() {
 		err := state.SceneManager.GoTo(&Stage01Scene{})
 		if err != nil {
 			log.Println("failed to got Stage01Scene: ", err)
 		}
 	}
-}
 
-func (s *SelectScene) checkSelectorChanged() {
-	if s.iChecker.TriggeredRight() {
-		if int(s.selector) < len(s.windowList)-1 {
-			s.selector++
-		}
-	}
-	if s.iChecker.TriggeredLeft() {
-		if int(s.selector) > 0 {
-			s.selector--
-		}
-	}
+	s.bgViewPort.Move(view.UpperRight)
 }
 
 // Draw draws background and characters.
 func (s *SelectScene) Draw(screen *ebiten.Image) {
 	s.drawBackground(screen)
 	s.drawWindows(screen)
+	for i := range s.selectArray {
+		s.selectArray[i].Draw(screen)
+	}
+	s.goButton.Draw(screen)
 	s.drawCharacters(screen)
 }
 
@@ -148,15 +169,6 @@ func (s *SelectScene) drawBackground(screen *ebiten.Image) {
 }
 
 func (s *SelectScene) drawWindows(screen *ebiten.Image) {
-	for i := range s.windowList {
-		if i == s.selector {
-			s.windowList[i].SetBlink(true)
-		} else {
-			s.windowList[i].SetBlink(false)
-		}
-		s.windowList[i].DrawWindow(screen)
-	}
-
 	s.msgWindow.DrawWindow(screen, messages.SelectStart)
 }
 
@@ -175,7 +187,7 @@ func (s *SelectScene) drawChara(screen *ebiten.Image, i int) {
 }
 
 func (s *SelectScene) takeHorizontalCenterPosition(i int) (x, y float64) {
-	rect := s.windowList[i].GetWindowRect()
+	rect := s.winRectArray[i]
 	width, _ := s.charaList[i].StandingImage.Size()
 	x = float64((rect.Max.X-rect.Min.X)/2 + rect.Min.X - (width*scale)/2)
 	y = float64(rect.Min.Y + margin)
@@ -183,7 +195,7 @@ func (s *SelectScene) takeHorizontalCenterPosition(i int) (x, y float64) {
 }
 
 func (s *SelectScene) drawMessage(screen *ebiten.Image, i int) {
-	rect := s.windowList[i].GetWindowRect()
+	rect := s.winRectArray[i]
 	splitlen := (rect.Max.X - rect.Min.X) / fontSize
 	startPoint := s.takeTextPosition(i)
 	lineNum := 1
@@ -204,11 +216,10 @@ func (s *SelectScene) drawMessage(screen *ebiten.Image, i int) {
 			lineNum++
 		}
 	}
-
 }
 
 func (s *SelectScene) takeTextPosition(i int) image.Point {
-	rect := s.windowList[i].GetWindowRect()
+	rect := s.winRectArray[i]
 	x := rect.Min.X + margin
 	_, height := s.charaList[i].StandingImage.Size()
 	y := rect.Min.Y + margin*2 + height*scale

@@ -39,6 +39,8 @@ type Stage01Scene struct {
 	iChecker  input.InputChecker
 	startBtn  vpad.TriggerButton
 	pauseBtn  vpad.TriggerButton
+	upBtn     vpad.TriggerButton
+	downBtn   vpad.TriggerButton
 	pauseBg   *ebiten.Image
 	pauseBgOp *ebiten.DrawImageOptions
 }
@@ -84,7 +86,13 @@ func (s *Stage01Scene) Initialize() error {
 		)
 		previousHeight = int(heights[index])
 	}
-	s.player.SetInputChecker(laneRectArray)
+
+	s.upBtn = vpad.NewTriggerButton(images.UpButton, vpad.JustPressed, vpad.SelectColor)
+	bW, bH := images.UpButton.Size()
+	s.upBtn.SetLocation(20, view.ScreenHeight-bH-45)
+	s.downBtn = vpad.NewTriggerButton(images.DownButton, vpad.JustPressed, vpad.SelectColor)
+	s.downBtn.SetLocation(20+bW+10, view.ScreenHeight-bH-45)
+	s.player.SetInputChecker(laneRectArray, s.upBtn, s.downBtn)
 
 	s.startBtn = vpad.NewTriggerButton(images.StartButton, vpad.JustPressed, vpad.SelectColor)
 	s.startBtn.SetLocation(view.ScreenWidth/2-64, view.ScreenHeight/2-128)
@@ -100,6 +108,7 @@ func (s *Stage01Scene) Initialize() error {
 
 // Update updates the status of this scene.
 func (s *Stage01Scene) Update(state *GameState) {
+	// s.upBtnとs.downBtnは、s.iChecker内でUpdate()されるのでここではしない
 	s.iChecker.Update()
 
 	switch s.state {
@@ -195,6 +204,9 @@ func (s *Stage01Scene) drawUI(screen *ebiten.Image) {
 }
 
 func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
+	s.upBtn.Draw(screen)
+	s.downBtn.Draw(screen)
+
 	// TODO: StartとPauseのボタンは見えてないだけで、該当する場所を押せばボタンはトリガーされる。弊害がありそうなら処置する。
 	switch s.state {
 	case wait:

@@ -151,6 +151,8 @@ github.com/jtolds/gls v4.20.0+incompatible/go.mod h1:QJZ7F/aHp+rZTRtaJ1ow/lLfFfV
 github.com/julienschmidt/httprouter v1.2.0/go.mod h1:SYymIcj16QtmaHHD7aYtjjsJG7VTCxuUUipMqKk8s4w=
 github.com/kemokemo/ebiten-virtualpad v0.2.0 h1:bjW7cuWkMgLaSZRjAJm3Fz0dSekwt7IXlcHdyu2SCBI=
 github.com/kemokemo/ebiten-virtualpad v0.2.0/go.mod h1:wsmg7B0F2mtYoD8Bb+tEvpjQU5SKoFHEUXbxN/hvrYQ=
+github.com/kemokemo/ebiten-virtualpad v0.3.0 h1:ZvGo5gaxZW4TBVO+c0Mno9wCgupx4mzdNddsLVo+0TA=
+github.com/kemokemo/ebiten-virtualpad v0.3.0/go.mod h1:wsmg7B0F2mtYoD8Bb+tEvpjQU5SKoFHEUXbxN/hvrYQ=
 github.com/kisielk/errcheck v1.1.0/go.mod h1:EZBBE59ingxPouuu3KfxchcWSUPOHkagtvWXihfKN4Q=
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
