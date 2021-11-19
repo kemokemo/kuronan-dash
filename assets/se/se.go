@@ -6,6 +6,9 @@ import "fmt"
 var (
 	Jump *Player
 	Drop *Player
+
+	attackScratch *Player
+	attackSwipe   *Player
 )
 
 // LoadSE loads all sound effects.
@@ -17,6 +20,14 @@ func LoadSE() error {
 		return err
 	}
 	Drop, err = loadPlayer(drop_wav)
+	if err != nil {
+		return err
+	}
+	attackScratch, err = loadPlayer(attack_scratch_wav)
+	if err != nil {
+		return err
+	}
+	attackSwipe, err = loadPlayer(attack_swipe_wav)
 	if err != nil {
 		return err
 	}
@@ -35,5 +46,33 @@ func CloseSE() error {
 	if err != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
+	e = attackScratch.Close()
+	if err != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+	e = attackSwipe.Close()
+	if err != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
 	return err
+}
+
+// sound type
+type SoundType int
+
+const (
+	KuronaSe SoundType = iota
+	KomaSe
+	ShishimaruSe
+)
+
+func GetAttackSe(st SoundType) *Player {
+	switch st {
+	case KuronaSe:
+		return attackScratch
+	case KomaSe, ShishimaruSe:
+		return attackSwipe
+	default:
+		return attackScratch
+	}
 }

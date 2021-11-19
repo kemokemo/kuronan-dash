@@ -48,6 +48,7 @@ var (
 	StartButton       *ebiten.Image
 	UpButton          *ebiten.Image
 	DownButton        *ebiten.Image
+	AttackButton      *ebiten.Image
 )
 
 // character standing image
@@ -64,6 +65,12 @@ var (
 	ShishimaruAnimation []*ebiten.Image
 )
 
+// character attack image
+var (
+	AttackFist    *ebiten.Image
+	AttackScratch *ebiten.Image
+)
+
 // LoadImages loads all public images.
 func LoadImages() error {
 	err := loadBackground()
@@ -76,7 +83,7 @@ func LoadImages() error {
 		return err
 	}
 
-	err = loadStandingImages()
+	err = loadCharacters()
 	if err != nil {
 		return err
 	}

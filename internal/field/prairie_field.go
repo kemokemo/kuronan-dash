@@ -175,3 +175,11 @@ func (p *PrairieField) EatFoods(hr *view.HitRectangle) int {
 
 	return stamina
 }
+
+func (p *PrairieField) AttackObstacles(hr *view.HitRectangle, power float64) {
+	for i := range p.obstacles {
+		if p.obstacles[i].IsCollided(hr) {
+			p.obstacles[i].Attack(power)
+		}
+	}
+}

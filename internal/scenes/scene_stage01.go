@@ -41,6 +41,7 @@ type Stage01Scene struct {
 	pauseBtn  vpad.TriggerButton
 	upBtn     vpad.TriggerButton
 	downBtn   vpad.TriggerButton
+	atkBtn    vpad.TriggerButton
 	pauseBg   *ebiten.Image
 	pauseBgOp *ebiten.DrawImageOptions
 }
@@ -92,7 +93,9 @@ func (s *Stage01Scene) Initialize() error {
 	s.upBtn.SetLocation(20, view.ScreenHeight-bH-45)
 	s.downBtn = vpad.NewTriggerButton(images.DownButton, vpad.JustPressed, vpad.SelectColor)
 	s.downBtn.SetLocation(20+bW+10, view.ScreenHeight-bH-45)
-	s.player.SetInputChecker(laneRectArray, s.upBtn, s.downBtn)
+	s.atkBtn = vpad.NewTriggerButton(images.AttackButton, vpad.JustPressed, vpad.SelectColor)
+	s.atkBtn.SetLocation(view.ScreenWidth-20-2*bW-10, view.ScreenHeight-bH-45)
+	s.player.SetInputChecker(laneRectArray, s.upBtn, s.downBtn, s.atkBtn)
 
 	s.startBtn = vpad.NewTriggerButton(images.StartButton, vpad.JustPressed, vpad.SelectColor)
 	s.startBtn.SetLocation(view.ScreenWidth/2-64, view.ScreenHeight/2-128)
@@ -176,6 +179,10 @@ func (s *Stage01Scene) run() {
 		s.field.Update(s.player.GetScrollVelocity())
 
 		// TODO: プレイヤーの攻撃が障害物に当たっているか判定しつつ、当たっていればダメージを加える処理
+		isAtk, aRect, power := s.player.IsAttacked()
+		if isAtk {
+			s.field.AttackObstacles(aRect, power)
+		}
 
 		pRect := s.player.GetRectangle()
 		s.player.BeBlocked(s.field.IsCollidedWithObstacles(pRect))
@@ -206,6 +213,7 @@ func (s *Stage01Scene) drawUI(screen *ebiten.Image) {
 func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 	s.upBtn.Draw(screen)
 	s.downBtn.Draw(screen)
+	s.atkBtn.Draw(screen)
 
 	// TODO: StartとPauseのボタンは見えてないだけで、該当する場所を押せばボタンはトリガーされる。弊害がありそうなら処置する。
 	switch s.state {

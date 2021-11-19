@@ -25,6 +25,9 @@ type Field interface {
 	// EatFoods determines if there is a conflict between the player and the food.
 	// If it hits, it returns the stamina gained.
 	EatFoods(hr *view.HitRectangle) int
+
+	// AttackObstacles attacks obstacles.
+	AttackObstacles(hr *view.HitRectangle, power float64)
 }
 
 const (

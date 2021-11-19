@@ -18,12 +18,16 @@ type Player struct {
 	// Specified at creation and not changed
 	StandingImage *ebiten.Image
 	Description   string
+	attackImage   *ebiten.Image
 	animation     *anime.StepAnimation
 	jumpSe        *se.Player
 	dropSe        *se.Player
+	typeSe        se.SoundType
+	maxDuration   int
 
 	// Update each time based on the internal status and other information
 	op         *ebiten.DrawImageOptions
+	atkOp      *ebiten.DrawImageOptions
 	vc         move.VelocityController
 	scrollV    *view.Vector
 	tempPosV   *view.Vector
@@ -31,6 +35,7 @@ type Player struct {
 	tempDrawV  *view.Vector
 	charaDrawV *view.Vector
 	rect       *view.HitRectangle
+	atkRect    *view.HitRectangle
 
 	// Initialization is required before starting the stage.
 	stateMachine *move.StateMachine
@@ -38,6 +43,7 @@ type Player struct {
 	current      move.State
 	stamina      *Stamina
 	sumTicks     float64
+	power        float64
 }
 
 // InitializeWithLanesInfo sets the lanes information.
@@ -48,13 +54,14 @@ func (p *Player) InitializeWithLanes(lanes *field.Lanes) error {
 	p.stamina.Initialize()
 
 	var err error
-	p.stateMachine, err = move.NewStateMachine(lanes)
+	p.stateMachine, err = move.NewStateMachine(lanes, p.typeSe, p.maxDuration)
 	if err != nil {
 		return err
 	}
 
 	// set the player at the top lane.
 	w, h := p.StandingImage.Size()
+	aw, ah := p.attackImage.Size()
 
 	initialY := lanes.GetTargetLaneHeight() - float64(h) + field.FieldOffset
 	p.charaPosV = &view.Vector{X: 0.0, Y: 0.0}
@@ -62,17 +69,22 @@ func (p *Player) InitializeWithLanes(lanes *field.Lanes) error {
 	p.scrollV = &view.Vector{X: 0.0, Y: 0.0}
 	p.op = &ebiten.DrawImageOptions{}
 	p.op.GeoM.Translate(view.DrawPosition, initialY)
+	p.atkOp = &ebiten.DrawImageOptions{}
+	p.atkOp.GeoM.Translate(view.DrawPosition+float64(w)+5, initialY+20)
 
 	rectOffset := 3.0
 	p.rect = view.NewHitRectangle(
 		view.Vector{X: view.DrawPosition + rectOffset, Y: initialY + rectOffset},
 		view.Vector{X: view.DrawPosition + float64(w) - rectOffset, Y: initialY + float64(h) - rectOffset})
+	p.atkRect = view.NewHitRectangle(
+		view.Vector{X: view.DrawPosition + float64(w) + 5 + rectOffset, Y: initialY + 20 + rectOffset},
+		view.Vector{X: view.DrawPosition + float64(w) + 5 + float64(aw) - rectOffset, Y: initialY + 20 + float64(ah) - rectOffset})
 
 	return nil
 }
 
-func (p *Player) SetInputChecker(laneRectArray []image.Rectangle, upBtn, downBtn vpad.TriggerButton) {
-	p.stateMachine.SetInputChecker(laneRectArray, upBtn, downBtn)
+func (p *Player) SetInputChecker(laneRectArray []image.Rectangle, upBtn, downBtn, atkBtn vpad.TriggerButton) {
+	p.stateMachine.SetInputChecker(laneRectArray, upBtn, downBtn, atkBtn)
 }
 
 // Start starts playing.
@@ -115,7 +127,9 @@ func (p *Player) Update() {
 
 	p.animation.AddStep(p.charaPosV.X)
 	p.op.GeoM.Translate(p.charaDrawV.X, p.charaDrawV.Y)
+	p.atkOp.GeoM.Translate(p.charaDrawV.X, p.charaDrawV.Y)
 	p.rect.Add(p.charaDrawV)
+	p.atkRect.Add(p.charaDrawV)
 }
 
 func (p *Player) updateVelWithOffset(offsetV *view.Vector) {
@@ -130,6 +144,9 @@ func (p *Player) updateVelWithOffset(offsetV *view.Vector) {
 func (p *Player) Draw(screen *ebiten.Image) {
 	// TODO: ダッシュ中とか奥義中とか状態に応じて多少前後しつつ、ほぼ画面中央に描画したい
 	screen.DrawImage(p.animation.GetCurrentFrame(), p.op)
+	if p.stateMachine.DrawAttack() {
+		screen.DrawImage(p.attackImage, p.atkOp)
+	}
 }
 
 // GetPosition return the current position of this player.
@@ -179,4 +196,8 @@ func (p *Player) Close() error {
 func (p *Player) GetHeight() float64 {
 	_, h := p.StandingImage.Size()
 	return float64(h)
+}
+
+func (p *Player) IsAttacked() (bool, *view.HitRectangle, float64) {
+	return p.stateMachine.Attacked(), p.atkRect, p.power
 }
