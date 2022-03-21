@@ -8,7 +8,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-func loadStandingImages() error {
+func loadCharacters() error {
 	var err error
 
 	KuronaStanding, err = loadSingleImage(kurona_taiki_png)
@@ -20,6 +20,15 @@ func loadStandingImages() error {
 		return err
 	}
 	ShishimaruStanding, err = loadSingleImage(shishimaru_taiki_png)
+	if err != nil {
+		return err
+	}
+
+	AttackScratch, err = loadSingleImage(scratch_png)
+	if err != nil {
+		return err
+	}
+	AttackFist, err = loadSingleImage(fist_png)
 	if err != nil {
 		return err
 	}

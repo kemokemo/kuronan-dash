@@ -14,42 +14,51 @@ import (
 
 // StateMachine manages the player's state.
 type StateMachine struct {
-	pos       *view.Vector
-	current   State
-	previous  State
-	isBlocked bool
-	jumpSe    *se.Player
-	dropSe    *se.Player
-	lanes     *field.Lanes
-	offset    *view.Vector
-	iChecker  input.InputChecker
+	pos         *view.Vector
+	current     State
+	previous    State
+	isBlocked   bool
+	jumpSe      *se.Player
+	dropSe      *se.Player
+	attackSe    *se.Player
+	lanes       *field.Lanes
+	offset      *view.Vector
+	iChecker    input.InputChecker
+	attacked    bool
+	drawing     bool
+	duration    int
+	maxDuration int
 }
 
-func NewStateMachine(lanes *field.Lanes) (*StateMachine, error) {
+func NewStateMachine(lanes *field.Lanes, typeSe se.SoundType, maxDuration int) (*StateMachine, error) {
 	heights := lanes.GetLaneHeights()
 	if len(heights) == 0 {
 		return nil, fmt.Errorf("heights is empty")
 	}
 
 	sm := StateMachine{
-		pos:       &view.Vector{X: view.DrawPosition, Y: lanes.GetTargetLaneHeight()},
-		current:   Dash,
-		previous:  Pause,
-		isBlocked: false,
-		jumpSe:    se.Jump,
-		dropSe:    se.Drop,
-		lanes:     lanes,
-		offset:    &view.Vector{X: 0.0, Y: 0.0},
+		pos:         &view.Vector{X: view.DrawPosition, Y: lanes.GetTargetLaneHeight()},
+		current:     Dash,
+		previous:    Pause,
+		isBlocked:   false,
+		jumpSe:      se.Jump,
+		dropSe:      se.Drop,
+		attackSe:    se.GetAttackSe(typeSe),
+		lanes:       lanes,
+		offset:      &view.Vector{X: 0.0, Y: 0.0},
+		maxDuration: maxDuration,
+		duration:    maxDuration,
 	}
 
 	return &sm, nil
 }
 
-func (sm *StateMachine) SetInputChecker(laneRectArray []image.Rectangle, upBtn, downBtn vpad.TriggerButton) {
+func (sm *StateMachine) SetInputChecker(laneRectArray []image.Rectangle, upBtn, downBtn, atkBtn vpad.TriggerButton) {
 	sm.iChecker = &input.PlayerInputChecker{
 		RectArray: laneRectArray,
 		UpBtn:     upBtn,
 		DownBtn:   downBtn,
+		AttackBtn: atkBtn,
 	}
 }
 
@@ -119,6 +128,26 @@ func (sm *StateMachine) updateWithKey(vY float64) {
 			log.Println("failed to play drop SE: ", err)
 		}
 	}
+
+	if sm.duration < sm.maxDuration {
+		if sm.drawing {
+			sm.duration++
+		}
+		sm.attacked = false
+	} else {
+		if sm.iChecker.TriggeredAttack() {
+			sm.attacked = true
+			sm.drawing = true
+			sm.duration = 0
+			err := sm.attackSe.Play()
+			if err != nil {
+				log.Println("failed to play attack SE: ", err)
+			}
+		} else {
+			sm.attacked = false
+			sm.drawing = false
+		}
+	}
 }
 
 // IsReachedUpperLane returns which the player reached to the target upper lane.
@@ -157,4 +186,12 @@ func (sm *StateMachine) GetPosition() *view.Vector {
 
 func (sm *StateMachine) GetOffsetV() *view.Vector {
 	return sm.offset
+}
+
+func (sm *StateMachine) Attacked() bool {
+	return sm.attacked
+}
+
+func (sm *StateMachine) DrawAttack() bool {
+	return sm.drawing
 }

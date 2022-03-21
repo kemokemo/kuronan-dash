@@ -80,6 +80,10 @@ func loadFieldparts() error {
 	if err != nil {
 		return err
 	}
+	AttackButton, err = loadSingleImage(attack_button_png)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

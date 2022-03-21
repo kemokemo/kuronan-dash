@@ -12,6 +12,7 @@ type PlayerInputChecker struct {
 	RectArray    []image.Rectangle
 	UpBtn        vpad.TriggerButton
 	DownBtn      vpad.TriggerButton
+	AttackBtn    vpad.TriggerButton
 	currentIndex int
 	mousePos     image.Point
 	isUp         bool
@@ -21,8 +22,24 @@ type PlayerInputChecker struct {
 }
 
 func (i *PlayerInputChecker) Update() {
+	i.AttackBtn.Update()
+
+	// 使用頻度が高そうな操作系からチェック。上下移動があればこの関数の処理を終える。
 	i.isUp = false
 	i.isDown = false
+
+	// Button
+	i.UpBtn.Update()
+	if i.UpBtn.IsTriggered() {
+		i.isUp = true
+	}
+	i.DownBtn.Update()
+	if i.DownBtn.IsTriggered() {
+		i.isDown = true
+	}
+	if i.isUp || i.isDown {
+		return
+	}
 
 	// Mouse
 	i.mousePos.X, i.mousePos.Y = ebiten.CursorPosition()
@@ -39,8 +56,10 @@ func (i *PlayerInputChecker) Update() {
 				i.isDown = true
 				i.currentIndex++
 			}
-			return
 		}
+	}
+	if i.isUp || i.isDown {
+		return
 	}
 
 	// Touches
@@ -60,6 +79,9 @@ func (i *PlayerInputChecker) Update() {
 			}
 		}
 	}
+	if i.isUp || i.isDown {
+		return
+	}
 
 	// Keyboard
 	if inpututil.IsKeyJustReleased(ebiten.KeyUp) {
@@ -68,15 +90,8 @@ func (i *PlayerInputChecker) Update() {
 	if inpututil.IsKeyJustReleased(ebiten.KeyDown) {
 		i.isDown = true
 	}
-
-	// Button
-	i.UpBtn.Update()
-	if i.UpBtn.IsTriggered() {
-		i.isUp = true
-	}
-	i.DownBtn.Update()
-	if i.DownBtn.IsTriggered() {
-		i.isDown = true
+	if i.isUp || i.isDown {
+		return
 	}
 }
 
@@ -105,8 +120,7 @@ func (i *PlayerInputChecker) TriggeredPause() bool {
 }
 
 func (i *PlayerInputChecker) TriggeredAttack() bool {
-	// todo
-	return false
+	return i.AttackBtn.IsTriggered() || inpututil.IsKeyJustPressed(ebiten.KeyA)
 }
 
 func (i *PlayerInputChecker) TriggeredSpecial() bool {

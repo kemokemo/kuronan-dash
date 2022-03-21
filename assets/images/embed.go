@@ -57,6 +57,11 @@ var (
 	//go:embed shishimaru_05.png
 	shishimaru_05_png []byte
 
+	//go:embed Fist.png
+	fist_png []byte
+	//go:embed Scratch.png
+	scratch_png []byte
+
 	//go:embed cloud_far.png
 	cloud_far_png []byte
 	//go:embed cloud_near.png
@@ -93,10 +98,11 @@ var (
 	up_button_png []byte
 	//go:embed DownButton.png
 	down_button_png []byte
+	//go:embed AttackButton.png
+	attack_button_png []byte
 
 	//go:embed goal_back.png
 	goal_back_png []byte
-
 	//go:embed goal_front.png
 	goal_front_png []byte
 )
