@@ -26,18 +26,22 @@ func (s *Stamina) Initialize() {
 	s.valRate = s.endurance
 }
 
-// Consumes encourages a decrease in stamina by the value specified in the argument.
+// ConsumesByState encourages a decrease in stamina by the value specified in the argument.
 // The actual stamina is reduced when the consumption is greater than the "endurance".
 // The stamina value does not go below zero.
-func (s *Stamina) Consumes(state move.State) {
+func (s *Stamina) ConsumesByState(state move.State) {
 	switch state {
 	case move.Dash:
 		s.consumes(2)
-	case move.Walk, move.Ascending, move.Descending:
+	case move.Walk:
 		s.consumes(1)
 	default:
 		// not consume stamina.
 	}
+}
+
+func (s *Stamina) ConsumeByAttack(brokenNum int) {
+	s.consumes(brokenNum * 5)
 }
 
 func (s *Stamina) consumes(val int) {

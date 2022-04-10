@@ -178,10 +178,15 @@ func (s *Stage01Scene) run() {
 		s.player.Update()
 		s.field.Update(s.player.GetScrollVelocity())
 
-		// TODO: プレイヤーの攻撃が障害物に当たっているか判定しつつ、当たっていればダメージを加える処理
 		isAtk, aRect, power := s.player.IsAttacked()
 		if isAtk {
-			s.field.AttackObstacles(aRect, power)
+			collided, broken := s.field.AttackObstacles(aRect, power)
+			if collided > 0 {
+				s.player.ConsumeStaminaByAttack(collided)
+			}
+			if broken > 0 {
+				s.player.AddTension(broken)
+			}
 		}
 
 		pRect := s.player.GetRectangle()
@@ -201,8 +206,9 @@ func (s *Stage01Scene) Draw(screen *ebiten.Image) {
 
 // description
 func (s *Stage01Scene) drawUI(screen *ebiten.Image) {
-	s.uiMsg = fmt.Sprintf("スタミナ: %v\nタイム: 　%v\nすすんだきょり: %.1f\nゴールのいち: 　%.1f",
+	s.uiMsg = fmt.Sprintf("スタミナ: %v\nテンション: %v\nタイム: 　%v\nすすんだきょり: %.1f\nゴールのいち: 　%.1f",
 		s.player.GetStamina(),
+		s.player.GetTension(),
 		s.time,
 		s.player.GetPosition().X-view.DrawPosition,
 		s.goalX,

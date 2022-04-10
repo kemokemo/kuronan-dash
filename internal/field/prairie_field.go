@@ -8,15 +8,17 @@ import (
 
 // PrairieField is the field of prairie.
 type PrairieField struct {
-	bg           *ebiten.Image
-	bgOp         *ebiten.DrawImageOptions
-	tile         *ebiten.Image
-	fartherParts []ScrollableObject
-	closerParts  []ScrollableObject
-	obstacles    []Obstacle
-	foods        []Food
-	lanes        *Lanes
-	goals        []Goal
+	bg            *ebiten.Image
+	bgOp          *ebiten.DrawImageOptions
+	tile          *ebiten.Image
+	fartherParts  []ScrollableObject
+	closerParts   []ScrollableObject
+	obstacles     []Obstacle
+	foods         []Food
+	lanes         *Lanes
+	goals         []Goal
+	collidCounter int
+	brokenCounter int
 }
 
 // Initialize initializes all resources to draw.
@@ -176,10 +178,19 @@ func (p *PrairieField) EatFoods(hr *view.HitRectangle) int {
 	return stamina
 }
 
-func (p *PrairieField) AttackObstacles(hr *view.HitRectangle, power float64) {
+func (p *PrairieField) AttackObstacles(hr *view.HitRectangle, power float64) (int, int) {
+	p.collidCounter = 0
+	p.brokenCounter = 0
+
 	for i := range p.obstacles {
 		if p.obstacles[i].IsCollided(hr) {
+			p.collidCounter++
 			p.obstacles[i].Attack(power)
+			if p.obstacles[i].IsBroken() {
+				p.brokenCounter++
+			}
 		}
 	}
+
+	return p.collidCounter, p.brokenCounter
 }
