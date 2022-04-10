@@ -27,7 +27,8 @@ type Field interface {
 	EatFoods(hr *view.HitRectangle) int
 
 	// AttackObstacles attacks obstacles.
-	AttackObstacles(hr *view.HitRectangle, power float64)
+	// If any obstacle is collided or broken, returns the number of collided or broken obstacles.
+	AttackObstacles(hr *view.HitRectangle, power float64) (int, int)
 }
 
 const (

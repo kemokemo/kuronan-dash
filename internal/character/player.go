@@ -44,6 +44,7 @@ type Player struct {
 	stamina      *Stamina
 	sumTicks     float64
 	power        float64
+	tension      *Tension
 }
 
 // InitializeWithLanesInfo sets the lanes information.
@@ -119,7 +120,8 @@ func (p *Player) Update() {
 	p.sumTicks += 1.0 / ebiten.CurrentTPS()
 	if p.sumTicks >= 0.05 {
 		p.sumTicks = 0.0
-		p.stamina.Consumes(p.current)
+		p.stamina.ConsumesByState(p.current)
+		p.tension.AddByState(p.current)
 	}
 
 	// 次に動くべき速度にオフセットを適用
@@ -200,4 +202,16 @@ func (p *Player) GetHeight() float64 {
 
 func (p *Player) IsAttacked() (bool, *view.HitRectangle, float64) {
 	return p.stateMachine.Attacked(), p.atkRect, p.power
+}
+
+func (p *Player) ConsumeStaminaByAttack(num int) {
+	p.stamina.ConsumeByAttack(num)
+}
+
+func (p *Player) AddTension(num int) {
+	p.tension.AddByAttack(num)
+}
+
+func (p *Player) GetTension() int {
+	return p.tension.Get()
 }

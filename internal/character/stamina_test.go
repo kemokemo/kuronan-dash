@@ -3,45 +3,9 @@ package character
 import (
 	"reflect"
 	"testing"
-)
 
-func TestStaminaConsumes(t *testing.T) {
-	type fields struct {
-		max       int
-		val       int
-		endurance int
-		valRate   int
-	}
-	type args struct {
-		val int
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   int
-	}{
-		{"normal", fields{100, 90, 2, 1}, args{1}, 89},
-		{"not reduced", fields{100, 50, 2, 2}, args{1}, 50},
-		{"big consume", fields{90, 20, 2, 2}, args{3}, 19},
-		{"zero", fields{90, 0, 2, 1}, args{1}, 0},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			s := &Stamina{
-				max:       tt.fields.max,
-				val:       tt.fields.val,
-				endurance: tt.fields.endurance,
-				valRate:   tt.fields.valRate,
-			}
-			s.consumes(tt.args.val)
-			got := s.GetStamina()
-			if got != tt.want {
-				t.Errorf("GetStamina() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
+	"github.com/kemokemo/kuronan-dash/internal/move"
+)
 
 func TestNewStamina(t *testing.T) {
 	type args struct {
@@ -95,6 +59,60 @@ func TestStamina_Restore(t *testing.T) {
 			got := s.GetStamina()
 			if got != tt.want {
 				t.Errorf("GetStamina() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestStamina_Consumes(t *testing.T) {
+	type fields struct {
+		max       int
+		endurance int
+	}
+	type args struct {
+		state move.State
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want1  int
+		want2  int
+	}{
+		{"Walk", fields{100, 2}, args{move.Walk}, 100, 99},
+		{"Walk2", fields{100, 3}, args{move.Walk}, 100, 100},
+		{"Dash", fields{100, 2}, args{move.Dash}, 99, 98},
+		{"Dash2", fields{100, 3}, args{move.Dash}, 100, 99},
+		{"Ascending (not consume)", fields{100, 2}, args{move.Ascending}, 100, 100},
+		{"Descending (not consume)", fields{100, 2}, args{move.Descending}, 100, 100},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := NewStamina(tt.fields.max, tt.fields.endurance)
+			s.ConsumesByState(tt.args.state)
+			got := s.GetStamina()
+			if got != tt.want1 {
+				t.Errorf("GetStamina() = %v, want1 %v", got, tt.want1)
+			}
+
+			s.ConsumesByState(tt.args.state)
+			got = s.GetStamina()
+			if got != tt.want2 {
+				t.Errorf("GetStamina() = %v, want2 %v", got, tt.want2)
+			}
+
+			s.Initialize()
+
+			s.ConsumesByState(tt.args.state)
+			got = s.GetStamina()
+			if got != tt.want1 {
+				t.Errorf("GetStamina() = %v, want1 %v", got, tt.want1)
+			}
+
+			s.ConsumesByState(tt.args.state)
+			got = s.GetStamina()
+			if got != tt.want2 {
+				t.Errorf("GetStamina() = %v, want2 %v", got, tt.want2)
 			}
 		})
 	}
