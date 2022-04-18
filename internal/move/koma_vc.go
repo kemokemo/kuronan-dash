@@ -33,7 +33,7 @@ func (kvc *KomaVc) SetState(s State) {
 	kvc.currentState = s
 
 	if kvc.prevState == s {
-		kvc.elapsed += elapsedStep
+		kvc.elapsed += elapsedStepY
 	} else {
 		kvc.elapsed = 0.0
 	}

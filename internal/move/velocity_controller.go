@@ -3,7 +3,8 @@ package move
 import "github.com/kemokemo/kuronan-dash/internal/view"
 
 const (
-	elapsedStep = 0.2
+	elapsedStepX = 1.0
+	elapsedStepY = 0.2
 )
 
 // VelocityController calcurate velocity of characters.

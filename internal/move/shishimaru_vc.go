@@ -33,7 +33,7 @@ func (svc *ShishimaruVc) SetState(s State) {
 	svc.currentState = s
 
 	if svc.prevState == s {
-		svc.elapsed += elapsedStep
+		svc.elapsed += elapsedStepY
 	} else {
 		svc.elapsed = 0.0
 	}
