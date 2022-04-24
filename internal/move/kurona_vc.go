@@ -5,8 +5,11 @@ import (
 )
 
 const (
-	kuronaWalkMax = 1.7
-	kuronaDashMax = 3.0
+	kuronaWalkMax             = 1.7
+	kuronaDashMax             = 3.0
+	kuronaDecelerateRate      = 0.9
+	kuronaInitialVelocityWalk = 0.1
+	kuronaInitialVelocityDash = 0.35
 )
 
 // NewKuronaVc returns a new VelocityController for Kurona.
@@ -17,7 +20,7 @@ func NewKuronaVc() *KuronaVc {
 		charaDrawV: &view.Vector{X: 0.0, Y: 0.0},
 		gravity:    1.2,
 		jumpV0:     -10.3,
-		dropV0:     0.5,
+		dropV0:     0.2,
 	}
 }
 
@@ -84,9 +87,9 @@ func (kvc *KuronaVc) decideVbyState() {
 func (vc *KuronaVc) decideVofWalk() {
 	if vc.prevState == Dash && vc.deltaX > kuronaWalkMax {
 		// 減速処理
-		vc.deltaX -= 0.9 * vc.elapsedX
+		vc.deltaX -= kuronaDecelerateRate * vc.elapsedX
 	} else {
-		vc.deltaX += 0.1 * vc.elapsedX
+		vc.deltaX += kuronaInitialVelocityWalk * vc.elapsedX
 		if vc.deltaX > kuronaWalkMax {
 			vc.deltaX = kuronaWalkMax
 		}
@@ -96,7 +99,7 @@ func (vc *KuronaVc) decideVofWalk() {
 }
 
 func (vc *KuronaVc) decideVofDash() {
-	vc.deltaX += 0.35 * vc.elapsedX
+	vc.deltaX += kuronaInitialVelocityDash * vc.elapsedX
 	if vc.deltaX > kuronaDashMax {
 		vc.deltaX = kuronaDashMax
 	}
