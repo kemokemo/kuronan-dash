@@ -39,46 +39,46 @@ type KomaVc struct {
 	deltaX, deltaY float64
 }
 
-func (kvc *KomaVc) SetState(s State) {
-	if kvc.currentState == s {
-		kvc.elapsedX += elapsedStepX
-		kvc.elapsedY += elapsedStepY
+func (vc *KomaVc) SetState(s State) {
+	if vc.currentState == s {
+		vc.elapsedX += elapsedStepX
+		vc.elapsedY += elapsedStepY
 	} else {
-		kvc.prevState = kvc.currentState
-		kvc.currentState = s
+		vc.prevState = vc.currentState
+		vc.currentState = s
 
-		kvc.elapsedX = 1.0
-		kvc.elapsedY = 0.0
+		vc.elapsedX = 1.0
+		vc.elapsedY = 0.0
 	}
 }
 
 // GetVelocity returns the velocity to scroll the field parts and to update the character position.
-func (mvc *KomaVc) GetVelocity() (*view.Vector, *view.Vector, *view.Vector) {
-	mvc.decideVbyState()
-	mvc.updateVelocity()
-	return mvc.scrollV, mvc.charaPosV, mvc.charaDrawV
+func (vc *KomaVc) GetVelocity() (*view.Vector, *view.Vector, *view.Vector) {
+	vc.decideVbyState()
+	vc.updateVelocity()
+	return vc.scrollV, vc.charaPosV, vc.charaDrawV
 }
 
-func (mvc *KomaVc) decideVbyState() {
-	switch mvc.currentState {
+func (vc *KomaVc) decideVbyState() {
+	switch vc.currentState {
 	case Walk:
-		mvc.decideVofWalk()
+		vc.decideVofWalk()
 	case Dash:
-		mvc.decideVofDash()
+		vc.decideVofDash()
 	case Ascending:
-		mvc.deltaX = 0.6
-		mvc.deltaY = mvc.jumpV0 + mvc.gravity*mvc.elapsedY
+		vc.deltaX = 0.6
+		vc.deltaY = vc.jumpV0 + vc.gravity*vc.elapsedY
 	case Descending:
-		mvc.deltaX = 0.6
-		if mvc.deltaY > 9.0 {
-			mvc.deltaY = 9.0
+		vc.deltaX = 0.6
+		if vc.deltaY > 9.0 {
+			vc.deltaY = 9.0
 		} else {
-			mvc.deltaY = mvc.dropV0 + mvc.gravity*mvc.elapsedY
+			vc.deltaY = vc.dropV0 + vc.gravity*vc.elapsedY
 		}
 	default:
 		// Don't move
-		mvc.deltaX = 0.0
-		mvc.deltaY = 0.0
+		vc.deltaX = 0.0
+		vc.deltaY = 0.0
 	}
 }
 
@@ -106,13 +106,13 @@ func (vc *KomaVc) decideVofDash() {
 }
 
 // updateVelocity updates all velocities. Please pass me the data for charaPosV.
-func (mvc *KomaVc) updateVelocity() {
-	mvc.charaPosV.X = mvc.deltaX
-	mvc.charaPosV.Y = mvc.deltaY
+func (vc *KomaVc) updateVelocity() {
+	vc.charaPosV.X = vc.deltaX
+	vc.charaPosV.Y = vc.deltaY
 
-	mvc.charaDrawV.X = 0.0
-	mvc.charaDrawV.Y = mvc.deltaY
+	vc.charaDrawV.X = 0.0
+	vc.charaDrawV.Y = vc.deltaY
 
-	mvc.scrollV.X = -mvc.deltaX
-	mvc.scrollV.Y = 0.0
+	vc.scrollV.X = -vc.deltaX
+	vc.scrollV.Y = 0.0
 }

@@ -42,46 +42,46 @@ type KuronaVc struct {
 }
 
 // Only when state changed, prev and current states are updated.
-func (kvc *KuronaVc) SetState(s State) {
-	if kvc.currentState == s {
-		kvc.elapsedX += elapsedStepX
-		kvc.elapsedY += elapsedStepY
+func (vc *KuronaVc) SetState(s State) {
+	if vc.currentState == s {
+		vc.elapsedX += elapsedStepX
+		vc.elapsedY += elapsedStepY
 	} else {
-		kvc.prevState = kvc.currentState
-		kvc.currentState = s
+		vc.prevState = vc.currentState
+		vc.currentState = s
 
-		kvc.elapsedX = 1.0
-		kvc.elapsedY = 0.0
+		vc.elapsedX = 1.0
+		vc.elapsedY = 0.0
 	}
 }
 
 // GetVelocity returns the velocity to scroll the field parts and to update the character position.
-func (kvc *KuronaVc) GetVelocity() (*view.Vector, *view.Vector, *view.Vector) {
-	kvc.decideVbyState()
-	kvc.updateVelocity()
-	return kvc.scrollV, kvc.charaPosV, kvc.charaDrawV
+func (vc *KuronaVc) GetVelocity() (*view.Vector, *view.Vector, *view.Vector) {
+	vc.decideVbyState()
+	vc.updateVelocity()
+	return vc.scrollV, vc.charaPosV, vc.charaDrawV
 }
 
-func (kvc *KuronaVc) decideVbyState() {
-	switch kvc.currentState {
+func (vc *KuronaVc) decideVbyState() {
+	switch vc.currentState {
 	case Walk:
-		kvc.decideVofWalk()
+		vc.decideVofWalk()
 	case Dash:
-		kvc.decideVofDash()
+		vc.decideVofDash()
 	case Ascending:
-		kvc.deltaX = 0.6
-		kvc.deltaY = kvc.jumpV0 + kvc.gravity*kvc.elapsedY
+		vc.deltaX = 0.6
+		vc.deltaY = vc.jumpV0 + vc.gravity*vc.elapsedY
 	case Descending:
-		kvc.deltaX = 0.6
-		if kvc.deltaY > 9.0 {
-			kvc.deltaY = 9.0
+		vc.deltaX = 0.6
+		if vc.deltaY > 9.0 {
+			vc.deltaY = 9.0
 		} else {
-			kvc.deltaY = kvc.dropV0 + kvc.gravity*kvc.elapsedY
+			vc.deltaY = vc.dropV0 + vc.gravity*vc.elapsedY
 		}
 	default:
 		// Don't move
-		kvc.deltaX = 0.0
-		kvc.deltaY = 0.0
+		vc.deltaX = 0.0
+		vc.deltaY = 0.0
 	}
 }
 
@@ -109,13 +109,13 @@ func (vc *KuronaVc) decideVofDash() {
 }
 
 // updateVelocity updates all velocities. Please pass me the data for charaPosV.
-func (kvc *KuronaVc) updateVelocity() {
-	kvc.charaPosV.X = kvc.deltaX
-	kvc.charaPosV.Y = kvc.deltaY
+func (vc *KuronaVc) updateVelocity() {
+	vc.charaPosV.X = vc.deltaX
+	vc.charaPosV.Y = vc.deltaY
 
-	kvc.charaDrawV.X = 0.0
-	kvc.charaDrawV.Y = kvc.deltaY
+	vc.charaDrawV.X = 0.0
+	vc.charaDrawV.Y = vc.deltaY
 
-	kvc.scrollV.X = -kvc.deltaX
-	kvc.scrollV.Y = 0.0
+	vc.scrollV.X = -vc.deltaX
+	vc.scrollV.Y = 0.0
 }

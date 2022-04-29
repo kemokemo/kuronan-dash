@@ -39,46 +39,46 @@ type ShishimaruVc struct {
 	deltaX, deltaY float64
 }
 
-func (svc *ShishimaruVc) SetState(s State) {
-	if svc.currentState == s {
-		svc.elapsedX += elapsedStepX
-		svc.elapsedY += elapsedStepY
+func (vc *ShishimaruVc) SetState(s State) {
+	if vc.currentState == s {
+		vc.elapsedX += elapsedStepX
+		vc.elapsedY += elapsedStepY
 	} else {
-		svc.prevState = svc.currentState
-		svc.currentState = s
+		vc.prevState = vc.currentState
+		vc.currentState = s
 
-		svc.elapsedX = 1.0
-		svc.elapsedY = 0.0
+		vc.elapsedX = 1.0
+		vc.elapsedY = 0.0
 	}
 }
 
 // GetVelocity returns the velocity to scroll the field parts and to update the character position.
-func (svc *ShishimaruVc) GetVelocity() (*view.Vector, *view.Vector, *view.Vector) {
-	svc.decideVbyState()
-	svc.updateVelocity()
-	return svc.scrollV, svc.charaPosV, svc.charaDrawV
+func (vc *ShishimaruVc) GetVelocity() (*view.Vector, *view.Vector, *view.Vector) {
+	vc.decideVbyState()
+	vc.updateVelocity()
+	return vc.scrollV, vc.charaPosV, vc.charaDrawV
 }
 
-func (svc *ShishimaruVc) decideVbyState() {
-	switch svc.currentState {
+func (vc *ShishimaruVc) decideVbyState() {
+	switch vc.currentState {
 	case Walk:
-		svc.decideVofWalk()
+		vc.decideVofWalk()
 	case Dash:
-		svc.decideVofDash()
+		vc.decideVofDash()
 	case Ascending:
-		svc.deltaX = 0.6
-		svc.deltaY = svc.jumpV0 + svc.gravity*svc.elapsedY
+		vc.deltaX = 0.6
+		vc.deltaY = vc.jumpV0 + vc.gravity*vc.elapsedY
 	case Descending:
-		svc.deltaX = 0.6
-		if svc.deltaY > 9.0 {
-			svc.deltaY = 9.0
+		vc.deltaX = 0.6
+		if vc.deltaY > 9.0 {
+			vc.deltaY = 9.0
 		} else {
-			svc.deltaY = svc.dropV0 + svc.gravity*svc.elapsedY
+			vc.deltaY = vc.dropV0 + vc.gravity*vc.elapsedY
 		}
 	default:
 		// Don't move
-		svc.deltaX = 0.0
-		svc.deltaY = 0.0
+		vc.deltaX = 0.0
+		vc.deltaY = 0.0
 	}
 }
 
@@ -106,13 +106,13 @@ func (vc *ShishimaruVc) decideVofDash() {
 }
 
 // updateVelocity updates all velocities. Please pass me the data for charaPosV.
-func (svc *ShishimaruVc) updateVelocity() {
-	svc.charaPosV.X = svc.deltaX
-	svc.charaPosV.Y = svc.deltaY
+func (vc *ShishimaruVc) updateVelocity() {
+	vc.charaPosV.X = vc.deltaX
+	vc.charaPosV.Y = vc.deltaY
 
-	svc.charaDrawV.X = 0.0
-	svc.charaDrawV.Y = svc.deltaY
+	vc.charaDrawV.X = 0.0
+	vc.charaDrawV.Y = vc.deltaY
 
-	svc.scrollV.X = -svc.deltaX
-	svc.scrollV.Y = 0.0
+	vc.scrollV.X = -vc.deltaX
+	vc.scrollV.Y = 0.0
 }
