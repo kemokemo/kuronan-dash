@@ -4,10 +4,12 @@ import (
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
 
+// 黒菜:
+// 移動速度が速い。その代わり、障害物に当るとすぐに速度が落ちちゃう。
 const (
 	kuronaWalkMax             = 1.7
 	kuronaDashMax             = 3.0
-	kuronaDecelerateRate      = 0.9
+	kuronaDecelerateRate      = 1.2
 	kuronaInitialVelocityWalk = 0.1
 	kuronaInitialVelocityDash = 0.35
 )
