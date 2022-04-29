@@ -68,3 +68,7 @@ func NewPlayers() error {
 	Selected = Kurona
 	return nil
 }
+
+func InitializeCharacter() {
+	Selected = Kurona
+}
