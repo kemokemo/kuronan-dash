@@ -62,6 +62,7 @@ func (s *SelectScene) Initialize() error {
 	s.winRectArray = make([]image.Rectangle, s.lenChara)
 	s.selectArray = make([]vpad.SelectButton, s.lenChara)
 	s.selectedIndex = 0
+	chara.InitializeCharacter() // インデックスを更新したら選択キャラクターも初期化しよう
 
 	iw, ih := images.CharaWindow.Size()
 	for i := range s.selectArray {

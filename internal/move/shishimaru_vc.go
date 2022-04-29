@@ -2,6 +2,16 @@ package move
 
 import "github.com/kemokemo/kuronan-dash/internal/view"
 
+// 獅子丸:
+// 黒菜と独楽の中間性能。バランスがいいよ。
+const (
+	shishimaruWalkMax             = 1.5
+	shishimaruDashMax             = 2.6
+	shishimaruDecelerateRate      = 0.8
+	shishimaruInitialVelocityWalk = 0.07
+	shishimaruInitialVelocityDash = 0.2
+)
+
 // NewShishimaruVc returns a new VelocityController for Kurona.
 func NewShishimaruVc() *ShishimaruVc {
 	return &ShishimaruVc{
@@ -24,59 +34,85 @@ type ShishimaruVc struct {
 	dropV0         float64
 	currentState   State
 	prevState      State
-	elapsed        float64
+	elapsedX       float64
+	elapsedY       float64
 	deltaX, deltaY float64
 }
 
-func (svc *ShishimaruVc) SetState(s State) {
-	svc.prevState = svc.currentState
-	svc.currentState = s
-
-	if svc.prevState == s {
-		svc.elapsed += elapsedStep
+func (vc *ShishimaruVc) SetState(s State) {
+	if vc.currentState == s {
+		vc.elapsedX += elapsedStepX
+		vc.elapsedY += elapsedStepY
 	} else {
-		svc.elapsed = 0.0
+		vc.prevState = vc.currentState
+		vc.currentState = s
+
+		vc.elapsedX = 1.0
+		vc.elapsedY = 0.0
 	}
 }
 
 // GetVelocity returns the velocity to scroll the field parts and to update the character position.
-func (svc *ShishimaruVc) GetVelocity() (*view.Vector, *view.Vector, *view.Vector) {
-	svc.decideVbyState()
-	svc.updateVelocity()
-	return svc.scrollV, svc.charaPosV, svc.charaDrawV
+func (vc *ShishimaruVc) GetVelocity() (*view.Vector, *view.Vector, *view.Vector) {
+	vc.decideVbyState()
+	vc.updateVelocity()
+	return vc.scrollV, vc.charaPosV, vc.charaDrawV
 }
 
-// TODO: キャラクターごとに個性を出す部分
-// ダッシュから歩きに変わる時のX方向の速度の落ち方、上がり方もキャラごとに特性が出せたら素敵。
-func (svc *ShishimaruVc) decideVbyState() {
-	switch svc.currentState {
+func (vc *ShishimaruVc) decideVbyState() {
+	switch vc.currentState {
 	case Walk:
-		svc.deltaX = 1.0
-		svc.deltaY = 0.0
+		vc.decideVofWalk()
 	case Dash:
-		svc.deltaX = 2.0
-		svc.deltaY = 0.0
+		vc.decideVofDash()
 	case Ascending:
-		svc.deltaX = 0.6
-		svc.deltaY = svc.jumpV0 + svc.gravity*svc.elapsed
+		vc.deltaX = 0.6
+		vc.deltaY = vc.jumpV0 + vc.gravity*vc.elapsedY
 	case Descending:
-		svc.deltaX = 0.6
-		svc.deltaY = svc.dropV0 + svc.gravity*svc.elapsed
+		vc.deltaX = 0.6
+		if vc.deltaY > 9.0 {
+			vc.deltaY = 9.0
+		} else {
+			vc.deltaY = vc.dropV0 + vc.gravity*vc.elapsedY
+		}
 	default:
 		// Don't move
-		svc.deltaX = 0.0
-		svc.deltaY = 0.0
+		vc.deltaX = 0.0
+		vc.deltaY = 0.0
 	}
 }
 
+// ダッシュから歩きに変わる時のX方向の速度の落ち方、上がり方もキャラごとに特性を出す。
+func (vc *ShishimaruVc) decideVofWalk() {
+	if vc.prevState == Dash && vc.deltaX > shishimaruWalkMax {
+		// 減速処理
+		vc.deltaX -= shishimaruDecelerateRate * vc.elapsedX
+	} else {
+		vc.deltaX += shishimaruInitialVelocityWalk * vc.elapsedX
+		if vc.deltaX > shishimaruWalkMax {
+			vc.deltaX = shishimaruWalkMax
+		}
+	}
+
+	vc.deltaY = 0.0
+}
+
+func (vc *ShishimaruVc) decideVofDash() {
+	vc.deltaX += shishimaruInitialVelocityDash * vc.elapsedX
+	if vc.deltaX > shishimaruDashMax {
+		vc.deltaX = shishimaruDashMax
+	}
+	vc.deltaY = 0.0
+}
+
 // updateVelocity updates all velocities. Please pass me the data for charaPosV.
-func (svc *ShishimaruVc) updateVelocity() {
-	svc.charaPosV.X = svc.deltaX
-	svc.charaPosV.Y = svc.deltaY
+func (vc *ShishimaruVc) updateVelocity() {
+	vc.charaPosV.X = vc.deltaX
+	vc.charaPosV.Y = vc.deltaY
 
-	svc.charaDrawV.X = 0.0
-	svc.charaDrawV.Y = svc.deltaY
+	vc.charaDrawV.X = 0.0
+	vc.charaDrawV.Y = vc.deltaY
 
-	svc.scrollV.X = -svc.deltaX
-	svc.scrollV.Y = 0.0
+	vc.scrollV.X = -vc.deltaX
+	vc.scrollV.Y = 0.0
 }
