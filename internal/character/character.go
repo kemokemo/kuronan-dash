@@ -38,7 +38,7 @@ func NewPlayers() error {
 	Koma = &Player{
 		StandingImage: images.KomaStanding,
 		Description:   messages.DescKoma,
-		attackImage:   images.AttackFist,
+		attackImage:   images.AttackKomaFist,
 		animation:     anime.NewStepAnimation(images.KomaAnimation, 5),
 		jumpSe:        se.Jump,
 		dropSe:        se.Drop,
@@ -53,7 +53,7 @@ func NewPlayers() error {
 	Shishimaru = &Player{
 		StandingImage: images.ShishimaruStanding,
 		Description:   messages.DescShishimaru,
-		attackImage:   images.AttackFist,
+		attackImage:   images.AttackKomaFist,
 		animation:     anime.NewStepAnimation(images.ShishimaruAnimation, 5),
 		jumpSe:        se.Jump,
 		dropSe:        se.Drop,

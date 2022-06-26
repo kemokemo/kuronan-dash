@@ -53,6 +53,7 @@ func (p *Player) InitializeWithLanes(lanes *field.Lanes) error {
 	p.previous = move.Pause
 	p.current = move.Dash
 	p.stamina.Initialize()
+	p.tension.Initialize()
 
 	var err error
 	p.stateMachine, err = move.NewStateMachine(lanes, p.typeSe, p.maxDuration)
@@ -84,8 +85,8 @@ func (p *Player) InitializeWithLanes(lanes *field.Lanes) error {
 	return nil
 }
 
-func (p *Player) SetInputChecker(laneRectArray []image.Rectangle, upBtn, downBtn, atkBtn vpad.TriggerButton) {
-	p.stateMachine.SetInputChecker(laneRectArray, upBtn, downBtn, atkBtn)
+func (p *Player) SetInputChecker(laneRectArray []image.Rectangle, upBtn, downBtn, atkBtn, spBtn vpad.TriggerButton) {
+	p.stateMachine.SetInputChecker(laneRectArray, upBtn, downBtn, atkBtn, spBtn)
 }
 
 // Start starts playing.
@@ -115,7 +116,11 @@ func (p *Player) Update() {
 
 	// 次に動くべき速度から次のStateを決定
 	// State更新処理で判明した、レーンにめり込まないようにするためのオフセットを入手
-	p.current = p.stateMachine.Update(p.stamina.GetStamina(), p.charaPosV)
+	p.current = p.stateMachine.Update(
+		p.stamina.GetStamina(),
+		p.tension.Get(),
+		p.tension.IsMax(),
+		p.charaPosV)
 
 	p.sumTicks += 1.0 / ebiten.CurrentTPS()
 	if p.sumTicks >= 0.05 {
@@ -166,7 +171,7 @@ func (p *Player) GetStamina() int {
 	return p.stamina.GetStamina()
 }
 
-// GetRectangle returns the edge rentangle of this player.
+// GetRectangle returns the edge rectangle of this player.
 func (p *Player) GetRectangle() *view.HitRectangle {
 	return p.rect
 }

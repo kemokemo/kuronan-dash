@@ -10,4 +10,24 @@ const (
 	Ascending
 	Descending
 	Pause
+	Special
 )
+
+func (s State) String() string {
+	var str = ""
+	switch s {
+	case Dash:
+		str = "Dash"
+	case Walk:
+		str = "Walk"
+	case Ascending:
+		str = "Ascending"
+	case Descending:
+		str = "Descending"
+	case Pause:
+		str = "Pause"
+	case Special:
+		str = "Special"
+	}
+	return str
+}

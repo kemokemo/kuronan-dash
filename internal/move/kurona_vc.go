@@ -9,9 +9,11 @@ import (
 const (
 	kuronaWalkMax             = 1.7
 	kuronaDashMax             = 3.0
+	kuronaSpMax               = 3.6
 	kuronaDecelerateRate      = 1.2
 	kuronaInitialVelocityWalk = 0.1
 	kuronaInitialVelocityDash = 0.35
+	kuronaInitialVelocitySp   = 0.4
 )
 
 // NewKuronaVc returns a new VelocityController for Kurona.
@@ -68,6 +70,8 @@ func (vc *KuronaVc) decideVbyState() {
 		vc.decideVofWalk()
 	case Dash:
 		vc.decideVofDash()
+	case Special:
+		vc.decideVofSpecial()
 	case Ascending:
 		vc.deltaX = 0.6
 		vc.deltaY = vc.jumpV0 + vc.gravity*vc.elapsedY
@@ -104,6 +108,14 @@ func (vc *KuronaVc) decideVofDash() {
 	vc.deltaX += kuronaInitialVelocityDash * vc.elapsedX
 	if vc.deltaX > kuronaDashMax {
 		vc.deltaX = kuronaDashMax
+	}
+	vc.deltaY = 0.0
+}
+
+func (vc *KuronaVc) decideVofSpecial() {
+	vc.deltaX += kuronaInitialVelocitySp * vc.elapsedX
+	if vc.deltaX > kuronaSpMax {
+		vc.deltaX = kuronaSpMax
 	}
 	vc.deltaY = 0.0
 }

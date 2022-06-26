@@ -7,9 +7,11 @@ import "github.com/kemokemo/kuronan-dash/internal/view"
 const (
 	shishimaruWalkMax             = 1.5
 	shishimaruDashMax             = 2.6
+	shishimaruSpMax               = 3.0
 	shishimaruDecelerateRate      = 0.8
 	shishimaruInitialVelocityWalk = 0.07
 	shishimaruInitialVelocityDash = 0.2
+	shishimaruInitialVelocitySp   = 0.25
 )
 
 // NewShishimaruVc returns a new VelocityController for Kurona.
@@ -65,6 +67,8 @@ func (vc *ShishimaruVc) decideVbyState() {
 		vc.decideVofWalk()
 	case Dash:
 		vc.decideVofDash()
+	case Special:
+		vc.decideVofSp()
 	case Ascending:
 		vc.deltaX = 0.6
 		vc.deltaY = vc.jumpV0 + vc.gravity*vc.elapsedY
@@ -101,6 +105,14 @@ func (vc *ShishimaruVc) decideVofDash() {
 	vc.deltaX += shishimaruInitialVelocityDash * vc.elapsedX
 	if vc.deltaX > shishimaruDashMax {
 		vc.deltaX = shishimaruDashMax
+	}
+	vc.deltaY = 0.0
+}
+
+func (vc *ShishimaruVc) decideVofSp() {
+	vc.deltaX += shishimaruInitialVelocitySp * vc.elapsedX
+	if vc.deltaX > shishimaruSpMax {
+		vc.deltaX = shishimaruSpMax
 	}
 	vc.deltaY = 0.0
 }

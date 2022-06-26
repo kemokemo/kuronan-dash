@@ -26,6 +26,8 @@ var (
 	kurona_04_png []byte
 	//go:embed kurona_05.png
 	kurona_05_png []byte
+	//go:embed kurona_sp_back.png
+	kurona_sp_back_png []byte
 
 	//go:embed koma_taiki.png
 	koma_taiki_png []byte
@@ -57,8 +59,8 @@ var (
 	//go:embed shishimaru_05.png
 	shishimaru_05_png []byte
 
-	//go:embed Fist.png
-	fist_png []byte
+	//go:embed koma-fist.png
+	koma_fist_png []byte
 	//go:embed Scratch.png
 	scratch_png []byte
 
@@ -100,6 +102,8 @@ var (
 	down_button_png []byte
 	//go:embed AttackButton.png
 	attack_button_png []byte
+	//go:embed SpecialButton.png
+	special_button_png []byte
 
 	//go:embed goal_back.png
 	goal_back_png []byte

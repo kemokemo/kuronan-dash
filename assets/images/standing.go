@@ -28,7 +28,11 @@ func loadCharacters() error {
 	if err != nil {
 		return err
 	}
-	AttackFist, err = loadSingleImage(fist_png)
+	AttackKomaFist, err = loadSingleImage(koma_fist_png)
+	if err != nil {
+		return err
+	}
+	KuronaSpBack, err = loadSingleImage(kurona_sp_back_png)
 	if err != nil {
 		return err
 	}
