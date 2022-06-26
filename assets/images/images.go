@@ -64,7 +64,9 @@ var (
 	AttackScratch  *ebiten.Image
 
 	// character special cut-in image
-	KuronaSpBack *ebiten.Image
+	KuronaSpBack     *ebiten.Image
+	KomaSpBack       *ebiten.Image
+	ShishimaruSpBack *ebiten.Image
 )
 
 // LoadImages loads all public images.

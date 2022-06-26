@@ -36,6 +36,14 @@ func loadCharacters() error {
 	if err != nil {
 		return err
 	}
+	KomaSpBack, err = loadSingleImage(koma_sp_back_png)
+	if err != nil {
+		return err
+	}
+	ShishimaruSpBack, err = loadSingleImage(shishimaru_sp_back_png)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

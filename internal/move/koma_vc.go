@@ -7,7 +7,7 @@ import "github.com/kemokemo/kuronan-dash/internal/view"
 const (
 	komaWalkMax             = 1.2
 	komaDashMax             = 2.2
-	komaSpMax               = 3.0
+	komaSpMax               = 4.0
 	komaDecelerateRate      = 0.2
 	komaInitialVelocityWalk = 0.03
 	komaInitialVelocityDash = 0.1

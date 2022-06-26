@@ -28,6 +28,10 @@ var (
 	kurona_05_png []byte
 	//go:embed kurona_sp_back.png
 	kurona_sp_back_png []byte
+	//go:embed koma_sp_back.png
+	koma_sp_back_png []byte
+	//go:embed shishimaru_sp_back.png
+	shishimaru_sp_back_png []byte
 
 	//go:embed koma_taiki.png
 	koma_taiki_png []byte

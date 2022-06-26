@@ -9,7 +9,7 @@ import (
 const (
 	kuronaWalkMax             = 1.7
 	kuronaDashMax             = 3.0
-	kuronaSpMax               = 3.6
+	kuronaSpMax               = 6.0
 	kuronaDecelerateRate      = 1.2
 	kuronaInitialVelocityWalk = 0.1
 	kuronaInitialVelocityDash = 0.35

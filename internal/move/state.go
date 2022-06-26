@@ -10,6 +10,7 @@ const (
 	Ascending
 	Descending
 	Pause
+	SpecialEffect
 	Special
 )
 
@@ -26,6 +27,8 @@ func (s State) String() string {
 		str = "Descending"
 	case Pause:
 		str = "Pause"
+	case SpecialEffect:
+		str = "SpecialEffect"
 	case Special:
 		str = "Special"
 	}

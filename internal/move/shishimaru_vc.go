@@ -7,7 +7,7 @@ import "github.com/kemokemo/kuronan-dash/internal/view"
 const (
 	shishimaruWalkMax             = 1.5
 	shishimaruDashMax             = 2.6
-	shishimaruSpMax               = 3.0
+	shishimaruSpMax               = 4.7
 	shishimaruDecelerateRate      = 0.8
 	shishimaruInitialVelocityWalk = 0.07
 	shishimaruInitialVelocityDash = 0.2

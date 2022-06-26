@@ -129,6 +129,8 @@ func (s *Stage01Scene) Update(state *GameState) {
 			s.state = pause
 			s.player.Pause()
 			s.disc.Pause()
+		} else if s.player.StartSpEffect() {
+			s.state = specialEffect
 		} else {
 			s.run()
 		}
@@ -137,6 +139,11 @@ func (s *Stage01Scene) Update(state *GameState) {
 			s.state = run
 			s.player.ReStart()
 			s.disc.Play()
+		}
+	case specialEffect:
+		s.player.UpdateSpecialEffect()
+		if s.player.FinishSpEffect() {
+			s.state = run
 		}
 	case stageClear:
 		if s.iChecker.TriggeredStart() {
@@ -241,6 +248,8 @@ func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 		s.pauseBtn.Draw(screen)
 		text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
 			fonts.GamerFontS, 12, view.ScreenHeight-10, color.White)
+	case specialEffect:
+		s.player.DrawSpecialEffect(screen)
 	case stageClear:
 		text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
 			fonts.GamerFontS, 12, view.ScreenHeight-10, color.White)
