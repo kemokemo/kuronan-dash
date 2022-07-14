@@ -32,6 +32,10 @@ func loadCharacters() error {
 	if err != nil {
 		return err
 	}
+	AttackShishimaruFist, err = loadSingleImage(shishimaru_fist_png)
+	if err != nil {
+		return err
+	}
 	KuronaSpBack, err = loadSingleImage(kurona_sp_back_png)
 	if err != nil {
 		return err

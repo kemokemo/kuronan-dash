@@ -60,8 +60,9 @@ var (
 	ShishimaruAnimation []*ebiten.Image
 
 	// character attack image
-	AttackKomaFist *ebiten.Image
-	AttackScratch  *ebiten.Image
+	AttackKomaFist       *ebiten.Image
+	AttackShishimaruFist *ebiten.Image
+	AttackScratch        *ebiten.Image
 
 	// character special cut-in image
 	KuronaSpBack     *ebiten.Image

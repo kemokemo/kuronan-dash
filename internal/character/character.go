@@ -57,7 +57,7 @@ func NewPlayers() error {
 	Shishimaru = &Player{
 		StandingImage:  images.ShishimaruStanding,
 		Description:    messages.DescShishimaru,
-		attackImage:    images.AttackKomaFist,
+		attackImage:    images.AttackShishimaruFist,
 		specialImage:   images.ShishimaruSpBack,
 		animation:      anime.NewStepAnimation(images.ShishimaruAnimation, 5),
 		jumpSe:         se.Jump,

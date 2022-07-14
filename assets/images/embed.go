@@ -65,6 +65,8 @@ var (
 
 	//go:embed koma-fist.png
 	koma_fist_png []byte
+	//go:embed shishimaru-fist.png
+	shishimaru_fist_png []byte
 	//go:embed Scratch.png
 	scratch_png []byte
 
