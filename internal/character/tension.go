@@ -15,6 +15,11 @@ func NewTension(max, border int) *Tension {
 	return &Tension{max: max, languor: border}
 }
 
+func (t *Tension) Initialize() {
+	t.val = 0
+	t.valRate = 0
+}
+
 // AddByState adds val to tension's val.
 func (t *Tension) AddByState(state move.State) {
 	switch state {
@@ -22,6 +27,8 @@ func (t *Tension) AddByState(state move.State) {
 		t.add(2)
 	case move.Walk:
 		t.add(1)
+	case move.Special:
+		t.remove(1)
 	default:
 		// not add tension.
 	}
@@ -43,6 +50,20 @@ func (t *Tension) add(val int) {
 	}
 }
 
+func (t *Tension) remove(val int) {
+	if t.val < 0 {
+		return
+	}
+	t.val -= val
+	if t.val < 0 {
+		t.val = 0
+	}
+}
+
 func (t *Tension) Get() int {
 	return t.val
+}
+
+func (t *Tension) IsMax() bool {
+	return t.val >= t.max
 }

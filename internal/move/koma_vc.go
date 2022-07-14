@@ -7,9 +7,11 @@ import "github.com/kemokemo/kuronan-dash/internal/view"
 const (
 	komaWalkMax             = 1.2
 	komaDashMax             = 2.2
+	komaSpMax               = 4.0
 	komaDecelerateRate      = 0.2
 	komaInitialVelocityWalk = 0.03
 	komaInitialVelocityDash = 0.1
+	komaInitialVelocitySp   = 0.15
 )
 
 // NewKomaVc returns a new VelocityController for Kurona.
@@ -65,6 +67,8 @@ func (vc *KomaVc) decideVbyState() {
 		vc.decideVofWalk()
 	case Dash:
 		vc.decideVofDash()
+	case Special:
+		vc.decideVofSpecial()
 	case Ascending:
 		vc.deltaX = 0.6
 		vc.deltaY = vc.jumpV0 + vc.gravity*vc.elapsedY
@@ -101,6 +105,14 @@ func (vc *KomaVc) decideVofDash() {
 	vc.deltaX += komaInitialVelocityDash * vc.elapsedX
 	if vc.deltaX > komaDashMax {
 		vc.deltaX = komaDashMax
+	}
+	vc.deltaY = 0.0
+}
+
+func (vc *KomaVc) decideVofSpecial() {
+	vc.deltaX += komaInitialVelocitySp * vc.elapsedX
+	if vc.deltaX > komaSpMax {
+		vc.deltaX = komaSpMax
 	}
 	vc.deltaY = 0.0
 }

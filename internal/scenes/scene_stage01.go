@@ -42,6 +42,7 @@ type Stage01Scene struct {
 	upBtn     vpad.TriggerButton
 	downBtn   vpad.TriggerButton
 	atkBtn    vpad.TriggerButton
+	spBtn     vpad.TriggerButton
 	pauseBg   *ebiten.Image
 	pauseBgOp *ebiten.DrawImageOptions
 }
@@ -95,7 +96,9 @@ func (s *Stage01Scene) Initialize() error {
 	s.downBtn.SetLocation(20+bW+10, view.ScreenHeight-bH-45)
 	s.atkBtn = vpad.NewTriggerButton(images.AttackButton, vpad.JustPressed, vpad.SelectColor)
 	s.atkBtn.SetLocation(view.ScreenWidth-20-2*bW-10, view.ScreenHeight-bH-45)
-	s.player.SetInputChecker(laneRectArray, s.upBtn, s.downBtn, s.atkBtn)
+	s.spBtn = vpad.NewTriggerButton(images.SpecialButton, vpad.JustPressed, vpad.SelectColor)
+	s.spBtn.SetLocation(view.ScreenWidth-bW-20, view.ScreenHeight-bH-45)
+	s.player.SetInputChecker(laneRectArray, s.upBtn, s.downBtn, s.atkBtn, s.spBtn)
 
 	s.startBtn = vpad.NewTriggerButton(images.StartButton, vpad.JustPressed, vpad.SelectColor)
 	s.startBtn.SetLocation(view.ScreenWidth/2-64, view.ScreenHeight/2-128)
@@ -126,6 +129,8 @@ func (s *Stage01Scene) Update(state *GameState) {
 			s.state = pause
 			s.player.Pause()
 			s.disc.Pause()
+		} else if s.player.StartSpEffect() {
+			s.state = specialEffect
 		} else {
 			s.run()
 		}
@@ -134,6 +139,11 @@ func (s *Stage01Scene) Update(state *GameState) {
 			s.state = run
 			s.player.ReStart()
 			s.disc.Play()
+		}
+	case specialEffect:
+		s.player.UpdateSpecialEffect()
+		if s.player.FinishSpEffect() {
+			s.state = run
 		}
 	case stageClear:
 		if s.iChecker.TriggeredStart() {
@@ -220,6 +230,7 @@ func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 	s.upBtn.Draw(screen)
 	s.downBtn.Draw(screen)
 	s.atkBtn.Draw(screen)
+	s.spBtn.Draw(screen)
 
 	// TODO: StartとPauseのボタンは見えてないだけで、該当する場所を押せばボタンはトリガーされる。弊害がありそうなら処置する。
 	switch s.state {
@@ -237,6 +248,8 @@ func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 		s.pauseBtn.Draw(screen)
 		text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
 			fonts.GamerFontS, 12, view.ScreenHeight-10, color.White)
+	case specialEffect:
+		s.player.DrawSpecialEffect(screen)
 	case stageClear:
 		text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
 			fonts.GamerFontS, 12, view.ScreenHeight-10, color.White)

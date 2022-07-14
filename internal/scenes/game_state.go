@@ -12,6 +12,7 @@ const (
 	wait gameState = iota
 	run
 	pause
+	specialEffect
 	stageClear
 	gameOver
 )

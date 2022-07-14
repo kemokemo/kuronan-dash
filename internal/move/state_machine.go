@@ -14,66 +14,76 @@ import (
 
 // StateMachine manages the player's state.
 type StateMachine struct {
-	pos         *view.Vector
-	current     State
-	previous    State
-	isBlocked   bool
-	jumpSe      *se.Player
-	dropSe      *se.Player
-	attackSe    *se.Player
-	lanes       *field.Lanes
-	offset      *view.Vector
-	iChecker    input.InputChecker
-	attacked    bool
-	drawing     bool
-	duration    int
-	maxDuration int
+	pos            *view.Vector
+	current        State
+	previous       State
+	isBlocked      bool
+	jumpSe         *se.Player
+	dropSe         *se.Player
+	attackSe       *se.Player
+	lanes          *field.Lanes
+	offset         *view.Vector
+	iChecker       input.InputChecker
+	attacked       bool
+	drawing        bool
+	atkDuration    int
+	atkMaxDuration int
+	startSpEffect  bool
+	finishSpEffect bool
+	spDuration     int
+	spMaxDuration  int
 }
 
-func NewStateMachine(lanes *field.Lanes, typeSe se.SoundType, maxDuration int) (*StateMachine, error) {
+func NewStateMachine(lanes *field.Lanes, typeSe se.SoundType, atkMaxDuration int, spMaxDuration int) (*StateMachine, error) {
 	heights := lanes.GetLaneHeights()
 	if len(heights) == 0 {
 		return nil, fmt.Errorf("heights is empty")
 	}
 
 	sm := StateMachine{
-		pos:         &view.Vector{X: view.DrawPosition, Y: lanes.GetTargetLaneHeight()},
-		current:     Dash,
-		previous:    Pause,
-		isBlocked:   false,
-		jumpSe:      se.Jump,
-		dropSe:      se.Drop,
-		attackSe:    se.GetAttackSe(typeSe),
-		lanes:       lanes,
-		offset:      &view.Vector{X: 0.0, Y: 0.0},
-		maxDuration: maxDuration,
-		duration:    maxDuration,
+		pos:            &view.Vector{X: view.DrawPosition, Y: lanes.GetTargetLaneHeight()},
+		current:        Dash,
+		previous:       Pause,
+		isBlocked:      false,
+		jumpSe:         se.Jump,
+		dropSe:         se.Drop,
+		attackSe:       se.GetAttackSe(typeSe),
+		lanes:          lanes,
+		offset:         &view.Vector{X: 0.0, Y: 0.0},
+		atkMaxDuration: atkMaxDuration,
+		atkDuration:    atkMaxDuration,
+		spDuration:     0,
+		spMaxDuration:  spMaxDuration,
 	}
 
 	return &sm, nil
 }
 
-func (sm *StateMachine) SetInputChecker(laneRectArray []image.Rectangle, upBtn, downBtn, atkBtn vpad.TriggerButton) {
+func (sm *StateMachine) SetInputChecker(laneRectArray []image.Rectangle, upBtn, downBtn, atkBtn, spBtn vpad.TriggerButton) {
 	sm.iChecker = &input.PlayerInputChecker{
-		RectArray: laneRectArray,
-		UpBtn:     upBtn,
-		DownBtn:   downBtn,
-		AttackBtn: atkBtn,
+		RectArray:  laneRectArray,
+		UpBtn:      upBtn,
+		DownBtn:    downBtn,
+		AttackBtn:  atkBtn,
+		SpecialBtn: spBtn,
 	}
 }
 
 // Update updates the state.
-func (sm *StateMachine) Update(stamina int, charaPosV *view.Vector) State {
+func (sm *StateMachine) Update(stamina int, tension int, isMaxTension bool, charaPosV *view.Vector) State {
 	sm.pos.Add(charaPosV)
 	sm.offset.Y = 0.0
 
-	sm.updateWithStaminaAndMove(stamina, charaPosV)
-	sm.updateWithKey(charaPosV.Y)
+	sm.updateWithStaminaAndMove(stamina, tension, charaPosV)
+	sm.updateWithKey(isMaxTension, charaPosV.Y)
+
+	// Debug
+	// log.Printf("current state: %s, isMaxTension: %v\n", sm.current, isMaxTension)
 
 	return sm.current
 }
 
-func (sm *StateMachine) updateWithStaminaAndMove(stamina int, charaPosV *view.Vector) {
+func (sm *StateMachine) updateWithStaminaAndMove(stamina int, tension int, charaPosV *view.Vector) {
 	switch sm.current {
 	case Ascending:
 		if sm.IsReachedUpperLane(charaPosV.Y) {
@@ -88,18 +98,33 @@ func (sm *StateMachine) updateWithStaminaAndMove(stamina int, charaPosV *view.Ve
 			sm.previous = Dash
 			sm.current = Walk
 		}
-	case Walk:
-		if stamina > 0 {
-			sm.previous = Walk
+	case Special:
+		sm.finishSpEffect = false
+		// TODO: Special状態では障害物で遅くなりにくい、みたいな特性をどうやって表現するか
+		if stamina <= 0 || sm.isBlocked {
+			sm.previous = Special
+			sm.current = Walk
+		} else if tension <= 0 {
+			sm.previous = Special
 			sm.current = Dash
+
+		}
+	case Walk:
+		if stamina > 0 && !sm.isBlocked {
+			if sm.previous == Special {
+				sm.current = Special
+			} else {
+				sm.current = Dash
+			}
+			sm.previous = Walk
 		}
 	default:
 		log.Println("unknown state: ", sm.current)
 	}
 }
 
-func (sm *StateMachine) updateWithKey(vY float64) {
-	if !(sm.current == Dash) && !(sm.current == Walk) {
+func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
+	if !(sm.current == Dash) && !(sm.current == Walk) && !(sm.current == Special) && !(sm.current == SpecialEffect) {
 		return
 	}
 
@@ -129,16 +154,16 @@ func (sm *StateMachine) updateWithKey(vY float64) {
 		}
 	}
 
-	if sm.duration < sm.maxDuration {
+	if sm.atkDuration < sm.atkMaxDuration {
 		if sm.drawing {
-			sm.duration++
+			sm.atkDuration++
 		}
 		sm.attacked = false
 	} else {
 		if sm.iChecker.TriggeredAttack() {
 			sm.attacked = true
 			sm.drawing = true
-			sm.duration = 0
+			sm.atkDuration = 0
 			err := sm.attackSe.Play()
 			if err != nil {
 				log.Println("failed to play attack SE: ", err)
@@ -147,6 +172,21 @@ func (sm *StateMachine) updateWithKey(vY float64) {
 			sm.attacked = false
 			sm.drawing = false
 		}
+	}
+
+	if sm.iChecker.TriggeredSpecial() && isMaxTension {
+		sm.previous = sm.current
+		sm.current = SpecialEffect
+		sm.startSpEffect = true
+	}
+}
+
+func (sm *StateMachine) UpdateSpecialEffect() {
+	sm.startSpEffect = false
+	sm.spDuration++
+	if sm.spDuration >= sm.spMaxDuration {
+		sm.finishSpEffect = true
+		sm.current = Special
 	}
 }
 
@@ -194,4 +234,12 @@ func (sm *StateMachine) Attacked() bool {
 
 func (sm *StateMachine) DrawAttack() bool {
 	return sm.drawing
+}
+
+func (sm *StateMachine) StartSpEffect() bool {
+	return sm.startSpEffect
+}
+
+func (sm *StateMachine) FinishSpEffect() bool {
+	return sm.finishSpEffect
 }

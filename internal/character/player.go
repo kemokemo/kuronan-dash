@@ -16,18 +16,21 @@ import (
 // Player is a player character.
 type Player struct {
 	// Specified at creation and not changed
-	StandingImage *ebiten.Image
-	Description   string
-	attackImage   *ebiten.Image
-	animation     *anime.StepAnimation
-	jumpSe        *se.Player
-	dropSe        *se.Player
-	typeSe        se.SoundType
-	maxDuration   int
+	StandingImage  *ebiten.Image
+	Description    string
+	attackImage    *ebiten.Image
+	specialImage   *ebiten.Image
+	animation      *anime.StepAnimation
+	jumpSe         *se.Player
+	dropSe         *se.Player
+	typeSe         se.SoundType
+	atkMaxDuration int
+	spMaxDuration  int
 
 	// Update each time based on the internal status and other information
 	op         *ebiten.DrawImageOptions
 	atkOp      *ebiten.DrawImageOptions
+	spOp       *ebiten.DrawImageOptions
 	vc         move.VelocityController
 	scrollV    *view.Vector
 	tempPosV   *view.Vector
@@ -53,9 +56,10 @@ func (p *Player) InitializeWithLanes(lanes *field.Lanes) error {
 	p.previous = move.Pause
 	p.current = move.Dash
 	p.stamina.Initialize()
+	p.tension.Initialize()
 
 	var err error
-	p.stateMachine, err = move.NewStateMachine(lanes, p.typeSe, p.maxDuration)
+	p.stateMachine, err = move.NewStateMachine(lanes, p.typeSe, p.atkMaxDuration, p.spMaxDuration)
 	if err != nil {
 		return err
 	}
@@ -72,6 +76,7 @@ func (p *Player) InitializeWithLanes(lanes *field.Lanes) error {
 	p.op.GeoM.Translate(view.DrawPosition, initialY)
 	p.atkOp = &ebiten.DrawImageOptions{}
 	p.atkOp.GeoM.Translate(view.DrawPosition+float64(w)+5, initialY+20)
+	p.spOp = &ebiten.DrawImageOptions{}
 
 	rectOffset := 3.0
 	p.rect = view.NewHitRectangle(
@@ -84,8 +89,8 @@ func (p *Player) InitializeWithLanes(lanes *field.Lanes) error {
 	return nil
 }
 
-func (p *Player) SetInputChecker(laneRectArray []image.Rectangle, upBtn, downBtn, atkBtn vpad.TriggerButton) {
-	p.stateMachine.SetInputChecker(laneRectArray, upBtn, downBtn, atkBtn)
+func (p *Player) SetInputChecker(laneRectArray []image.Rectangle, upBtn, downBtn, atkBtn, spBtn vpad.TriggerButton) {
+	p.stateMachine.SetInputChecker(laneRectArray, upBtn, downBtn, atkBtn, spBtn)
 }
 
 // Start starts playing.
@@ -115,7 +120,14 @@ func (p *Player) Update() {
 
 	// 次に動くべき速度から次のStateを決定
 	// State更新処理で判明した、レーンにめり込まないようにするためのオフセットを入手
-	p.current = p.stateMachine.Update(p.stamina.GetStamina(), p.charaPosV)
+	p.current = p.stateMachine.Update(
+		p.stamina.GetStamina(),
+		p.tension.Get(),
+		p.tension.IsMax(),
+		p.charaPosV)
+	if p.current == move.SpecialEffect || p.current == move.Pause {
+		return
+	}
 
 	p.sumTicks += 1.0 / ebiten.CurrentTPS()
 	if p.sumTicks >= 0.05 {
@@ -142,6 +154,10 @@ func (p *Player) updateVelWithOffset(offsetV *view.Vector) {
 	p.charaDrawV.Y = p.tempDrawV.Y + offsetV.Y
 }
 
+func (p *Player) UpdateSpecialEffect() {
+	p.stateMachine.UpdateSpecialEffect()
+}
+
 // Draw draws the character image.
 func (p *Player) Draw(screen *ebiten.Image) {
 	// TODO: ダッシュ中とか奥義中とか状態に応じて多少前後しつつ、ほぼ画面中央に描画したい
@@ -149,6 +165,10 @@ func (p *Player) Draw(screen *ebiten.Image) {
 	if p.stateMachine.DrawAttack() {
 		screen.DrawImage(p.attackImage, p.atkOp)
 	}
+}
+
+func (p *Player) DrawSpecialEffect(screen *ebiten.Image) {
+	screen.DrawImage(p.specialImage, p.spOp)
 }
 
 // GetPosition return the current position of this player.
@@ -166,7 +186,7 @@ func (p *Player) GetStamina() int {
 	return p.stamina.GetStamina()
 }
 
-// GetRectangle returns the edge rentangle of this player.
+// GetRectangle returns the edge rectangle of this player.
 func (p *Player) GetRectangle() *view.HitRectangle {
 	return p.rect
 }
@@ -214,4 +234,12 @@ func (p *Player) AddTension(num int) {
 
 func (p *Player) GetTension() int {
 	return p.tension.Get()
+}
+
+func (p *Player) StartSpEffect() bool {
+	return p.stateMachine.StartSpEffect()
+}
+
+func (p *Player) FinishSpEffect() bool {
+	return p.stateMachine.FinishSpEffect()
 }

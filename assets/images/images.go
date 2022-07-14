@@ -35,13 +35,11 @@ var (
 	RockNormal   *ebiten.Image
 )
 
-// Foods
 var (
+	// Foods
 	Onigiri *ebiten.Image
-)
 
-// UI parts
-var (
+	// UI parts
 	CharaWindow       *ebiten.Image
 	CharaSelectButton *ebiten.Image
 	PauseButton       *ebiten.Image
@@ -49,26 +47,26 @@ var (
 	UpButton          *ebiten.Image
 	DownButton        *ebiten.Image
 	AttackButton      *ebiten.Image
-)
+	SpecialButton     *ebiten.Image
 
-// character standing image
-var (
+	// character standing image
 	KuronaStanding     *ebiten.Image
 	KomaStanding       *ebiten.Image
 	ShishimaruStanding *ebiten.Image
-)
 
-// character animation
-var (
+	// character animation
 	KuronaAnimation     []*ebiten.Image
 	KomaAnimation       []*ebiten.Image
 	ShishimaruAnimation []*ebiten.Image
-)
 
-// character attack image
-var (
-	AttackFist    *ebiten.Image
-	AttackScratch *ebiten.Image
+	// character attack image
+	AttackKomaFist *ebiten.Image
+	AttackScratch  *ebiten.Image
+
+	// character special cut-in image
+	KuronaSpBack     *ebiten.Image
+	KomaSpBack       *ebiten.Image
+	ShishimaruSpBack *ebiten.Image
 )
 
 // LoadImages loads all public images.
