@@ -3,7 +3,7 @@ name: Test and Build
 on: [push, pull_request]
 
 jobs:
-  test:
+  test-and-build:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
@@ -48,51 +48,24 @@ jobs:
       - name: go test
         run: |
           go test -v ./...
-      
-  build:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        go: ['1.18.x']
-    name: Test with Go ${{ matrix.go }} on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    env:
-      DISPLAY: ':99.0'
-    defaults:
-      run:
-        shell: bash
-    steps:
-      - name: Setup Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go }}
-          stable: true
 
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Install dependencies
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: |
-          sudo apt-get update
-          sudo apt-get install libasound2-dev libgl1-mesa-dev libxcursor-dev libxi-dev libxinerama-dev libxrandr-dev libxxf86vm-dev
-
-      - name: Xvfb
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: |
-          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-
-      - name: build for ubuntu
+      - name: Build for ubuntu
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |
           CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -ldflags="-X 'main.Revision=$(git rev-parse --short HEAD)'" -o release/kuronan-dash_linux_amd64
 
-      - name: build for windows
+      - name: Build WebAssembly
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+          GOOS=js GOARCH=wasm go build -ldflags="-X 'main.Revision=$(git rev-parse --short HEAD)'" -o public/kuronan-dash.wasm
+
+      - name: Build for windows
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
           CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build -ldflags="-X 'main.Revision=$(git rev-parse --short HEAD)'" -o release/kuronan-dash_windows_amd64.exe
 
-      - name: build for macos
+      - name: Build for macos
         if: ${{ matrix.os == 'macos-latest' }}
         run: |
           CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build -ldflags="-X 'main.Revision=$(git rev-parse --short HEAD)'" -o release/kuronan-dash_macOS_amd64
+      
