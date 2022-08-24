@@ -118,7 +118,10 @@ func (s *SelectScene) Update(state *GameState) {
 		}
 		s.selectChanged = true
 		s.selectedIndex = i
-		chara.Selected = s.charaList[i]
+	}
+
+	if s.selectChanged {
+		chara.Selected = s.charaList[s.selectedIndex]
 	}
 
 	for i := range s.selectArray {
