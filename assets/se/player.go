@@ -17,11 +17,9 @@ type Player struct {
 // Play plays a sound effect
 // If you execute this feature before playing finished, you can get the new sound from start.
 func (p *Player) Play() {
-	if !p.player.IsPlaying() {
-		err := p.player.Rewind()
-		if err != nil {
-			log.Println("failed to rewind, ", err)
-		}
+	err := p.player.Rewind()
+	if err != nil {
+		log.Println("failed to rewind, ", err)
 	}
 	p.player.Play()
 }
