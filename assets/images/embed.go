@@ -115,4 +115,11 @@ var (
 	goal_back_png []byte
 	//go:embed goal_front.png
 	goal_front_png []byte
+
+	//go:embed kurona_sp_effect.png
+	kurona_sp_effect_png []byte
+	//go:embed koma_sp_effect.png
+	koma_sp_effect_png []byte
+	//go:embed shishimaru_sp_effect.png
+	shishimaru_sp_effect_png []byte
 )

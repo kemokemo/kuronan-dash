@@ -1,6 +1,6 @@
 package images
 
-func loadFieldparts() error {
+func loadFieldParts() error {
 	var err error
 
 	// General
