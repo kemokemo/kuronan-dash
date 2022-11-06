@@ -32,12 +32,14 @@ func LoadMusic() error {
 		return err
 	}
 	Title = &Disc{Name: "しぶがき の くろねこ", player: p}
+	Title.SetVolume(0.8)
 
 	p, err = loadPlayer(hashire_kurona_mp3)
 	if err != nil {
 		return err
 	}
 	Stage01 = &Disc{Name: "はしれ! くろな!", player: p}
+	Stage01.SetVolume(0.8)
 
 	return nil
 }

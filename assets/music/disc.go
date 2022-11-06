@@ -15,6 +15,10 @@ func (d *Disc) Close() error {
 	return d.player.Close()
 }
 
+func (d *Disc) SetVolume(volume float64) {
+	d.player.SetVolume(volume)
+}
+
 // Play plays a preselected disc.
 func (d *Disc) Play() {
 	d.player.Play()

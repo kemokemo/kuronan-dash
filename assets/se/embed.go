@@ -12,4 +12,9 @@ var (
 	attack_scratch_wav []byte
 	//go:embed attack-swipe.wav
 	attack_swipe_wav []byte
+
+	//go:embed title-call.wav
+	title_call_wav []byte
+	//go:embed character-select-voice.wav
+	character_select_voice_wav []byte
 )

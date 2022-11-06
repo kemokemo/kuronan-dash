@@ -9,6 +9,9 @@ var (
 
 	attackScratch *Player
 	attackSwipe   *Player
+
+	TitleCall            *Player
+	CharacterSelectVoice *Player
 )
 
 // LoadSE loads all sound effects.
@@ -28,6 +31,14 @@ func LoadSE() error {
 		return err
 	}
 	attackSwipe, err = loadPlayer(attack_swipe_wav)
+	if err != nil {
+		return err
+	}
+	TitleCall, err = loadPlayer(title_call_wav)
+	if err != nil {
+		return err
+	}
+	CharacterSelectVoice, err = loadPlayer(character_select_voice_wav)
 	if err != nil {
 		return err
 	}
