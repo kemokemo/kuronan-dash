@@ -17,4 +17,8 @@ var (
 	title_call_wav []byte
 	//go:embed character-select-voice.wav
 	character_select_voice_wav []byte
+	//go:embed ready.wav
+	ready_wav []byte
+	//go:embed go.wav
+	go_wav []byte
 )

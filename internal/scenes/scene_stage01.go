@@ -15,6 +15,7 @@ import (
 	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/assets/messages"
 	"github.com/kemokemo/kuronan-dash/assets/music"
+	"github.com/kemokemo/kuronan-dash/assets/se"
 
 	vpad "github.com/kemokemo/ebiten-virtualpad"
 	chara "github.com/kemokemo/kuronan-dash/internal/character"
@@ -26,25 +27,27 @@ import (
 
 // Stage01Scene is the scene for the 1st stage game.
 type Stage01Scene struct {
-	state     gameState
-	player    *chara.Player
-	disc      *music.Disc
-	field     field.Field
-	goalX     float64
-	timeLimit int // second
-	time      int // second
-	sumTicks  float64
-	msgWindow *ui.MessageWindow
-	uiMsg     string
-	iChecker  input.InputChecker
-	startBtn  vpad.TriggerButton
-	pauseBtn  vpad.TriggerButton
-	upBtn     vpad.TriggerButton
-	downBtn   vpad.TriggerButton
-	atkBtn    vpad.TriggerButton
-	spBtn     vpad.TriggerButton
-	pauseBg   *ebiten.Image
-	pauseBgOp *ebiten.DrawImageOptions
+	state      gameState
+	player     *chara.Player
+	disc       *music.Disc
+	readyVoice *se.Player
+	goVoice    *se.Player
+	field      field.Field
+	goalX      float64
+	timeLimit  int // second
+	time       int // second
+	sumTicks   float64
+	msgWindow  *ui.MessageWindow
+	uiMsg      string
+	iChecker   input.InputChecker
+	startBtn   vpad.TriggerButton
+	pauseBtn   vpad.TriggerButton
+	upBtn      vpad.TriggerButton
+	downBtn    vpad.TriggerButton
+	atkBtn     vpad.TriggerButton
+	spBtn      vpad.TriggerButton
+	pauseBg    *ebiten.Image
+	pauseBgOp  *ebiten.DrawImageOptions
 }
 
 // Initialize initializes all resources.
@@ -53,6 +56,8 @@ func (s *Stage01Scene) Initialize() error {
 	s.timeLimit = 90
 	s.time = s.timeLimit
 	s.disc = music.Stage01
+	s.readyVoice = se.ReadyVoice
+	s.goVoice = se.GoVoice
 
 	s.player = chara.Selected
 	lanes := field.NewLanes(field.PrairieLane)
@@ -120,6 +125,16 @@ func (s *Stage01Scene) Update(state *GameState) {
 	switch s.state {
 	case wait:
 		if s.iChecker.TriggeredStart() {
+			s.state = readyCall
+			s.readyVoice.Play()
+		}
+	case readyCall:
+		if !s.readyVoice.IsPlaying() {
+			s.state = goCall
+			s.goVoice.Play()
+		}
+	case goCall:
+		if !s.goVoice.IsPlaying() {
 			s.state = run
 			s.player.Start()
 			s.disc.Play()
@@ -238,6 +253,10 @@ func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 		screen.DrawImage(s.pauseBg, s.pauseBgOp)
 		text.Draw(screen, messages.GameStart, fonts.GamerFontL, view.ScreenWidth/2-280, view.ScreenHeight/2+30, color.White)
 		s.startBtn.Draw(screen)
+	case readyCall:
+		text.Draw(screen, messages.GameReady, fonts.GamerFontL, view.ScreenWidth/2-30, view.ScreenHeight/2+30, color.White)
+	case goCall:
+		text.Draw(screen, messages.GameGo, fonts.GamerFontL, view.ScreenWidth/2-20, view.ScreenHeight/2+30, color.White)
 	case pause:
 		text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
 			fonts.GamerFontS, 12, view.ScreenHeight-10, color.White)

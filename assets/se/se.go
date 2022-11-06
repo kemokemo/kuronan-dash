@@ -12,6 +12,8 @@ var (
 
 	TitleCall            *Player
 	CharacterSelectVoice *Player
+	ReadyVoice           *Player
+	GoVoice              *Player
 )
 
 // LoadSE loads all sound effects.
@@ -39,6 +41,14 @@ func LoadSE() error {
 		return err
 	}
 	CharacterSelectVoice, err = loadPlayer(character_select_voice_wav)
+	if err != nil {
+		return err
+	}
+	ReadyVoice, err = loadPlayer(ready_wav)
+	if err != nil {
+		return err
+	}
+	GoVoice, err = loadPlayer(go_wav)
 	if err != nil {
 		return err
 	}
