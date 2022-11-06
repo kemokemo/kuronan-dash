@@ -1,6 +1,7 @@
 package scenes
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"log"
@@ -15,6 +16,7 @@ import (
 	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/assets/messages"
 	"github.com/kemokemo/kuronan-dash/assets/music"
+	"github.com/kemokemo/kuronan-dash/assets/se"
 	chara "github.com/kemokemo/kuronan-dash/internal/character"
 	"github.com/kemokemo/kuronan-dash/internal/input"
 	"github.com/kemokemo/kuronan-dash/internal/ui"
@@ -36,6 +38,7 @@ type SelectScene struct {
 	bg            *ebiten.Image
 	bgViewPort    *view.Viewport
 	disc          *music.Disc
+	selectVoice   *se.Player
 	msgWindow     *ui.MessageWindow
 	fontNormal    font.Face
 	iChecker      input.InputChecker
@@ -56,6 +59,7 @@ func (s *SelectScene) Initialize() error {
 	s.bgViewPort.SetVelocity(1.0)
 	s.bgViewPort.SetLoop(true)
 	s.disc = music.Title
+	s.selectVoice = se.CharacterSelectVoice
 
 	s.charaList = []*chara.Player{chara.Kurona, chara.Koma, chara.Shishimaru}
 	s.lenChara = len(s.charaList)
@@ -95,6 +99,10 @@ func (s *SelectScene) Initialize() error {
 
 // Update updates the status of this scene.
 func (s *SelectScene) Update(state *GameState) {
+	if !s.selectVoice.IsPlaying() {
+		s.disc.SetVolume(0.8)
+	}
+
 	s.selectChanged = false
 
 	s.iChecker.Update()
@@ -232,10 +240,22 @@ func (s *SelectScene) takeTextPosition(i int) image.Point {
 
 // StartMusic starts playing music
 func (s *SelectScene) StartMusic() {
+	s.selectVoice.Play()
+	s.disc.SetVolume(0.3)
 	s.disc.Play()
 }
 
-// StopMusic stops playing music
+// StopMusic stops playing music and sound effects
 func (s *SelectScene) StopMusic() error {
-	return s.disc.Stop()
+	var err, e error
+	e = s.selectVoice.Close()
+	if e != nil {
+		err = fmt.Errorf("%v, %v", err, e)
+	}
+	e = s.disc.Stop()
+	if e != nil {
+		err = fmt.Errorf("%v, %v", err, e)
+	}
+
+	return err
 }

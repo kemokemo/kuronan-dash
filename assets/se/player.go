@@ -2,6 +2,7 @@ package se
 
 import (
 	"bytes"
+	"log"
 
 	"github.com/hajimehoshi/ebiten/v2/audio"
 	"github.com/hajimehoshi/ebiten/v2/audio/wav"
@@ -14,15 +15,17 @@ type Player struct {
 }
 
 // Play plays a sound effect
-func (p *Player) Play() error {
-	if !p.player.IsPlaying() {
-		err := p.player.Rewind()
-		if err != nil {
-			return err
-		}
-		p.player.Play()
+// If you execute this feature before playing finished, you can get the new sound from start.
+func (p *Player) Play() {
+	err := p.player.Rewind()
+	if err != nil {
+		log.Println("failed to rewind, ", err)
 	}
-	return nil
+	p.player.Play()
+}
+
+func (p *Player) IsPlaying() bool {
+	return p.player.IsPlaying()
 }
 
 // Close closes the inner resources.

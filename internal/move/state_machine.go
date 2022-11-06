@@ -137,10 +137,7 @@ func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
 
 		sm.previous = sm.current
 		sm.current = Ascending
-		err := sm.jumpSe.Play()
-		if err != nil {
-			log.Println("failed to play jump SE: ", err)
-		}
+		sm.jumpSe.Play()
 	} else if sm.iChecker.TriggeredDown() {
 		if !sm.lanes.GoToLowerLane() {
 			return
@@ -148,10 +145,7 @@ func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
 
 		sm.previous = sm.current
 		sm.current = Descending
-		err := sm.dropSe.Play()
-		if err != nil {
-			log.Println("failed to play drop SE: ", err)
-		}
+		sm.dropSe.Play()
 	}
 
 	if sm.atkDuration < sm.atkMaxDuration {
@@ -164,10 +158,7 @@ func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
 			sm.attacked = true
 			sm.drawing = true
 			sm.atkDuration = 0
-			err := sm.attackSe.Play()
-			if err != nil {
-				log.Println("failed to play attack SE: ", err)
-			}
+			sm.attackSe.Play()
 		} else {
 			sm.attacked = false
 			sm.drawing = false

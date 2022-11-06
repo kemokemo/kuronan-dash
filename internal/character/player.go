@@ -55,8 +55,8 @@ type Player struct {
 // InitializeWithLanesInfo sets the lanes information.
 // The player can run on the lane or move between lanes based on the lane drawing height information received in the argument.
 func (p *Player) InitializeWithLanes(lanes *field.Lanes) error {
-	p.previous = move.Pause
-	p.current = move.Dash
+	p.previous = move.Wait
+	p.current = move.Wait
 	p.stamina.Initialize()
 	p.tension.Initialize()
 
@@ -166,6 +166,11 @@ func (p *Player) UpdateSpecialEffect() {
 
 // Draw draws the character image.
 func (p *Player) Draw(screen *ebiten.Image) {
+	if p.current == move.Wait {
+		screen.DrawImage(p.StandingImage, p.op)
+		return
+	}
+
 	// TODO: ダッシュ中とか奥義中とか状態に応じて多少前後しつつ、ほぼ画面中央に描画したい
 	if p.current == move.Special {
 		screen.DrawImage(p.specialEffect, p.spEffectOp)

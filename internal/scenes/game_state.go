@@ -10,6 +10,8 @@ type gameState int
 
 const (
 	wait gameState = iota
+	readyCall
+	goCall
 	run
 	pause
 	specialEffect

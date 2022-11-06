@@ -5,7 +5,8 @@ type State int
 
 // States
 const (
-	Dash State = iota
+	Wait State = iota
+	Dash
 	Walk
 	Ascending
 	Descending
@@ -17,6 +18,8 @@ const (
 func (s State) String() string {
 	var str = ""
 	switch s {
+	case Wait:
+		str = "Wait"
 	case Dash:
 		str = "Dash"
 	case Walk:
