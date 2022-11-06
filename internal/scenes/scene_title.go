@@ -3,6 +3,7 @@
 package scenes
 
 import (
+	"fmt"
 	"image/color"
 	"log"
 
@@ -75,8 +76,17 @@ func (s *TitleScene) StartMusic() {
 	s.disc.Play()
 }
 
-// StopMusic stops playing music
+// StopMusic stops playing music and sound effects
 func (s *TitleScene) StopMusic() error {
-	s.titleCall.Close()
-	return s.disc.Stop()
+	var err, e error
+	e = s.titleCall.Close()
+	if e != nil {
+		err = fmt.Errorf("%v, %v", err, e)
+	}
+	e = s.disc.Stop()
+	if e != nil {
+		err = fmt.Errorf("%v, %v", err, e)
+	}
+
+	return err
 }

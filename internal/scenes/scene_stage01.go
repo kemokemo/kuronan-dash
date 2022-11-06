@@ -27,27 +27,28 @@ import (
 
 // Stage01Scene is the scene for the 1st stage game.
 type Stage01Scene struct {
-	state      gameState
-	player     *chara.Player
-	disc       *music.Disc
-	readyVoice *se.Player
-	goVoice    *se.Player
-	field      field.Field
-	goalX      float64
-	timeLimit  int // second
-	time       int // second
-	sumTicks   float64
-	msgWindow  *ui.MessageWindow
-	uiMsg      string
-	iChecker   input.InputChecker
-	startBtn   vpad.TriggerButton
-	pauseBtn   vpad.TriggerButton
-	upBtn      vpad.TriggerButton
-	downBtn    vpad.TriggerButton
-	atkBtn     vpad.TriggerButton
-	spBtn      vpad.TriggerButton
-	pauseBg    *ebiten.Image
-	pauseBgOp  *ebiten.DrawImageOptions
+	state           gameState
+	player          *chara.Player
+	disc            *music.Disc
+	readyVoice      *se.Player
+	goVoice         *se.Player
+	stageClearVoice *se.Player
+	field           field.Field
+	goalX           float64
+	timeLimit       int // second
+	time            int // second
+	sumTicks        float64
+	msgWindow       *ui.MessageWindow
+	uiMsg           string
+	iChecker        input.InputChecker
+	startBtn        vpad.TriggerButton
+	pauseBtn        vpad.TriggerButton
+	upBtn           vpad.TriggerButton
+	downBtn         vpad.TriggerButton
+	atkBtn          vpad.TriggerButton
+	spBtn           vpad.TriggerButton
+	pauseBg         *ebiten.Image
+	pauseBgOp       *ebiten.DrawImageOptions
 }
 
 // Initialize initializes all resources.
@@ -58,6 +59,7 @@ func (s *Stage01Scene) Initialize() error {
 	s.disc = music.Stage01
 	s.readyVoice = se.ReadyVoice
 	s.goVoice = se.GoVoice
+	s.stageClearVoice = se.StageClearVoice
 
 	s.player = chara.Selected
 	lanes := field.NewLanes(field.PrairieLane)
@@ -117,7 +119,7 @@ func (s *Stage01Scene) Initialize() error {
 	return nil
 }
 
-// Update updates the status of this scene.
+// Update updates the status of this scene and play sounds.
 func (s *Stage01Scene) Update(state *GameState) {
 	// s.upBtnとs.downBtnは、s.iChecker内でUpdate()されるのでここではしない
 	s.iChecker.Update()
@@ -195,6 +197,7 @@ func (s *Stage01Scene) run() {
 		s.state = stageClear
 		s.player.Pause()
 		s.disc.Pause()
+		s.stageClearVoice.Play()
 	} else if !isArriveGoal && isTimeUp {
 		s.state = gameOver
 		s.player.Pause()
@@ -301,7 +304,17 @@ func (s *Stage01Scene) StartMusic() {
 	// start music when game state is changed from 'wait'.
 }
 
-// StopMusic stops playing music
+// StopMusic stops playing music and sound effects
 func (s *Stage01Scene) StopMusic() error {
-	return s.disc.Stop()
+	var err, e error
+	e = s.stageClearVoice.Close()
+	if e != nil {
+		err = fmt.Errorf("%v, %v", err, e)
+	}
+	e = s.disc.Stop()
+	if e != nil {
+		err = fmt.Errorf("%v, %v", err, e)
+	}
+
+	return err
 }

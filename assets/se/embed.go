@@ -21,4 +21,6 @@ var (
 	ready_wav []byte
 	//go:embed go.wav
 	go_wav []byte
+	//go:embed stage-clear-voice.wav
+	stage_clear_voice_wav []byte
 )

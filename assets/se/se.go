@@ -14,6 +14,7 @@ var (
 	CharacterSelectVoice *Player
 	ReadyVoice           *Player
 	GoVoice              *Player
+	StageClearVoice      *Player
 )
 
 // LoadSE loads all sound effects.
@@ -49,6 +50,10 @@ func LoadSE() error {
 		return err
 	}
 	GoVoice, err = loadPlayer(go_wav)
+	if err != nil {
+		return err
+	}
+	StageClearVoice, err = loadPlayer(stage_clear_voice_wav)
 	if err != nil {
 		return err
 	}

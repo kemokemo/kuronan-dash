@@ -1,6 +1,7 @@
 package scenes
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"log"
@@ -244,7 +245,17 @@ func (s *SelectScene) StartMusic() {
 	s.disc.Play()
 }
 
-// StopMusic stops playing music
+// StopMusic stops playing music and sound effects
 func (s *SelectScene) StopMusic() error {
-	return s.disc.Stop()
+	var err, e error
+	e = s.selectVoice.Close()
+	if e != nil {
+		err = fmt.Errorf("%v, %v", err, e)
+	}
+	e = s.disc.Stop()
+	if e != nil {
+		err = fmt.Errorf("%v, %v", err, e)
+	}
+
+	return err
 }
