@@ -36,6 +36,18 @@ func loadCharacters() error {
 	if err != nil {
 		return err
 	}
+	KuronaSpEffect, err = loadSingleImage(kurona_sp_effect_png)
+	if err != nil {
+		return err
+	}
+	KomaSpEffect, err = loadSingleImage(koma_sp_effect_png)
+	if err != nil {
+		return err
+	}
+	ShishimaruSpEffect, err = loadSingleImage(shishimaru_sp_effect_png)
+	if err != nil {
+		return err
+	}
 	KuronaSpBack, err = loadSingleImage(kurona_sp_back_png)
 	if err != nil {
 		return err

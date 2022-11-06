@@ -20,6 +20,7 @@ type Player struct {
 	Description    string
 	attackImage    *ebiten.Image
 	specialImage   *ebiten.Image
+	specialEffect  *ebiten.Image
 	animation      *anime.StepAnimation
 	jumpSe         *se.Player
 	dropSe         *se.Player
@@ -30,6 +31,7 @@ type Player struct {
 	// Update each time based on the internal status and other information
 	op         *ebiten.DrawImageOptions
 	atkOp      *ebiten.DrawImageOptions
+	spEffectOp *ebiten.DrawImageOptions
 	spOp       *ebiten.DrawImageOptions
 	vc         move.VelocityController
 	scrollV    *view.Vector
@@ -66,6 +68,7 @@ func (p *Player) InitializeWithLanes(lanes *field.Lanes) error {
 
 	// set the player at the top lane.
 	w, h := p.StandingImage.Size()
+	sw, sh := p.specialEffect.Size()
 	aw, ah := p.attackImage.Size()
 
 	initialY := lanes.GetTargetLaneHeight() - float64(h) + field.FieldOffset
@@ -74,6 +77,8 @@ func (p *Player) InitializeWithLanes(lanes *field.Lanes) error {
 	p.scrollV = &view.Vector{X: 0.0, Y: 0.0}
 	p.op = &ebiten.DrawImageOptions{}
 	p.op.GeoM.Translate(view.DrawPosition, initialY)
+	p.spEffectOp = &ebiten.DrawImageOptions{}
+	p.spEffectOp.GeoM.Translate(view.DrawPosition-float64((sw-w)/2), initialY-float64(sh-h))
 	p.atkOp = &ebiten.DrawImageOptions{}
 	p.atkOp.GeoM.Translate(view.DrawPosition+float64(w)+5, initialY+20)
 	p.spOp = &ebiten.DrawImageOptions{}
@@ -141,6 +146,7 @@ func (p *Player) Update() {
 
 	p.animation.AddStep(p.charaPosV.X)
 	p.op.GeoM.Translate(p.charaDrawV.X, p.charaDrawV.Y)
+	p.spEffectOp.GeoM.Translate(p.charaDrawV.X, p.charaDrawV.Y)
 	p.atkOp.GeoM.Translate(p.charaDrawV.X, p.charaDrawV.Y)
 	p.rect.Add(p.charaDrawV)
 	p.atkRect.Add(p.charaDrawV)
@@ -161,6 +167,9 @@ func (p *Player) UpdateSpecialEffect() {
 // Draw draws the character image.
 func (p *Player) Draw(screen *ebiten.Image) {
 	// TODO: ダッシュ中とか奥義中とか状態に応じて多少前後しつつ、ほぼ画面中央に描画したい
+	if p.current == move.Special {
+		screen.DrawImage(p.specialEffect, p.spEffectOp)
+	}
 	screen.DrawImage(p.animation.GetCurrentFrame(), p.op)
 	if p.stateMachine.DrawAttack() {
 		screen.DrawImage(p.attackImage, p.atkOp)

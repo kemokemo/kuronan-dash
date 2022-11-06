@@ -22,7 +22,7 @@ var (
 	Goal_front *ebiten.Image
 )
 
-//  - prairie  field
+// - prairie  field
 var (
 	TilePrairie  *ebiten.Image
 	Grass1       *ebiten.Image
@@ -64,6 +64,11 @@ var (
 	AttackShishimaruFist *ebiten.Image
 	AttackScratch        *ebiten.Image
 
+	// character sp effect
+	KuronaSpEffect     *ebiten.Image
+	KomaSpEffect       *ebiten.Image
+	ShishimaruSpEffect *ebiten.Image
+
 	// character special cut-in image
 	KuronaSpBack     *ebiten.Image
 	KomaSpBack       *ebiten.Image
@@ -77,7 +82,7 @@ func LoadImages() error {
 		return err
 	}
 
-	err = loadFieldparts()
+	err = loadFieldParts()
 	if err != nil {
 		return err
 	}
