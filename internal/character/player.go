@@ -200,6 +200,10 @@ func (p *Player) GetStamina() int {
 	return p.stamina.GetStamina()
 }
 
+func (p *Player) GetMaxStamina() float64 {
+	return p.stamina.GetMaxStamina()
+}
+
 // GetRectangle returns the edge rectangle of this player.
 func (p *Player) GetRectangle() *view.HitRectangle {
 	return p.rect
@@ -248,6 +252,10 @@ func (p *Player) AddTension(num int) {
 
 func (p *Player) GetTension() int {
 	return p.tension.Get()
+}
+
+func (p *Player) GetMaxTension() float64 {
+	return p.tension.GetMax()
 }
 
 func (p *Player) StartSpEffect() bool {

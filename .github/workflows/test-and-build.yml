@@ -1,6 +1,10 @@
 name: Test and Build
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
 
 jobs:
   test-and-build:
@@ -39,7 +43,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.45.2
+          version: latest
 
       - name: go vet
         run: |
