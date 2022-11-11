@@ -176,6 +176,7 @@ func (sm *StateMachine) UpdateSpecialEffect() {
 	sm.startSpEffect = false
 	sm.spDuration++
 	if sm.spDuration >= sm.spMaxDuration {
+		sm.spDuration = 0
 		sm.finishSpEffect = true
 		sm.current = Special
 	}

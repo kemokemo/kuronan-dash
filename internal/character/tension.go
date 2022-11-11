@@ -64,6 +64,10 @@ func (t *Tension) Get() int {
 	return t.val
 }
 
+func (t *Tension) GetMax() float64 {
+	return float64(t.max)
+}
+
 func (t *Tension) IsMax() bool {
 	return t.val >= t.max
 }

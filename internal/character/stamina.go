@@ -69,3 +69,8 @@ func (s *Stamina) Add(val int) {
 func (s *Stamina) GetStamina() int {
 	return s.val
 }
+
+// GetMaxStamina returns the max value of this stamina.
+func (s *Stamina) GetMaxStamina() float64 {
+	return float64(s.max)
+}

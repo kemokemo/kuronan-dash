@@ -11,6 +11,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
 
+	gauge "github.com/kemokemo/ebiten-gauge"
 	"github.com/kemokemo/kuronan-dash/assets/fonts"
 	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/assets/messages"
@@ -39,6 +40,8 @@ type Stage01Scene struct {
 	time            int // second
 	sumTicks        float64
 	msgWindow       *ui.MessageWindow
+	staminaGauge    *gauge.Gauge
+	tensionGauge    *gauge.Gauge
 	uiMsg           string
 	iChecker        input.InputChecker
 	startBtn        vpad.TriggerButton
@@ -53,7 +56,7 @@ type Stage01Scene struct {
 
 // Initialize initializes all resources.
 func (s *Stage01Scene) Initialize() error {
-	s.goalX = 3000.0
+	s.goalX = 3900.0
 	s.timeLimit = 90
 	s.time = s.timeLimit
 	s.disc = music.Stage01
@@ -83,6 +86,9 @@ func (s *Stage01Scene) Initialize() error {
 		color.RGBA{64, 64, 64, 255},
 		color.RGBA{192, 192, 192, 255},
 		color.RGBA{33, 228, 68, 255})
+	s.staminaGauge = gauge.NewGaugeWithColor(405, int(lowerLaneY)+windowMargin+15, s.player.GetMaxStamina(), color.RGBA{255, 255, 255, 255})
+	s.staminaGauge.SetBlink(false)
+	s.tensionGauge = gauge.NewGaugeWithColor(405, int(lowerLaneY)+windowMargin+35, s.player.GetMaxTension(), color.RGBA{248, 169, 0, 255})
 
 	laneRectArray := []image.Rectangle{}
 	previousHeight := 0
@@ -220,6 +226,9 @@ func (s *Stage01Scene) run() {
 		pRect := s.player.GetRectangle()
 		s.player.BeBlocked(s.field.IsCollidedWithObstacles(pRect))
 		s.player.Eat(s.field.EatFoods(pRect))
+
+		s.staminaGauge.Update(float64(s.player.GetStamina()))
+		s.tensionGauge.Update(float64(s.player.GetTension()))
 	}
 }
 
@@ -234,14 +243,14 @@ func (s *Stage01Scene) Draw(screen *ebiten.Image) {
 
 // description
 func (s *Stage01Scene) drawUI(screen *ebiten.Image) {
-	s.uiMsg = fmt.Sprintf("スタミナ: %v\nテンション: %v\nタイム: 　%v\nすすんだきょり: %.1f\nゴールのいち: 　%.1f",
-		s.player.GetStamina(),
-		s.player.GetTension(),
+	s.uiMsg = fmt.Sprintf("スタミナ :\nテンション:\nタイム: 　%v\nすすんだきょり: %.1f\nゴールのいち: 　%.1f",
 		s.time,
 		s.player.GetPosition().X-view.DrawPosition,
 		s.goalX,
 	)
 	s.msgWindow.DrawWindow(screen, s.uiMsg)
+	s.staminaGauge.Draw(screen)
+	s.tensionGauge.Draw(screen)
 }
 
 func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
