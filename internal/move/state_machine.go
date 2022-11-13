@@ -235,3 +235,9 @@ func (sm *StateMachine) StartSpEffect() bool {
 func (sm *StateMachine) FinishSpEffect() bool {
 	return sm.finishSpEffect
 }
+
+func (sm *StateMachine) SetVolumeFlag(isVolumeOn bool) {
+	sm.jumpSe.SetVolumeFlag(isVolumeOn)
+	sm.dropSe.SetVolumeFlag(isVolumeOn)
+	sm.attackSe.SetVolumeFlag(isVolumeOn)
+}

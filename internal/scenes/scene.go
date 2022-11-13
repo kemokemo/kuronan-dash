@@ -9,6 +9,7 @@ type Scene interface {
 	Initialize() error
 	Update(state *GameState)
 	Draw(screen *ebiten.Image)
-	StartMusic()
+	StartMusic(isVolumeOn bool)
 	StopMusic() error
+	IsVolumeOn() bool
 }

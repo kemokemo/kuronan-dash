@@ -77,14 +77,15 @@ func (s *SceneManager) GoTo(scene Scene) error {
 
 	if s.current == nil {
 		s.current = scene
-		s.current.StartMusic()
+		// The default volume of music and sounds is on.
+		s.current.StartMusic(true)
 	} else {
 		err = s.current.StopMusic()
 		if err != nil {
 			return err
 		}
 		s.next = scene
-		s.next.StartMusic()
+		s.next.StartMusic(s.current.IsVolumeOn())
 		s.transitionCount = transitionMaxCount
 	}
 

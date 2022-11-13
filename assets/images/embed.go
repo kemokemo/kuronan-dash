@@ -110,6 +110,10 @@ var (
 	attack_button_png []byte
 	//go:embed SpecialButton.png
 	special_button_png []byte
+	//go:embed button_volume_on.png
+	button_volume_on_png []byte
+	//go:embed button_volume_off.png
+	button_volume_off_png []byte
 
 	//go:embed goal_back.png
 	goal_back_png []byte

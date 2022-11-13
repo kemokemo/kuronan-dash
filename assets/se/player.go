@@ -11,12 +11,17 @@ import (
 
 // Player is a player to play a sound effect.
 type Player struct {
-	player *audio.Player
+	player  *audio.Player
+	disable bool
 }
 
 // Play plays a sound effect
 // If you execute this feature before playing finished, you can get the new sound from start.
 func (p *Player) Play() {
+	if p.disable {
+		return
+	}
+
 	err := p.player.Rewind()
 	if err != nil {
 		log.Println("failed to rewind, ", err)
@@ -33,6 +38,15 @@ func (p *Player) Close() error {
 	return p.player.Close()
 }
 
+func (p *Player) SetVolumeFlag(isVolumeOn bool) {
+	p.disable = !isVolumeOn
+	if p.disable {
+		p.player.SetVolume(0)
+	} else {
+		p.player.SetVolume(1)
+	}
+}
+
 func loadPlayer(b []byte) (*Player, error) {
 	s, err := wav.DecodeWithSampleRate(music.SampleRate, bytes.NewReader(b))
 	if err != nil {
@@ -44,5 +58,5 @@ func loadPlayer(b []byte) (*Player, error) {
 		return nil, err
 	}
 
-	return &Player{p}, nil
+	return &Player{player: p}, nil
 }
