@@ -13,7 +13,6 @@ import (
 	vpad "github.com/kemokemo/ebiten-virtualpad"
 	"github.com/kemokemo/kuronan-dash/assets/fonts"
 	"github.com/kemokemo/kuronan-dash/assets/images"
-	"github.com/kemokemo/kuronan-dash/assets/messages"
 	"github.com/kemokemo/kuronan-dash/assets/music"
 	"github.com/kemokemo/kuronan-dash/assets/se"
 	"github.com/kemokemo/kuronan-dash/internal/input"
@@ -22,15 +21,16 @@ import (
 
 // TitleScene is the scene for title.
 type TitleScene struct {
-	bg        *ebiten.Image
-	disc      *music.Disc
-	titleCall *se.Player
-	verPos    view.Vector
-	titlePos  view.Vector
-	msgPos    view.Vector
-	iChecker  input.InputChecker
-	vChecker  input.VolumeChecker
-	volumeBtn vpad.SelectButton
+	bg            *ebiten.Image
+	disc          *music.Disc
+	titleCall     *se.Player
+	verPos        view.Vector
+	titlePos      view.Vector
+	msgPos        view.Vector
+	iChecker      input.InputChecker
+	vChecker      input.VolumeChecker
+	startTitleBtn vpad.TriggerButton
+	volumeBtn     vpad.SelectButton
 }
 
 // Initialize initializes all resources.
@@ -45,9 +45,13 @@ func (s *TitleScene) Initialize() error {
 	s.msgPos = view.Vector{
 		X: float64(view.ScreenWidth/2) - 200,
 		Y: float64(view.ScreenHeight/2) + 50}
+	s.startTitleBtn = vpad.NewTriggerButton(images.StartTitleButton, vpad.JustReleased, vpad.SelectColor)
+	s.startTitleBtn.SetLocation(view.ScreenWidth/2-64, view.ScreenHeight/2-30)
+	s.startTitleBtn.SetTriggerButton([]ebiten.Key{ebiten.KeySpace})
 	s.volumeBtn = vpad.NewSelectButton(images.VolumeOnButton, vpad.JustPressed, vpad.SelectColor)
 	s.volumeBtn.SetLocation(view.ScreenWidth-58, 10)
-	s.iChecker = &input.TitleInputChecker{}
+	s.volumeBtn.SetSelectKeys([]ebiten.Key{ebiten.KeyV})
+	s.iChecker = &input.TitleInputChecker{StartBtn: s.startTitleBtn}
 	s.vChecker = &input.VolumeInputChecker{VolumeBtn: s.volumeBtn}
 
 	return nil
@@ -88,7 +92,7 @@ func (s *TitleScene) Draw(screen *ebiten.Image) {
 	op := &ebiten.DrawImageOptions{}
 	screen.DrawImage(s.bg, op)
 	text.Draw(screen, versionInfo, fonts.GamerFontS, int(s.verPos.X), int(s.verPos.Y), color.White)
-	text.Draw(screen, messages.TitleStart, fonts.GamerFontL, int(s.msgPos.X), int(s.msgPos.Y), color.Black)
+	s.startTitleBtn.Draw(screen)
 	s.volumeBtn.Draw(screen)
 }
 

@@ -50,6 +50,7 @@ var (
 	SpecialButton     *ebiten.Image
 	VolumeOnButton    *ebiten.Image
 	VolumeOffButton   *ebiten.Image
+	StartTitleButton  *ebiten.Image
 
 	// character standing image
 	KuronaStanding     *ebiten.Image

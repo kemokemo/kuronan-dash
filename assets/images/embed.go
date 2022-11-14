@@ -126,4 +126,6 @@ var (
 	koma_sp_effect_png []byte
 	//go:embed shishimaru_sp_effect.png
 	shishimaru_sp_effect_png []byte
+	//go:embed button_start_title.png
+	button_start_title_png []byte
 )
