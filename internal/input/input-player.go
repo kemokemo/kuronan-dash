@@ -84,17 +84,6 @@ func (i *PlayerInputChecker) Update() {
 	if i.isUp || i.isDown {
 		return
 	}
-
-	// Keyboard
-	if inpututil.IsKeyJustReleased(ebiten.KeyUp) {
-		i.isUp = true
-	}
-	if inpututil.IsKeyJustReleased(ebiten.KeyDown) {
-		i.isDown = true
-	}
-	if i.isUp || i.isDown {
-		return
-	}
 }
 
 func (i *PlayerInputChecker) TriggeredUp() bool {
@@ -122,9 +111,9 @@ func (i *PlayerInputChecker) TriggeredPause() bool {
 }
 
 func (i *PlayerInputChecker) TriggeredAttack() bool {
-	return i.AttackBtn.IsTriggered() || inpututil.IsKeyJustPressed(ebiten.KeyA)
+	return i.AttackBtn.IsTriggered()
 }
 
 func (i *PlayerInputChecker) TriggeredSpecial() bool {
-	return i.SpecialBtn.IsTriggered() || inpututil.IsKeyJustPressed(ebiten.KeyS)
+	return i.SpecialBtn.IsTriggered()
 }

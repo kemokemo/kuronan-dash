@@ -88,6 +88,18 @@ func loadFieldParts() error {
 	if err != nil {
 		return err
 	}
+	VolumeOnButton, err = loadSingleImage(button_volume_on_png)
+	if err != nil {
+		return err
+	}
+	VolumeOffButton, err = loadSingleImage(button_volume_off_png)
+	if err != nil {
+		return err
+	}
+	StartTitleButton, err = loadSingleImage(button_start_title_png)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

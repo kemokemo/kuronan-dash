@@ -44,8 +44,10 @@ type Stage01Scene struct {
 	tensionGauge    *gauge.Gauge
 	uiMsg           string
 	iChecker        input.InputChecker
+	vChecker        input.VolumeChecker
 	startBtn        vpad.TriggerButton
 	pauseBtn        vpad.TriggerButton
+	volumeBtn       vpad.SelectButton
 	upBtn           vpad.TriggerButton
 	downBtn         vpad.TriggerButton
 	atkBtn          vpad.TriggerButton
@@ -105,19 +107,29 @@ func (s *Stage01Scene) Initialize() error {
 	s.upBtn = vpad.NewTriggerButton(images.UpButton, vpad.JustPressed, vpad.SelectColor)
 	bW, bH := images.UpButton.Size()
 	s.upBtn.SetLocation(20, view.ScreenHeight-bH-45)
+	s.upBtn.SetTriggerButton([]ebiten.Key{ebiten.KeyArrowUp})
 	s.downBtn = vpad.NewTriggerButton(images.DownButton, vpad.JustPressed, vpad.SelectColor)
 	s.downBtn.SetLocation(20+bW+10, view.ScreenHeight-bH-45)
+	s.downBtn.SetTriggerButton([]ebiten.Key{ebiten.KeyArrowDown})
 	s.atkBtn = vpad.NewTriggerButton(images.AttackButton, vpad.JustPressed, vpad.SelectColor)
 	s.atkBtn.SetLocation(view.ScreenWidth-20-2*bW-10, view.ScreenHeight-bH-45)
+	s.atkBtn.SetTriggerButton([]ebiten.Key{ebiten.KeyA})
 	s.spBtn = vpad.NewTriggerButton(images.SpecialButton, vpad.JustPressed, vpad.SelectColor)
 	s.spBtn.SetLocation(view.ScreenWidth-bW-20, view.ScreenHeight-bH-45)
+	s.spBtn.SetTriggerButton([]ebiten.Key{ebiten.KeyS})
 	s.player.SetInputChecker(laneRectArray, s.upBtn, s.downBtn, s.atkBtn, s.spBtn)
 
-	s.startBtn = vpad.NewTriggerButton(images.StartButton, vpad.JustPressed, vpad.SelectColor)
+	s.startBtn = vpad.NewTriggerButton(images.StartButton, vpad.JustReleased, vpad.SelectColor)
 	s.startBtn.SetLocation(view.ScreenWidth/2-64, view.ScreenHeight/2-128)
-	s.pauseBtn = vpad.NewTriggerButton(images.PauseButton, vpad.JustPressed, vpad.SelectColor)
-	s.pauseBtn.SetLocation(view.ScreenWidth-58, 48)
+	s.startBtn.SetTriggerButton([]ebiten.Key{ebiten.KeySpace})
+	s.volumeBtn = vpad.NewSelectButton(images.VolumeOnButton, vpad.JustPressed, vpad.SelectColor)
+	s.volumeBtn.SetLocation(view.ScreenWidth-58, 10)
+	s.volumeBtn.SetSelectKeys([]ebiten.Key{ebiten.KeyV})
+	s.pauseBtn = vpad.NewTriggerButton(images.PauseButton, vpad.JustReleased, vpad.SelectColor)
+	s.pauseBtn.SetLocation(view.ScreenWidth-98, 10)
+	s.pauseBtn.SetTriggerButton([]ebiten.Key{ebiten.KeySpace})
 	s.iChecker = &input.GameInputChecker{StartBtn: s.startBtn, PauseBtn: s.pauseBtn}
+	s.vChecker = &input.VolumeInputChecker{VolumeBtn: s.volumeBtn}
 
 	s.pauseBg = images.PauseLayer
 	s.pauseBgOp = &ebiten.DrawImageOptions{}
@@ -127,6 +139,8 @@ func (s *Stage01Scene) Initialize() error {
 
 // Update updates the status of this scene and play sounds.
 func (s *Stage01Scene) Update(state *GameState) {
+	s.updateVolume()
+
 	// s.upBtnとs.downBtnは、s.iChecker内でUpdate()されるのでここではしない
 	s.iChecker.Update()
 
@@ -188,6 +202,27 @@ func (s *Stage01Scene) Update(state *GameState) {
 	}
 }
 
+// updateVolume updates the volume on/off state of music and sounds.
+// If you add some sounds, please add this logic.
+func (s *Stage01Scene) updateVolume() {
+	s.vChecker.Update()
+
+	if s.vChecker.JustVolumeOn() {
+		s.disc.SetVolumeFlag(true)
+		s.readyVoice.SetVolumeFlag(true)
+		s.goVoice.SetVolumeFlag(true)
+		s.stageClearVoice.SetVolumeFlag(true)
+		s.player.SetVolumeFlag(true)
+		s.disc.Play()
+	} else if s.vChecker.JustVolumeOff() {
+		s.disc.SetVolumeFlag(false)
+		s.readyVoice.SetVolumeFlag(false)
+		s.goVoice.SetVolumeFlag(false)
+		s.stageClearVoice.SetVolumeFlag(false)
+		s.player.SetVolumeFlag(false)
+	}
+}
+
 // run works with 'run' state.
 func (s *Stage01Scene) run() {
 	s.sumTicks += ebiten.CurrentTPS()
@@ -239,6 +274,9 @@ func (s *Stage01Scene) Draw(screen *ebiten.Image) {
 	s.field.DrawCloser(screen)
 	s.drawUI(screen)
 	s.drawWithState(screen)
+
+	// Let's make sure that the volume can be changed at any time.
+	s.volumeBtn.Draw(screen)
 }
 
 // description
@@ -251,14 +289,14 @@ func (s *Stage01Scene) drawUI(screen *ebiten.Image) {
 	s.msgWindow.DrawWindow(screen, s.uiMsg)
 	s.staminaGauge.Draw(screen)
 	s.tensionGauge.Draw(screen)
-}
 
-func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 	s.upBtn.Draw(screen)
 	s.downBtn.Draw(screen)
 	s.atkBtn.Draw(screen)
 	s.spBtn.Draw(screen)
+}
 
+func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 	// TODO: StartとPauseのボタンは見えてないだけで、該当する場所を押せばボタンはトリガーされる。弊害がありそうなら処置する。
 	switch s.state {
 	case wait:
@@ -309,7 +347,9 @@ func (s *Stage01Scene) Close() error {
 }
 
 // StartMusic starts playing music
-func (s *Stage01Scene) StartMusic() {
+func (s *Stage01Scene) StartMusic(isVolumeOn bool) {
+	s.volumeBtn.SetSelectState(isVolumeOn)
+	s.updateVolume()
 	// start music when game state is changed from 'wait'.
 }
 
@@ -326,4 +366,8 @@ func (s *Stage01Scene) StopMusic() error {
 	}
 
 	return err
+}
+
+func (s *Stage01Scene) IsVolumeOn() bool {
+	return s.vChecker.IsVolumeOn()
 }

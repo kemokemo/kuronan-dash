@@ -22,8 +22,8 @@ github.com/jfreymuth/oggvorbis v1.0.3/go.mod h1:1U4pqWmghcoVsCJJ4fRBKv9peUJMBHix
 github.com/jfreymuth/vorbis v1.0.2/go.mod h1:DoftRo4AznKnShRl1GxiTFCseHr4zR9BN3TWXyuzrqQ=
 github.com/kemokemo/ebiten-gauge v0.0.2 h1:e/RqwchOLR/3Du/6yNcF8CM/PnGto+6qk+m4ysFgBfA=
 github.com/kemokemo/ebiten-gauge v0.0.2/go.mod h1:H0DBxyM/wN+uBeLYJ8Ot52JEgtLDP31MbgLPYKzIUy4=
-github.com/kemokemo/ebiten-virtualpad v0.3.0 h1:ZvGo5gaxZW4TBVO+c0Mno9wCgupx4mzdNddsLVo+0TA=
-github.com/kemokemo/ebiten-virtualpad v0.3.0/go.mod h1:wsmg7B0F2mtYoD8Bb+tEvpjQU5SKoFHEUXbxN/hvrYQ=
+github.com/kemokemo/ebiten-virtualpad v0.4.0 h1:Xoys5YnlOXbKEWpRGuRgc5C4B9cpoxMUuM7PjiRq+Tk=
+github.com/kemokemo/ebiten-virtualpad v0.4.0/go.mod h1:wsmg7B0F2mtYoD8Bb+tEvpjQU5SKoFHEUXbxN/hvrYQ=
 github.com/kr/pretty v0.2.1 h1:Fmg33tUaq4/8ym9TJN1x7sLJnHVwhP33CNkpYV/7rwI=
 github.com/kr/pretty v0.2.1/go.mod h1:ipq/a2n7PKx3OHsz4KJII5eveXtPO4qwEXGdVfWzfnI=
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=

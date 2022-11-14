@@ -42,6 +42,8 @@ type SelectScene struct {
 	msgWindow     *ui.MessageWindow
 	fontNormal    font.Face
 	iChecker      input.InputChecker
+	vChecker      input.VolumeChecker
+	volumeBtn     vpad.SelectButton
 	goButton      vpad.TriggerButton
 	charaList     []*chara.Player
 	winRectArray  []image.Rectangle
@@ -84,11 +86,16 @@ func (s *SelectScene) Initialize() error {
 
 	s.goButton = vpad.NewTriggerButton(images.CharaSelectButton, vpad.JustReleased, vpad.SelectColor)
 	s.goButton.SetLocation(view.ScreenWidth-220, view.ScreenHeight-80)
+	s.goButton.SetTriggerButton([]ebiten.Key{ebiten.KeySpace})
+	s.volumeBtn = vpad.NewSelectButton(images.VolumeOnButton, vpad.JustPressed, vpad.SelectColor)
+	s.volumeBtn.SetLocation(view.ScreenWidth-58, 10)
+	s.volumeBtn.SetSelectKeys([]ebiten.Key{ebiten.KeyV})
 
-	s.iChecker = &input.SelectInputChecker{}
+	s.iChecker = &input.SelectInputChecker{GoBtn: s.goButton}
+	s.vChecker = &input.VolumeInputChecker{VolumeBtn: s.volumeBtn}
 
 	s.fontNormal = fonts.GamerFontM
-	s.msgWindow = ui.NewMessageWindow(windowMargin, windowMargin+13, view.ScreenWidth-windowMargin*2, 42, frameWidth)
+	s.msgWindow = ui.NewMessageWindow(windowMargin+5, windowMargin+13, view.ScreenWidth-windowMargin*2-80, 42, frameWidth)
 	s.msgWindow.SetColors(
 		color.RGBA{64, 64, 64, 255},
 		color.RGBA{192, 192, 192, 255},
@@ -99,13 +106,15 @@ func (s *SelectScene) Initialize() error {
 
 // Update updates the status of this scene.
 func (s *SelectScene) Update(state *GameState) {
+	s.updateVolume()
+
 	if !s.selectVoice.IsPlaying() {
 		s.disc.SetVolume(0.8)
 	}
 
 	s.selectChanged = false
-
 	s.iChecker.Update()
+
 	if s.iChecker.TriggeredLeft() {
 		if s.selectedIndex > 0 {
 			s.selectChanged = true
@@ -119,6 +128,7 @@ func (s *SelectScene) Update(state *GameState) {
 		}
 	}
 
+	// todo: ここのロジックが良くないみたい。マウスクリックしてもキャラ選択が変わらない。
 	for i := range s.selectArray {
 		s.selectArray[i].Update()
 		if s.selectChanged || !s.selectArray[i].IsSelected() {
@@ -151,6 +161,21 @@ func (s *SelectScene) Update(state *GameState) {
 	s.bgViewPort.Move(view.UpperRight)
 }
 
+// updateVolume updates the volume on/off state of music and sounds.
+// If you add some sounds, please add this logic.
+func (s *SelectScene) updateVolume() {
+	s.vChecker.Update()
+
+	if s.vChecker.JustVolumeOn() {
+		s.disc.SetVolumeFlag(true)
+		s.selectVoice.SetVolumeFlag(true)
+		s.disc.Play()
+	} else if s.vChecker.JustVolumeOff() {
+		s.disc.SetVolumeFlag(false)
+		s.selectVoice.SetVolumeFlag(false)
+	}
+}
+
 // Draw draws background and characters.
 func (s *SelectScene) Draw(screen *ebiten.Image) {
 	s.drawBackground(screen)
@@ -158,8 +183,9 @@ func (s *SelectScene) Draw(screen *ebiten.Image) {
 	for i := range s.selectArray {
 		s.selectArray[i].Draw(screen)
 	}
-	s.goButton.Draw(screen)
 	s.drawCharacters(screen)
+	s.goButton.Draw(screen)
+	s.volumeBtn.Draw(screen)
 }
 
 func (s *SelectScene) drawBackground(screen *ebiten.Image) {
@@ -239,10 +265,12 @@ func (s *SelectScene) takeTextPosition(i int) image.Point {
 }
 
 // StartMusic starts playing music
-func (s *SelectScene) StartMusic() {
-	s.selectVoice.Play()
+func (s *SelectScene) StartMusic(isVolumeOn bool) {
+	s.volumeBtn.SetSelectState(isVolumeOn)
+	s.updateVolume()
 	s.disc.SetVolume(0.3)
 	s.disc.Play()
+	s.selectVoice.Play()
 }
 
 // StopMusic stops playing music and sound effects
@@ -258,4 +286,8 @@ func (s *SelectScene) StopMusic() error {
 	}
 
 	return err
+}
+
+func (s *SelectScene) IsVolumeOn() bool {
+	return s.vChecker.IsVolumeOn()
 }

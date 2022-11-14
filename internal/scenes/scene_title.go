@@ -10,9 +10,9 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
 
+	vpad "github.com/kemokemo/ebiten-virtualpad"
 	"github.com/kemokemo/kuronan-dash/assets/fonts"
 	"github.com/kemokemo/kuronan-dash/assets/images"
-	"github.com/kemokemo/kuronan-dash/assets/messages"
 	"github.com/kemokemo/kuronan-dash/assets/music"
 	"github.com/kemokemo/kuronan-dash/assets/se"
 	"github.com/kemokemo/kuronan-dash/internal/input"
@@ -21,13 +21,16 @@ import (
 
 // TitleScene is the scene for title.
 type TitleScene struct {
-	bg        *ebiten.Image
-	disc      *music.Disc
-	titleCall *se.Player
-	verPos    view.Vector
-	titlePos  view.Vector
-	msgPos    view.Vector
-	iChecker  input.InputChecker
+	bg            *ebiten.Image
+	disc          *music.Disc
+	titleCall     *se.Player
+	verPos        view.Vector
+	titlePos      view.Vector
+	msgPos        view.Vector
+	iChecker      input.InputChecker
+	vChecker      input.VolumeChecker
+	startTitleBtn vpad.TriggerButton
+	volumeBtn     vpad.SelectButton
 }
 
 // Initialize initializes all resources.
@@ -42,12 +45,22 @@ func (s *TitleScene) Initialize() error {
 	s.msgPos = view.Vector{
 		X: float64(view.ScreenWidth/2) - 200,
 		Y: float64(view.ScreenHeight/2) + 50}
-	s.iChecker = &input.TitleInputChecker{}
+	s.startTitleBtn = vpad.NewTriggerButton(images.StartTitleButton, vpad.JustReleased, vpad.SelectColor)
+	s.startTitleBtn.SetLocation(view.ScreenWidth/2-64, view.ScreenHeight/2-30)
+	s.startTitleBtn.SetTriggerButton([]ebiten.Key{ebiten.KeySpace})
+	s.volumeBtn = vpad.NewSelectButton(images.VolumeOnButton, vpad.JustPressed, vpad.SelectColor)
+	s.volumeBtn.SetLocation(view.ScreenWidth-58, 10)
+	s.volumeBtn.SetSelectKeys([]ebiten.Key{ebiten.KeyV})
+	s.iChecker = &input.TitleInputChecker{StartBtn: s.startTitleBtn}
+	s.vChecker = &input.VolumeInputChecker{VolumeBtn: s.volumeBtn}
+
 	return nil
 }
 
 // Update updates the status of this scene.
 func (s *TitleScene) Update(state *GameState) {
+	s.updateVolume()
+
 	if !s.titleCall.IsPlaying() {
 		s.disc.SetVolume(0.8)
 	}
@@ -61,19 +74,35 @@ func (s *TitleScene) Update(state *GameState) {
 	}
 }
 
+func (s *TitleScene) updateVolume() {
+	s.vChecker.Update()
+
+	if s.vChecker.JustVolumeOn() {
+		s.disc.SetVolumeFlag(true)
+		s.titleCall.SetVolumeFlag(true)
+		s.disc.Play()
+	} else if s.vChecker.JustVolumeOff() {
+		s.disc.SetVolumeFlag(false)
+		s.titleCall.SetVolumeFlag(false)
+	}
+}
+
 // Draw draws background and characters.
-func (s *TitleScene) Draw(r *ebiten.Image) {
+func (s *TitleScene) Draw(screen *ebiten.Image) {
 	op := &ebiten.DrawImageOptions{}
-	r.DrawImage(s.bg, op)
-	text.Draw(r, versionInfo, fonts.GamerFontS, int(s.verPos.X), int(s.verPos.Y), color.White)
-	text.Draw(r, messages.TitleStart, fonts.GamerFontL, int(s.msgPos.X), int(s.msgPos.Y), color.Black)
+	screen.DrawImage(s.bg, op)
+	text.Draw(screen, versionInfo, fonts.GamerFontS, int(s.verPos.X), int(s.verPos.Y), color.White)
+	s.startTitleBtn.Draw(screen)
+	s.volumeBtn.Draw(screen)
 }
 
 // StartMusic starts playing music
-func (s *TitleScene) StartMusic() {
-	s.titleCall.Play()
+func (s *TitleScene) StartMusic(isVolumeOn bool) {
+	s.volumeBtn.SetSelectState(isVolumeOn)
+	s.updateVolume()
 	s.disc.SetVolume(0.3)
 	s.disc.Play()
+	s.titleCall.Play()
 }
 
 // StopMusic stops playing music and sound effects
@@ -89,4 +118,8 @@ func (s *TitleScene) StopMusic() error {
 	}
 
 	return err
+}
+
+func (s *TitleScene) IsVolumeOn() bool {
+	return s.vChecker.IsVolumeOn()
 }

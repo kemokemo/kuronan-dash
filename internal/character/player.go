@@ -265,3 +265,7 @@ func (p *Player) StartSpEffect() bool {
 func (p *Player) FinishSpEffect() bool {
 	return p.stateMachine.FinishSpEffect()
 }
+
+func (p *Player) SetVolumeFlag(isVolumeOn bool) {
+	p.stateMachine.SetVolumeFlag(isVolumeOn)
+}

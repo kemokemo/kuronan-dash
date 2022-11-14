@@ -12,3 +12,10 @@ type InputChecker interface {
 	TriggeredAttack() bool
 	TriggeredSpecial() bool
 }
+
+type VolumeChecker interface {
+	Update()
+	IsVolumeOn() bool
+	JustVolumeOn() bool
+	JustVolumeOff() bool
+}

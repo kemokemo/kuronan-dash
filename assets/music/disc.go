@@ -6,8 +6,9 @@ import (
 
 // Disc is a music player
 type Disc struct {
-	Name   string
-	player *audio.Player
+	Name    string
+	player  *audio.Player
+	disable bool
 }
 
 // Close closes inner resources.
@@ -21,6 +22,9 @@ func (d *Disc) SetVolume(volume float64) {
 
 // Play plays a preselected disc.
 func (d *Disc) Play() {
+	if d.disable {
+		return
+	}
 	d.player.Play()
 }
 
@@ -33,4 +37,11 @@ func (d *Disc) Pause() {
 func (d *Disc) Stop() error {
 	d.player.Pause()
 	return d.player.Rewind()
+}
+
+func (d *Disc) SetVolumeFlag(isVolumeOn bool) {
+	d.disable = !isVolumeOn
+	if d.disable {
+		d.Pause()
+	}
 }
