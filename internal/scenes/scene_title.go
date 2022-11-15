@@ -48,8 +48,9 @@ func (s *TitleScene) Initialize() error {
 	s.startTitleBtn = vpad.NewTriggerButton(images.StartTitleButton, vpad.JustReleased, vpad.SelectColor)
 	s.startTitleBtn.SetLocation(view.ScreenWidth/2-64, view.ScreenHeight/2-30)
 	s.startTitleBtn.SetTriggerButton([]ebiten.Key{ebiten.KeySpace})
-	s.volumeBtn = vpad.NewSelectButton(images.VolumeOnButton, vpad.JustPressed, vpad.SelectColor)
+	s.volumeBtn = vpad.NewSelectButton(images.VolumeOffButton, vpad.JustPressed, vpad.SelectColor)
 	s.volumeBtn.SetLocation(view.ScreenWidth-58, 10)
+	s.volumeBtn.SetSelectImage(images.VolumeOnButton)
 	s.volumeBtn.SetSelectKeys([]ebiten.Key{ebiten.KeyV})
 	s.iChecker = &input.TitleInputChecker{StartBtn: s.startTitleBtn}
 	s.vChecker = &input.VolumeInputChecker{VolumeBtn: s.volumeBtn}

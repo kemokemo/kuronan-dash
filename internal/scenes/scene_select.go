@@ -87,8 +87,9 @@ func (s *SelectScene) Initialize() error {
 	s.goButton = vpad.NewTriggerButton(images.CharaSelectButton, vpad.JustReleased, vpad.SelectColor)
 	s.goButton.SetLocation(view.ScreenWidth-220, view.ScreenHeight-80)
 	s.goButton.SetTriggerButton([]ebiten.Key{ebiten.KeySpace})
-	s.volumeBtn = vpad.NewSelectButton(images.VolumeOnButton, vpad.JustPressed, vpad.SelectColor)
+	s.volumeBtn = vpad.NewSelectButton(images.VolumeOffButton, vpad.JustPressed, vpad.SelectColor)
 	s.volumeBtn.SetLocation(view.ScreenWidth-58, 10)
+	s.volumeBtn.SetSelectImage(images.VolumeOnButton)
 	s.volumeBtn.SetSelectKeys([]ebiten.Key{ebiten.KeyV})
 
 	s.iChecker = &input.SelectInputChecker{GoBtn: s.goButton}
