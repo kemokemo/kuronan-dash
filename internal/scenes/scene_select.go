@@ -115,7 +115,6 @@ func (s *SelectScene) Update(state *GameState) {
 
 	s.selectChanged = false
 	s.iChecker.Update()
-
 	if s.iChecker.TriggeredLeft() {
 		if s.selectedIndex > 0 {
 			s.selectChanged = true
@@ -129,14 +128,15 @@ func (s *SelectScene) Update(state *GameState) {
 		}
 	}
 
-	// todo: ここのロジックが良くないみたい。マウスクリックしてもキャラ選択が変わらない。
-	for i := range s.selectArray {
-		s.selectArray[i].Update()
-		if s.selectChanged || !s.selectArray[i].IsSelected() {
-			continue
+	if !s.selectChanged {
+		for i := range s.selectArray {
+			s.selectArray[i].Update()
+			if s.selectArray[i].IsSelected() && s.selectedIndex != i {
+				s.selectChanged = true
+				s.selectedIndex = i
+				break
+			}
 		}
-		s.selectChanged = true
-		s.selectedIndex = i
 	}
 
 	if s.selectChanged {
