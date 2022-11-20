@@ -209,22 +209,25 @@ func (s *Stage01Scene) updateVolume() {
 	s.vChecker.Update()
 
 	if s.vChecker.JustVolumeOn() {
-		s.disc.SetVolumeFlag(true)
-		s.readyVoice.SetVolumeFlag(true)
-		s.goVoice.SetVolumeFlag(true)
-		s.stageClearVoice.SetVolumeFlag(true)
-		s.player.SetVolumeFlag(true)
+		s.setVolume(true)
+		s.disc.Play()
 	} else if s.vChecker.JustVolumeOff() {
-		s.disc.SetVolumeFlag(false)
-		s.readyVoice.SetVolumeFlag(false)
-		s.goVoice.SetVolumeFlag(false)
-		s.stageClearVoice.SetVolumeFlag(false)
-		s.player.SetVolumeFlag(false)
+		s.setVolume(false)
 	}
+}
+
+func (s *Stage01Scene) setVolume(flag bool) {
+	s.disc.SetVolumeFlag(flag)
+	s.readyVoice.SetVolumeFlag(flag)
+	s.goVoice.SetVolumeFlag(flag)
+	s.stageClearVoice.SetVolumeFlag(flag)
+	s.player.SetVolumeFlag(flag)
 }
 
 // run works with 'run' state.
 func (s *Stage01Scene) run() {
+	// todo: do not use CurrentTPS for game (check the comment of func)
+	// I will use time.Elapsed for count.
 	s.sumTicks += ebiten.CurrentTPS()
 	if s.sumTicks >= 3600 {
 		s.sumTicks = 0.0
@@ -349,8 +352,9 @@ func (s *Stage01Scene) Close() error {
 // StartMusic starts playing music
 func (s *Stage01Scene) StartMusic(isVolumeOn bool) {
 	s.volumeBtn.SetSelectState(isVolumeOn)
-	s.updateVolume()
-	// start music when game state is changed from 'wait'.
+
+	s.setVolume(isVolumeOn)
+	// when the game state is changed to 'run', the music starts. not now.
 }
 
 // StopMusic stops playing music and sound effects

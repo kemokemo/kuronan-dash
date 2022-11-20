@@ -45,6 +45,9 @@ func (d *Disc) Stop() error {
 func (d *Disc) SetVolumeFlag(isVolumeOn bool) {
 	d.disable = !isVolumeOn
 	if d.disable {
+		d.player.SetVolume(0)
 		d.Pause()
+	} else {
+		d.player.SetVolume(1)
 	}
 }

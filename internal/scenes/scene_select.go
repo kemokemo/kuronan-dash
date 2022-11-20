@@ -168,13 +168,16 @@ func (s *SelectScene) updateVolume() {
 	s.vChecker.Update()
 
 	if s.vChecker.JustVolumeOn() {
-		s.disc.SetVolumeFlag(true)
-		s.selectVoice.SetVolumeFlag(true)
+		s.setVolume(true)
 		s.disc.Play()
 	} else if s.vChecker.JustVolumeOff() {
-		s.disc.SetVolumeFlag(false)
-		s.selectVoice.SetVolumeFlag(false)
+		s.setVolume(false)
 	}
+}
+
+func (s *SelectScene) setVolume(flag bool) {
+	s.disc.SetVolumeFlag(flag)
+	s.selectVoice.SetVolumeFlag(flag)
 }
 
 // Draw draws background and characters.
@@ -268,8 +271,6 @@ func (s *SelectScene) takeTextPosition(i int) image.Point {
 // StartMusic starts playing music
 func (s *SelectScene) StartMusic(isVolumeOn bool) {
 	s.volumeBtn.SetSelectState(isVolumeOn)
-	s.updateVolume()
-
 	if isVolumeOn {
 		s.disc.SetVolume(0.3)
 		s.disc.Play()
