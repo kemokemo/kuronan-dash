@@ -130,7 +130,7 @@ func (s *Stage01Scene) Initialize() error {
 	s.pauseBtn.SetLocation(view.ScreenWidth-98, 10)
 	s.pauseBtn.SetTriggerButton([]ebiten.Key{ebiten.KeySpace})
 	s.iChecker = &input.GameInputChecker{StartBtn: s.startBtn, PauseBtn: s.pauseBtn}
-	s.vChecker = &input.VolumeInputChecker{VolumeBtn: s.volumeBtn}
+	s.vChecker = input.NewVolumeChecker(s.volumeBtn, true)
 
 	s.pauseBg = images.PauseLayer
 	s.pauseBgOp = &ebiten.DrawImageOptions{}
