@@ -4,6 +4,15 @@ import (
 	vpad "github.com/kemokemo/ebiten-virtualpad"
 )
 
+func NewVolumeChecker(btn vpad.SelectButton, defaultVal bool) VolumeChecker {
+	btn.SetSelectState(defaultVal)
+	return &VolumeInputChecker{
+		VolumeBtn: btn,
+		current:   defaultVal,
+		previous:  defaultVal,
+	}
+}
+
 type VolumeInputChecker struct {
 	VolumeBtn       vpad.SelectButton
 	current         bool
