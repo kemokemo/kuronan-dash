@@ -214,7 +214,6 @@ func (s *Stage01Scene) updateVolume() {
 		s.goVoice.SetVolumeFlag(true)
 		s.stageClearVoice.SetVolumeFlag(true)
 		s.player.SetVolumeFlag(true)
-		s.disc.Play()
 	} else if s.vChecker.JustVolumeOff() {
 		s.disc.SetVolumeFlag(false)
 		s.readyVoice.SetVolumeFlag(false)

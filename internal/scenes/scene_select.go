@@ -269,9 +269,12 @@ func (s *SelectScene) takeTextPosition(i int) image.Point {
 func (s *SelectScene) StartMusic(isVolumeOn bool) {
 	s.volumeBtn.SetSelectState(isVolumeOn)
 	s.updateVolume()
-	s.disc.SetVolume(0.3)
-	s.disc.Play()
-	s.selectVoice.Play()
+
+	if isVolumeOn {
+		s.disc.SetVolume(0.3)
+		s.disc.Play()
+		s.selectVoice.Play()
+	}
 }
 
 // StopMusic stops playing music and sound effects

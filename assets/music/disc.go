@@ -25,6 +25,9 @@ func (d *Disc) Play() {
 	if d.disable {
 		return
 	}
+	if d.player.IsPlaying() {
+		return
+	}
 	d.player.Play()
 }
 
