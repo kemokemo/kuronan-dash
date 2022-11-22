@@ -150,14 +150,16 @@ func (s *Stage01Scene) Update(state *GameState) {
 		if s.iChecker.TriggeredStart() {
 			s.state = readyCall
 			s.readyVoice.Play()
+			s.sumTicks = 0
 		}
 	case readyCall:
-		if !s.readyVoice.IsPlaying() {
+		if !s.readyVoice.IsPlaying() && s.isFullTicks(0.8) {
 			s.state = goCall
 			s.goVoice.Play()
+			s.sumTicks = 0
 		}
 	case goCall:
-		if !s.goVoice.IsPlaying() {
+		if !s.goVoice.IsPlaying() && s.isFullTicks(0.5) {
 			s.state = run
 			s.player.Start()
 			s.disc.Play()
@@ -224,13 +226,18 @@ func (s *Stage01Scene) setVolume(flag bool) {
 	s.player.SetVolumeFlag(flag)
 }
 
+func (s *Stage01Scene) isFullTicks(num float64) bool {
+	s.sumTicks += ebiten.CurrentTPS()
+	if s.sumTicks >= 3600*num {
+		s.sumTicks = 0.0
+		return true
+	}
+	return false
+}
+
 // run works with 'run' state.
 func (s *Stage01Scene) run() {
-	// todo: do not use CurrentTPS for game (check the comment of func)
-	// I will use time.Elapsed for count.
-	s.sumTicks += ebiten.CurrentTPS()
-	if s.sumTicks >= 3600 {
-		s.sumTicks = 0.0
+	if s.isFullTicks(1) {
 		s.time--
 	}
 
