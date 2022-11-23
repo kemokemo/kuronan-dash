@@ -41,15 +41,14 @@ func NewMessageWindow(x, y, width, height, frameWidth int) *MessageWindow {
 	mw.innerOp = &ebiten.DrawImageOptions{}
 	mw.innerOp.GeoM.Translate(float64(x), float64(y))
 
-	if frameWidth > 0 {
-		mw.frameImg = ebiten.NewImage(width+frameWidth*2, height+frameWidth*2)
-		mw.frameImg.Fill(color.White)
-		mw.frameDarkOp = &ebiten.DrawImageOptions{}
-		mw.frameDarkOp.GeoM.Translate(float64(x-frameWidth), float64(y-frameWidth))
-		mw.frameLightOp = &ebiten.DrawImageOptions{}
-		mw.frameLightOp.GeoM.Translate(float64(x-frameWidth), float64(y-frameWidth))
-		mw.font = fonts.GamerFontM
-	}
+	mw.frameImg = ebiten.NewImage(width+frameWidth*2, height+frameWidth*2)
+	mw.frameImg.Fill(color.White)
+	mw.frameDarkOp = &ebiten.DrawImageOptions{}
+	mw.frameDarkOp.GeoM.Translate(float64(x-frameWidth), float64(y-frameWidth))
+	mw.frameLightOp = &ebiten.DrawImageOptions{}
+	mw.frameLightOp.GeoM.Translate(float64(x-frameWidth), float64(y-frameWidth))
+	mw.font = fonts.GamerFontM
+
 	return &mw
 }
 
@@ -117,7 +116,7 @@ func (mw *MessageWindow) drawMessage(screen *ebiten.Image, msg string) {
 }
 
 func (mw *MessageWindow) takeTextPosition() image.Point {
-	x := mw.rect.Min.X + 10
+	x := mw.rect.Min.X + 15
 	y := mw.rect.Min.Y + 7
 	return image.Point{X: x, Y: y}
 }

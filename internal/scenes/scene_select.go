@@ -85,7 +85,7 @@ func (s *SelectScene) Initialize() error {
 	s.selectArray[s.selectedIndex].SetSelectState(true)
 
 	s.goButton = vpad.NewTriggerButton(images.CharaSelectButton, vpad.JustReleased, vpad.SelectColor)
-	s.goButton.SetLocation(view.ScreenWidth-220, view.ScreenHeight-80)
+	s.goButton.SetLocation(view.ScreenWidth-220, view.ScreenHeight-90)
 	s.goButton.SetTriggerButton([]ebiten.Key{ebiten.KeySpace})
 	s.volumeBtn = vpad.NewSelectButton(images.VolumeOffButton, vpad.JustPressed, vpad.SelectColor)
 	s.volumeBtn.SetLocation(view.ScreenWidth-58, 10)
@@ -188,6 +188,7 @@ func (s *SelectScene) Draw(screen *ebiten.Image) {
 		s.selectArray[i].Draw(screen)
 	}
 	s.drawCharacters(screen)
+	text.Draw(screen, fmt.Sprintf("FPS: %3.1f", ebiten.ActualFPS()), fonts.GamerFontSS, 10, view.ScreenHeight-15, color.White)
 	s.goButton.Draw(screen)
 	s.volumeBtn.Draw(screen)
 }

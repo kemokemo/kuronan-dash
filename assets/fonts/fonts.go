@@ -8,6 +8,7 @@ import (
 )
 
 var (
+	GamerFontSS font.Face
 	// GamerFontS is the small size font of the strong gamer font.
 	GamerFontS font.Face
 
@@ -29,6 +30,11 @@ func LoadFonts() error {
 	}
 
 	const dpi = 72
+	GamerFontSS = truetype.NewFace(tt, &truetype.Options{
+		Size:    12,
+		DPI:     dpi,
+		Hinting: font.HintingFull,
+	})
 	GamerFontS = truetype.NewFace(tt, &truetype.Options{
 		Size:    16,
 		DPI:     dpi,

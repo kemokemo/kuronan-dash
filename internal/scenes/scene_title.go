@@ -92,7 +92,8 @@ func (s *TitleScene) updateVolume() {
 func (s *TitleScene) Draw(screen *ebiten.Image) {
 	op := &ebiten.DrawImageOptions{}
 	screen.DrawImage(s.bg, op)
-	text.Draw(screen, versionInfo, fonts.GamerFontS, int(s.verPos.X), int(s.verPos.Y), color.White)
+	text.Draw(screen, fmt.Sprintf("FPS: %3.1f", ebiten.ActualFPS()), fonts.GamerFontSS, 10, view.ScreenHeight-15, color.White)
+	text.Draw(screen, versionInfo, fonts.GamerFontSS, view.ScreenWidth-180, view.ScreenHeight-15, color.White)
 	s.startTitleBtn.Draw(screen)
 	s.volumeBtn.Draw(screen)
 }

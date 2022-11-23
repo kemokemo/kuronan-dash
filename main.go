@@ -20,7 +20,7 @@ func main() {
 }
 
 func run() int {
-	game, err := kuronandash.NewGame(fmt.Sprintf("Version: %s.%s", Version, Revision))
+	game, err := kuronandash.NewGame(fmt.Sprintf("Ver.: %s.%s", Version, Revision))
 	if err != nil {
 		log.Println("failed to create a new game:", err)
 		return exitFailed

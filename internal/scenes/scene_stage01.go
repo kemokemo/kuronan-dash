@@ -284,6 +284,7 @@ func (s *Stage01Scene) Draw(screen *ebiten.Image) {
 	s.field.DrawCloser(screen)
 	s.drawUI(screen)
 	s.drawWithState(screen)
+	text.Draw(screen, fmt.Sprintf("FPS: %3.1f", ebiten.ActualFPS()), fonts.GamerFontSS, 10, view.ScreenHeight-15, color.White)
 
 	// Let's make sure that the volume can be changed at any time.
 	s.volumeBtn.Draw(screen)
@@ -318,20 +319,17 @@ func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 	case goCall:
 		text.Draw(screen, messages.GameGo, fonts.GamerFontL, view.ScreenWidth/2-20, view.ScreenHeight/2+30, color.White)
 	case pause:
-		text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
-			fonts.GamerFontS, 12, view.ScreenHeight-10, color.White)
+		text.Draw(screen, fmt.Sprintf("Music: %s", s.disc.Name), fonts.GamerFontS, 10, 20, color.White)
 		screen.DrawImage(s.pauseBg, s.pauseBgOp)
 		text.Draw(screen, messages.GamePause, fonts.GamerFontL, view.ScreenWidth/2-150, view.ScreenHeight/2+30, color.White)
 		s.startBtn.Draw(screen)
 	case run:
 		s.pauseBtn.Draw(screen)
-		text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
-			fonts.GamerFontS, 12, view.ScreenHeight-10, color.White)
+		text.Draw(screen, fmt.Sprintf("Music: %s", s.disc.Name), fonts.GamerFontS, 10, 20, color.White)
 	case specialEffect:
 		s.player.DrawSpecialEffect(screen)
 	case stageClear:
-		text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
-			fonts.GamerFontS, 12, view.ScreenHeight-10, color.White)
+		text.Draw(screen, fmt.Sprintf("Music: %s", s.disc.Name), fonts.GamerFontS, 10, 20, color.White)
 		screen.DrawImage(s.pauseBg, s.pauseBgOp)
 		text.Draw(screen, messages.GameStageClear, fonts.GamerFontL, view.ScreenWidth/2-200, view.ScreenHeight/2-134, color.White)
 		text.Draw(screen, messages.GameStageClear2, fonts.GamerFontL, view.ScreenWidth/2-500, view.ScreenHeight/2+30, color.White)
