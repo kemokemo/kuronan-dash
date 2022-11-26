@@ -24,6 +24,7 @@ type Player struct {
 	animation      *anime.StepAnimation
 	jumpSe         *se.Player
 	dropSe         *se.Player
+	spVoice        *se.Player
 	typeSe         se.SoundType
 	atkMaxDuration int
 	spMaxDuration  int
@@ -134,7 +135,7 @@ func (p *Player) Update() {
 		return
 	}
 
-	p.sumTicks += 1.0 / ebiten.CurrentTPS()
+	p.sumTicks += 1.0 / ebiten.ActualTPS()
 	if p.sumTicks >= 0.05 {
 		p.sumTicks = 0.0
 		p.stamina.ConsumesByState(p.current)
@@ -230,6 +231,10 @@ func (p *Player) Close() error {
 	if e != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
+	e = p.spVoice.Close()
+	if e != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
 	return err
 }
 
@@ -259,7 +264,13 @@ func (p *Player) GetMaxTension() float64 {
 }
 
 func (p *Player) StartSpEffect() bool {
-	return p.stateMachine.StartSpEffect()
+	if p.stateMachine.StartSpEffect() {
+		// todo: SPエフェクトがボイス再生よりも早く終わらないようにしたい
+		// SPボイスを聞こえやすくするため、一時的にBGMの音量を下げたい
+		p.spVoice.Play()
+		return true
+	}
+	return false
 }
 
 func (p *Player) FinishSpEffect() bool {
@@ -267,5 +278,6 @@ func (p *Player) FinishSpEffect() bool {
 }
 
 func (p *Player) SetVolumeFlag(isVolumeOn bool) {
+	p.spVoice.SetVolumeFlag(isVolumeOn)
 	p.stateMachine.SetVolumeFlag(isVolumeOn)
 }

@@ -23,4 +23,10 @@ var (
 	go_wav []byte
 	//go:embed stage-clear-voice.wav
 	stage_clear_voice_wav []byte
+	//go:embed sp-voice-kurona.wav
+	sp_voice_kurona_wav []byte
+	//go:embed sp-voice-koma.wav
+	sp_voice_koma_wav []byte
+	//go:embed sp-voice-shishimaru.wav
+	sp_voice_shishimaru_wav []byte
 )
