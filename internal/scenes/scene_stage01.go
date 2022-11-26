@@ -227,7 +227,7 @@ func (s *Stage01Scene) setVolume(flag bool) {
 }
 
 func (s *Stage01Scene) isFullTicks(num float64) bool {
-	s.sumTicks += ebiten.CurrentTPS()
+	s.sumTicks += ebiten.ActualTPS()
 	if s.sumTicks >= 3600*num {
 		s.sumTicks = 0.0
 		return true

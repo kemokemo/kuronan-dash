@@ -135,7 +135,7 @@ func (p *Player) Update() {
 		return
 	}
 
-	p.sumTicks += 1.0 / ebiten.CurrentTPS()
+	p.sumTicks += 1.0 / ebiten.ActualTPS()
 	if p.sumTicks >= 0.05 {
 		p.sumTicks = 0.0
 		p.stamina.ConsumesByState(p.current)
