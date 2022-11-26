@@ -15,6 +15,9 @@ var (
 	ReadyVoice           *Player
 	GoVoice              *Player
 	StageClearVoice      *Player
+	SpVoiceKurona        *Player
+	SpVoiceKoma          *Player
+	SpVoiceShishimaru    *Player
 )
 
 // LoadSE loads all sound effects.
@@ -54,6 +57,18 @@ func LoadSE() error {
 		return err
 	}
 	StageClearVoice, err = loadPlayer(stage_clear_voice_wav)
+	if err != nil {
+		return err
+	}
+	SpVoiceKurona, err = loadPlayer(sp_voice_kurona_wav)
+	if err != nil {
+		return err
+	}
+	SpVoiceKoma, err = loadPlayer(sp_voice_koma_wav)
+	if err != nil {
+		return err
+	}
+	SpVoiceShishimaru, err = loadPlayer(sp_voice_shishimaru_wav)
 	if err != nil {
 		return err
 	}
