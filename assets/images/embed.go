@@ -11,6 +11,8 @@ var (
 	bg_select_png []byte
 	//go:embed bg_prairie.png
 	bg_prairie_png []byte
+	//go:embed curtain.png
+	curtain_png []byte
 
 	//go:embed kurona_taiki.png
 	kurona_taiki_png []byte

@@ -4,6 +4,8 @@ import "fmt"
 
 // sound effect
 var (
+	Click *Player
+
 	Jump *Player
 	Drop *Player
 
@@ -24,6 +26,10 @@ var (
 func LoadSE() error {
 	var err error
 
+	Click, err = loadPlayer(click_wav)
+	if err != nil {
+		return err
+	}
 	Jump, err = loadPlayer(jump_wav)
 	if err != nil {
 		return err

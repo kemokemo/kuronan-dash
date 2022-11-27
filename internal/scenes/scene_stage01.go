@@ -31,6 +31,7 @@ type Stage01Scene struct {
 	state           gameState
 	player          *chara.Player
 	disc            *music.Disc
+	clickSe         *se.Player
 	readyVoice      *se.Player
 	goVoice         *se.Player
 	stageClearVoice *se.Player
@@ -54,6 +55,9 @@ type Stage01Scene struct {
 	spBtn           vpad.TriggerButton
 	pauseBg         *ebiten.Image
 	pauseBgOp       *ebiten.DrawImageOptions
+	curtain         *Curtain
+	isStarting      bool
+	isClosing       bool
 }
 
 // Initialize initializes all resources.
@@ -62,6 +66,7 @@ func (s *Stage01Scene) Initialize() error {
 	s.timeLimit = 90
 	s.time = s.timeLimit
 	s.disc = music.Stage01
+	s.clickSe = se.Click
 	s.readyVoice = se.ReadyVoice
 	s.goVoice = se.GoVoice
 	s.stageClearVoice = se.StageClearVoice
@@ -135,11 +140,37 @@ func (s *Stage01Scene) Initialize() error {
 	s.pauseBg = images.PauseLayer
 	s.pauseBgOp = &ebiten.DrawImageOptions{}
 
+	s.curtain = NewCurtain()
+	s.isStarting = false
+	s.isClosing = false
+
 	return nil
 }
 
 // Update updates the status of this scene and play sounds.
 func (s *Stage01Scene) Update(state *GameState) {
+	if s.isStarting || s.isClosing {
+		s.curtain.Update()
+
+		if s.curtain.IsFinished() {
+			if s.isClosing && s.state == stageClear {
+				// TODO: goto next stage :-)
+				err := state.SceneManager.GoTo(&TitleScene{})
+				if err != nil {
+					log.Println("failed to go to the 2nd stage: ", err)
+				}
+			} else if s.isClosing && s.state == gameOver {
+				err := state.SceneManager.GoTo(&TitleScene{})
+				if err != nil {
+					log.Println("failed to go to the title screen: ", err)
+				}
+			} else if s.isStarting {
+				s.isStarting = false
+			}
+		}
+		return
+	}
+
 	s.updateVolume()
 
 	// s.upBtnとs.downBtnは、s.iChecker内でUpdate()されるのでここではしない
@@ -187,18 +218,15 @@ func (s *Stage01Scene) Update(state *GameState) {
 		}
 	case stageClear:
 		if s.iChecker.TriggeredStart() {
-			// TODO: goto next stage :-)
-			err := state.SceneManager.GoTo(&TitleScene{})
-			if err != nil {
-				log.Println("failed to go to the 2nd stage: ", err)
-			}
+			s.isClosing = true
+			s.curtain.Start(true)
+			s.clickSe.Play()
 		}
 	case gameOver:
 		if s.iChecker.TriggeredStart() {
-			err := state.SceneManager.GoTo(&TitleScene{})
-			if err != nil {
-				log.Println("failed to go to the title screen: ", err)
-			}
+			s.isClosing = true
+			s.curtain.Start(true)
+			s.clickSe.Play()
 		}
 	default:
 		log.Println("unknown state of Stage01Scene:", s.state)
@@ -220,6 +248,7 @@ func (s *Stage01Scene) updateVolume() {
 
 func (s *Stage01Scene) setVolume(flag bool) {
 	s.disc.SetVolumeFlag(flag)
+	s.clickSe.SetVolumeFlag(flag)
 	s.readyVoice.SetVolumeFlag(flag)
 	s.goVoice.SetVolumeFlag(flag)
 	s.stageClearVoice.SetVolumeFlag(flag)
@@ -288,6 +317,10 @@ func (s *Stage01Scene) Draw(screen *ebiten.Image) {
 
 	// Let's make sure that the volume can be changed at any time.
 	s.volumeBtn.Draw(screen)
+
+	if s.isStarting || s.isClosing {
+		s.curtain.Draw(screen)
+	}
 }
 
 // description
@@ -360,6 +393,9 @@ func (s *Stage01Scene) StartMusic(isVolumeOn bool) {
 
 	s.setVolume(isVolumeOn)
 	// when the game state is changed to 'run', the music starts. not now.
+
+	s.isStarting = true
+	s.curtain.Start(false)
 }
 
 // StopMusic stops playing music and sound effects

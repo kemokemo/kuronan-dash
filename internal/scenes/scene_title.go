@@ -23,6 +23,7 @@ import (
 type TitleScene struct {
 	bg            *ebiten.Image
 	disc          *music.Disc
+	clickSe       *se.Player
 	titleCall     *se.Player
 	verPos        view.Vector
 	titlePos      view.Vector
@@ -31,12 +32,16 @@ type TitleScene struct {
 	vChecker      input.VolumeChecker
 	startTitleBtn vpad.TriggerButton
 	volumeBtn     vpad.SelectButton
+	curtain       *Curtain
+	isStarting    bool
+	isClosing     bool
 }
 
 // Initialize initializes all resources.
 func (s *TitleScene) Initialize() error {
 	s.bg = images.TitleBackground
 	s.disc = music.Title
+	s.clickSe = se.Click
 	s.titleCall = se.TitleCall
 	s.verPos = view.Vector{X: 10, Y: float64(view.ScreenHeight) - 15}
 	s.titlePos = view.Vector{
@@ -55,11 +60,32 @@ func (s *TitleScene) Initialize() error {
 	s.iChecker = &input.TitleInputChecker{StartBtn: s.startTitleBtn}
 	s.vChecker = &input.VolumeInputChecker{VolumeBtn: s.volumeBtn}
 
+	s.curtain = NewCurtain()
+	s.isStarting = false
+	s.isClosing = false
+
 	return nil
 }
 
 // Update updates the status of this scene.
 func (s *TitleScene) Update(state *GameState) {
+	if s.isStarting || s.isClosing {
+		s.curtain.Update()
+
+		if s.curtain.IsFinished() {
+			if s.isClosing {
+				err := state.SceneManager.GoTo(&SelectScene{})
+				if err != nil {
+					log.Println("failed to go to the select scene: ", err)
+				}
+			} else if s.isStarting {
+				s.isStarting = false
+			}
+		}
+
+		return
+	}
+
 	s.updateVolume()
 
 	if !s.titleCall.IsPlaying() {
@@ -68,10 +94,10 @@ func (s *TitleScene) Update(state *GameState) {
 
 	s.iChecker.Update()
 	if s.iChecker.TriggeredStart() {
-		err := state.SceneManager.GoTo(&SelectScene{})
-		if err != nil {
-			log.Println("failed to go to the select scene: ", err)
-		}
+		s.isClosing = true
+		s.curtain.Start(true)
+		s.clickSe.Play()
+		return
 	}
 }
 
@@ -79,13 +105,17 @@ func (s *TitleScene) updateVolume() {
 	s.vChecker.Update()
 
 	if s.vChecker.JustVolumeOn() {
-		s.disc.SetVolumeFlag(true)
-		s.titleCall.SetVolumeFlag(true)
+		s.setVolume(true)
 		s.disc.Play()
 	} else if s.vChecker.JustVolumeOff() {
-		s.disc.SetVolumeFlag(false)
-		s.titleCall.SetVolumeFlag(false)
+		s.setVolume(false)
 	}
+}
+
+func (s *TitleScene) setVolume(flag bool) {
+	s.disc.SetVolumeFlag(flag)
+	s.clickSe.SetVolumeFlag(flag)
+	s.titleCall.SetVolumeFlag(flag)
 }
 
 // Draw draws background and characters.
@@ -96,15 +126,22 @@ func (s *TitleScene) Draw(screen *ebiten.Image) {
 	text.Draw(screen, versionInfo, fonts.GamerFontSS, view.ScreenWidth-180, view.ScreenHeight-15, color.White)
 	s.startTitleBtn.Draw(screen)
 	s.volumeBtn.Draw(screen)
+
+	if s.isStarting || s.isClosing {
+		s.curtain.Draw(screen)
+	}
 }
 
 // StartMusic starts playing music
 func (s *TitleScene) StartMusic(isVolumeOn bool) {
 	s.volumeBtn.SetSelectState(isVolumeOn)
-	s.updateVolume()
-	s.disc.SetVolume(0.3)
-	s.disc.Play()
-	s.titleCall.Play()
+	if isVolumeOn {
+		s.disc.SetVolume(0.3)
+		s.disc.Play()
+		s.titleCall.Play()
+	}
+	s.isStarting = true
+	s.curtain.Start(false)
 }
 
 // StopMusic stops playing music and sound effects
