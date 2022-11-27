@@ -105,13 +105,17 @@ func (s *TitleScene) updateVolume() {
 	s.vChecker.Update()
 
 	if s.vChecker.JustVolumeOn() {
-		s.disc.SetVolumeFlag(true)
-		s.titleCall.SetVolumeFlag(true)
+		s.setVolume(true)
 		s.disc.Play()
 	} else if s.vChecker.JustVolumeOff() {
-		s.disc.SetVolumeFlag(false)
-		s.titleCall.SetVolumeFlag(false)
+		s.setVolume(false)
 	}
+}
+
+func (s *TitleScene) setVolume(flag bool) {
+	s.disc.SetVolumeFlag(flag)
+	s.clickSe.SetVolumeFlag(flag)
+	s.titleCall.SetVolumeFlag(flag)
 }
 
 // Draw draws background and characters.
@@ -131,11 +135,11 @@ func (s *TitleScene) Draw(screen *ebiten.Image) {
 // StartMusic starts playing music
 func (s *TitleScene) StartMusic(isVolumeOn bool) {
 	s.volumeBtn.SetSelectState(isVolumeOn)
-	s.updateVolume()
-	s.disc.SetVolume(0.3)
-	s.disc.Play()
-	s.titleCall.Play()
-
+	if isVolumeOn {
+		s.disc.SetVolume(0.3)
+		s.disc.Play()
+		s.titleCall.Play()
+	}
 	s.isStarting = true
 	s.curtain.Start(false)
 }

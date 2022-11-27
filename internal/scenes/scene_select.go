@@ -203,6 +203,7 @@ func (s *SelectScene) updateVolume() {
 
 func (s *SelectScene) setVolume(flag bool) {
 	s.disc.SetVolumeFlag(flag)
+	s.clickSe.SetVolumeFlag(flag)
 	s.selectVoice.SetVolumeFlag(flag)
 }
 
