@@ -3,6 +3,9 @@ package se
 import _ "embed"
 
 var (
+	//go:embed click.wav
+	click_wav []byte
+
 	//go:embed jump.wav
 	jump_wav []byte
 	//go:embed drop.wav

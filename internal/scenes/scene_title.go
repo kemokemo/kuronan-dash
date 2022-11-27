@@ -23,6 +23,7 @@ import (
 type TitleScene struct {
 	bg            *ebiten.Image
 	disc          *music.Disc
+	clickSe       *se.Player
 	titleCall     *se.Player
 	verPos        view.Vector
 	titlePos      view.Vector
@@ -40,6 +41,7 @@ type TitleScene struct {
 func (s *TitleScene) Initialize() error {
 	s.bg = images.TitleBackground
 	s.disc = music.Title
+	s.clickSe = se.Click
 	s.titleCall = se.TitleCall
 	s.verPos = view.Vector{X: 10, Y: float64(view.ScreenHeight) - 15}
 	s.titlePos = view.Vector{
@@ -94,6 +96,7 @@ func (s *TitleScene) Update(state *GameState) {
 	if s.iChecker.TriggeredStart() {
 		s.isClosing = true
 		s.curtain.Start(true)
+		s.clickSe.Play()
 		return
 	}
 }

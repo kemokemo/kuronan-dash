@@ -31,6 +31,7 @@ type Stage01Scene struct {
 	state           gameState
 	player          *chara.Player
 	disc            *music.Disc
+	clickSe         *se.Player
 	readyVoice      *se.Player
 	goVoice         *se.Player
 	stageClearVoice *se.Player
@@ -65,6 +66,7 @@ func (s *Stage01Scene) Initialize() error {
 	s.timeLimit = 90
 	s.time = s.timeLimit
 	s.disc = music.Stage01
+	s.clickSe = se.Click
 	s.readyVoice = se.ReadyVoice
 	s.goVoice = se.GoVoice
 	s.stageClearVoice = se.StageClearVoice
@@ -218,11 +220,13 @@ func (s *Stage01Scene) Update(state *GameState) {
 		if s.iChecker.TriggeredStart() {
 			s.isClosing = true
 			s.curtain.Start(true)
+			s.clickSe.Play()
 		}
 	case gameOver:
 		if s.iChecker.TriggeredStart() {
 			s.isClosing = true
 			s.curtain.Start(true)
+			s.clickSe.Play()
 		}
 	default:
 		log.Println("unknown state of Stage01Scene:", s.state)

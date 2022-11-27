@@ -38,6 +38,7 @@ type SelectScene struct {
 	bg            *ebiten.Image
 	bgViewPort    *view.Viewport
 	disc          *music.Disc
+	clickSe       *se.Player
 	selectVoice   *se.Player
 	msgWindow     *ui.MessageWindow
 	fontNormal    font.Face
@@ -64,6 +65,7 @@ func (s *SelectScene) Initialize() error {
 	s.bgViewPort.SetVelocity(1.0)
 	s.bgViewPort.SetLoop(true)
 	s.disc = music.Title
+	s.clickSe = se.Click
 	s.selectVoice = se.CharacterSelectVoice
 
 	s.charaList = []*chara.Player{chara.Kurona, chara.Koma, chara.Shishimaru}
@@ -178,6 +180,7 @@ func (s *SelectScene) Update(state *GameState) {
 	if s.iChecker.TriggeredStart() {
 		s.isClosing = true
 		s.curtain.Start(true)
+		s.clickSe.Play()
 		return
 	}
 
