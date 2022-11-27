@@ -166,6 +166,7 @@ func (s *SelectScene) Update(state *GameState) {
 
 	if s.selectChanged {
 		chara.Selected = s.charaList[s.selectedIndex]
+		s.clickSe.Play()
 	}
 
 	for i := range s.selectArray {
