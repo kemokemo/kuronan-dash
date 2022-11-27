@@ -31,6 +31,9 @@ type TitleScene struct {
 	vChecker      input.VolumeChecker
 	startTitleBtn vpad.TriggerButton
 	volumeBtn     vpad.SelectButton
+	curtain       *Curtain
+	isStarting    bool
+	isClosing     bool
 }
 
 // Initialize initializes all resources.
@@ -55,11 +58,32 @@ func (s *TitleScene) Initialize() error {
 	s.iChecker = &input.TitleInputChecker{StartBtn: s.startTitleBtn}
 	s.vChecker = &input.VolumeInputChecker{VolumeBtn: s.volumeBtn}
 
+	s.curtain = NewCurtain()
+	s.isStarting = false
+	s.isClosing = false
+
 	return nil
 }
 
 // Update updates the status of this scene.
 func (s *TitleScene) Update(state *GameState) {
+	if s.isStarting || s.isClosing {
+		s.curtain.Update()
+
+		if s.curtain.IsFinished() {
+			if s.isClosing {
+				err := state.SceneManager.GoTo(&SelectScene{})
+				if err != nil {
+					log.Println("failed to go to the select scene: ", err)
+				}
+			} else if s.isStarting {
+				s.isStarting = false
+			}
+		}
+
+		return
+	}
+
 	s.updateVolume()
 
 	if !s.titleCall.IsPlaying() {
@@ -68,10 +92,9 @@ func (s *TitleScene) Update(state *GameState) {
 
 	s.iChecker.Update()
 	if s.iChecker.TriggeredStart() {
-		err := state.SceneManager.GoTo(&SelectScene{})
-		if err != nil {
-			log.Println("failed to go to the select scene: ", err)
-		}
+		s.isClosing = true
+		s.curtain.Start(true)
+		return
 	}
 }
 
@@ -96,6 +119,10 @@ func (s *TitleScene) Draw(screen *ebiten.Image) {
 	text.Draw(screen, versionInfo, fonts.GamerFontSS, view.ScreenWidth-180, view.ScreenHeight-15, color.White)
 	s.startTitleBtn.Draw(screen)
 	s.volumeBtn.Draw(screen)
+
+	if s.isStarting || s.isClosing {
+		s.curtain.Draw(screen)
+	}
 }
 
 // StartMusic starts playing music
@@ -105,6 +132,9 @@ func (s *TitleScene) StartMusic(isVolumeOn bool) {
 	s.disc.SetVolume(0.3)
 	s.disc.Play()
 	s.titleCall.Play()
+
+	s.isStarting = true
+	s.curtain.Start(false)
 }
 
 // StopMusic stops playing music and sound effects

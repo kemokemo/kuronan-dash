@@ -51,6 +51,9 @@ type SelectScene struct {
 	selectedIndex int
 	selectChanged bool
 	lenChara      int
+	curtain       *Curtain
+	isStarting    bool
+	isClosing     bool
 }
 
 // Initialize initializes all resources.
@@ -102,11 +105,31 @@ func (s *SelectScene) Initialize() error {
 		color.RGBA{192, 192, 192, 255},
 		color.RGBA{33, 228, 68, 255})
 
+	s.curtain = NewCurtain()
+	s.isStarting = false
+	s.isClosing = false
+
 	return nil
 }
 
 // Update updates the status of this scene.
 func (s *SelectScene) Update(state *GameState) {
+	if s.isStarting || s.isClosing {
+		s.curtain.Update()
+
+		if s.curtain.IsFinished() {
+			if s.isClosing {
+				err := state.SceneManager.GoTo(&Stage01Scene{})
+				if err != nil {
+					log.Println("failed to go to the Stage01Scene: ", err)
+				}
+			} else if s.isStarting {
+				s.isStarting = false
+			}
+		}
+		return
+	}
+
 	s.updateVolume()
 
 	if !s.selectVoice.IsPlaying() {
@@ -152,11 +175,10 @@ func (s *SelectScene) Update(state *GameState) {
 	}
 
 	s.goButton.Update()
-	if s.goButton.IsTriggered() || s.iChecker.TriggeredStart() {
-		err := state.SceneManager.GoTo(&Stage01Scene{})
-		if err != nil {
-			log.Println("failed to got Stage01Scene: ", err)
-		}
+	if s.iChecker.TriggeredStart() {
+		s.isClosing = true
+		s.curtain.Start(true)
+		return
 	}
 
 	s.bgViewPort.Move(view.UpperRight)
@@ -191,6 +213,10 @@ func (s *SelectScene) Draw(screen *ebiten.Image) {
 	text.Draw(screen, fmt.Sprintf("FPS: %3.1f", ebiten.ActualFPS()), fonts.GamerFontSS, 10, view.ScreenHeight-15, color.White)
 	s.goButton.Draw(screen)
 	s.volumeBtn.Draw(screen)
+
+	if s.isStarting || s.isClosing {
+		s.curtain.Draw(screen)
+	}
 }
 
 func (s *SelectScene) drawBackground(screen *ebiten.Image) {
@@ -277,6 +303,8 @@ func (s *SelectScene) StartMusic(isVolumeOn bool) {
 		s.disc.Play()
 		s.selectVoice.Play()
 	}
+	s.isStarting = true
+	s.curtain.Start(false)
 }
 
 // StopMusic stops playing music and sound effects

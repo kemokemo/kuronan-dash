@@ -22,6 +22,10 @@ func loadBackground() error {
 	if err != nil {
 		return err
 	}
+	Curtain, err = loadSingleImage(curtain_png)
+	if err != nil {
+		return err
+	}
 
 	PauseLayer = ebiten.NewImage(view.ScreenWidth, view.ScreenHeight)
 	PauseLayer.Fill(color.RGBA{R: 40, G: 40, B: 40, A: 200})
