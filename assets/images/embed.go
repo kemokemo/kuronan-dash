@@ -108,8 +108,8 @@ var (
 	down_button_png []byte
 	//go:embed AttackButton.png
 	attack_button_png []byte
-	//go:embed SpecialButton.png
-	special_button_png []byte
+	//go:embed SkillButton.png
+	skill_button_png []byte
 	//go:embed button_volume_on.png
 	button_volume_on_png []byte
 	//go:embed button_volume_off.png

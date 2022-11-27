@@ -14,7 +14,7 @@ const (
 	goCall
 	run
 	pause
-	specialEffect
+	skillEffect
 	stageClear
 	gameOver
 )

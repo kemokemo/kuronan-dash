@@ -84,7 +84,7 @@ func loadFieldParts() error {
 	if err != nil {
 		return err
 	}
-	SpecialButton, err = loadSingleImage(special_button_png)
+	SkillButton, err = loadSingleImage(skill_button_png)
 	if err != nil {
 		return err
 	}

@@ -19,8 +19,8 @@ type Player struct {
 	StandingImage  *ebiten.Image
 	Description    string
 	attackImage    *ebiten.Image
-	specialImage   *ebiten.Image
-	specialEffect  *ebiten.Image
+	skillImage     *ebiten.Image
+	skillEffect    *ebiten.Image
 	animation      *anime.StepAnimation
 	jumpSe         *se.Player
 	dropSe         *se.Player
@@ -69,7 +69,7 @@ func (p *Player) InitializeWithLanes(lanes *field.Lanes) error {
 
 	// set the player at the top lane.
 	w, h := p.StandingImage.Size()
-	sw, sh := p.specialEffect.Size()
+	sw, sh := p.skillEffect.Size()
 	aw, ah := p.attackImage.Size()
 
 	initialY := lanes.GetTargetLaneHeight() - float64(h) + field.FieldOffset
@@ -131,7 +131,7 @@ func (p *Player) Update() {
 		p.tension.Get(),
 		p.tension.IsMax(),
 		p.charaPosV)
-	if p.current == move.SpecialEffect || p.current == move.Pause {
+	if p.current == move.SkillEffect || p.current == move.Pause {
 		return
 	}
 
@@ -161,8 +161,8 @@ func (p *Player) updateVelWithOffset(offsetV *view.Vector) {
 	p.charaDrawV.Y = p.tempDrawV.Y + offsetV.Y
 }
 
-func (p *Player) UpdateSpecialEffect() {
-	p.stateMachine.UpdateSpecialEffect()
+func (p *Player) UpdateSkillEffect() {
+	p.stateMachine.UpdateSkillEffect()
 }
 
 // Draw draws the character image.
@@ -173,8 +173,8 @@ func (p *Player) Draw(screen *ebiten.Image) {
 	}
 
 	// TODO: ダッシュ中とか奥義中とか状態に応じて多少前後しつつ、ほぼ画面中央に描画したい
-	if p.current == move.Special {
-		screen.DrawImage(p.specialEffect, p.spEffectOp)
+	if p.current == move.Skill {
+		screen.DrawImage(p.skillEffect, p.spEffectOp)
 	}
 	screen.DrawImage(p.animation.GetCurrentFrame(), p.op)
 	if p.stateMachine.DrawAttack() {
@@ -182,8 +182,8 @@ func (p *Player) Draw(screen *ebiten.Image) {
 	}
 }
 
-func (p *Player) DrawSpecialEffect(screen *ebiten.Image) {
-	screen.DrawImage(p.specialImage, p.spOp)
+func (p *Player) DrawSkillEffect(screen *ebiten.Image) {
+	screen.DrawImage(p.skillImage, p.spOp)
 }
 
 // GetPosition return the current position of this player.

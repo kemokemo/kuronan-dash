@@ -114,7 +114,7 @@ func (s *Stage01Scene) Initialize() error {
 	s.atkBtn = vpad.NewTriggerButton(images.AttackButton, vpad.JustPressed, vpad.SelectColor)
 	s.atkBtn.SetLocation(view.ScreenWidth-20-2*bW-10, view.ScreenHeight-bH-45)
 	s.atkBtn.SetTriggerButton([]ebiten.Key{ebiten.KeyA})
-	s.spBtn = vpad.NewTriggerButton(images.SpecialButton, vpad.JustPressed, vpad.SelectColor)
+	s.spBtn = vpad.NewTriggerButton(images.SkillButton, vpad.JustPressed, vpad.SelectColor)
 	s.spBtn.SetLocation(view.ScreenWidth-bW-20, view.ScreenHeight-bH-45)
 	s.spBtn.SetTriggerButton([]ebiten.Key{ebiten.KeyS})
 	s.player.SetInputChecker(laneRectArray, s.upBtn, s.downBtn, s.atkBtn, s.spBtn)
@@ -170,7 +170,7 @@ func (s *Stage01Scene) Update(state *GameState) {
 			s.player.Pause()
 			s.disc.Pause()
 		} else if s.player.StartSpEffect() {
-			s.state = specialEffect
+			s.state = skillEffect
 		} else {
 			s.run()
 		}
@@ -180,8 +180,8 @@ func (s *Stage01Scene) Update(state *GameState) {
 			s.player.ReStart()
 			s.disc.Play()
 		}
-	case specialEffect:
-		s.player.UpdateSpecialEffect()
+	case skillEffect:
+		s.player.UpdateSkillEffect()
 		if s.player.FinishSpEffect() {
 			s.state = run
 		}
@@ -326,8 +326,8 @@ func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 	case run:
 		s.pauseBtn.Draw(screen)
 		text.Draw(screen, fmt.Sprintf("Music: %s", s.disc.Name), fonts.GamerFontS, 10, 20, color.White)
-	case specialEffect:
-		s.player.DrawSpecialEffect(screen)
+	case skillEffect:
+		s.player.DrawSkillEffect(screen)
 	case stageClear:
 		text.Draw(screen, fmt.Sprintf("Music: %s", s.disc.Name), fonts.GamerFontS, 10, 20, color.White)
 		screen.DrawImage(s.pauseBg, s.pauseBgOp)

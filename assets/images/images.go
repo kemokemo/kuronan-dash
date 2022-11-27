@@ -47,7 +47,7 @@ var (
 	UpButton          *ebiten.Image
 	DownButton        *ebiten.Image
 	AttackButton      *ebiten.Image
-	SpecialButton     *ebiten.Image
+	SkillButton       *ebiten.Image
 	VolumeOnButton    *ebiten.Image
 	VolumeOffButton   *ebiten.Image
 	StartTitleButton  *ebiten.Image
@@ -72,7 +72,7 @@ var (
 	KomaSpEffect       *ebiten.Image
 	ShishimaruSpEffect *ebiten.Image
 
-	// character special cut-in image
+	// character skill cut-in image
 	KuronaSpBack     *ebiten.Image
 	KomaSpBack       *ebiten.Image
 	ShishimaruSpBack *ebiten.Image

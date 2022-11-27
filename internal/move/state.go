@@ -11,8 +11,8 @@ const (
 	Ascending
 	Descending
 	Pause
-	SpecialEffect
-	Special
+	SkillEffect
+	Skill
 )
 
 func (s State) String() string {
@@ -30,10 +30,10 @@ func (s State) String() string {
 		str = "Descending"
 	case Pause:
 		str = "Pause"
-	case SpecialEffect:
-		str = "SpecialEffect"
-	case Special:
-		str = "Special"
+	case SkillEffect:
+		str = "SkillEffect"
+	case Skill:
+		str = "Skill"
 	}
 	return str
 }

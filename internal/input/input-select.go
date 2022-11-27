@@ -42,6 +42,6 @@ func (i *SelectInputChecker) TriggeredAttack() bool {
 	return false
 }
 
-func (i *SelectInputChecker) TriggeredSpecial() bool {
+func (i *SelectInputChecker) TriggeredSkill() bool {
 	return false
 }

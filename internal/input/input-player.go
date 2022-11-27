@@ -13,7 +13,7 @@ type PlayerInputChecker struct {
 	UpBtn        vpad.TriggerButton
 	DownBtn      vpad.TriggerButton
 	AttackBtn    vpad.TriggerButton
-	SpecialBtn   vpad.TriggerButton
+	SkillBtn     vpad.TriggerButton
 	currentIndex int
 	mousePos     image.Point
 	isUp         bool
@@ -24,7 +24,7 @@ type PlayerInputChecker struct {
 
 func (i *PlayerInputChecker) Update() {
 	i.AttackBtn.Update()
-	i.SpecialBtn.Update()
+	i.SkillBtn.Update()
 
 	// 使用頻度が高そうな操作系からチェック。上下移動があればこの関数の処理を終える。
 	i.isUp = false
@@ -114,6 +114,6 @@ func (i *PlayerInputChecker) TriggeredAttack() bool {
 	return i.AttackBtn.IsTriggered()
 }
 
-func (i *PlayerInputChecker) TriggeredSpecial() bool {
-	return i.SpecialBtn.IsTriggered()
+func (i *PlayerInputChecker) TriggeredSkill() bool {
+	return i.SkillBtn.IsTriggered()
 }

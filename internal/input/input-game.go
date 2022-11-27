@@ -7,12 +7,12 @@ import (
 )
 
 type GameInputChecker struct {
-	StartBtn   vpad.TriggerButton
-	PauseBtn   vpad.TriggerButton
-	UpBtn      vpad.TriggerButton
-	DownBtn    vpad.TriggerButton
-	AttackBtn  vpad.TriggerButton
-	SpecialBtn vpad.TriggerButton
+	StartBtn  vpad.TriggerButton
+	PauseBtn  vpad.TriggerButton
+	UpBtn     vpad.TriggerButton
+	DownBtn   vpad.TriggerButton
+	AttackBtn vpad.TriggerButton
+	SkillBtn  vpad.TriggerButton
 }
 
 func (gi *GameInputChecker) Update() {
@@ -48,6 +48,6 @@ func (gi *GameInputChecker) TriggeredAttack() bool {
 	return gi.AttackBtn.IsTriggered()
 }
 
-func (gi *GameInputChecker) TriggeredSpecial() bool {
-	return gi.SpecialBtn.IsTriggered()
+func (gi *GameInputChecker) TriggeredSkill() bool {
+	return gi.SkillBtn.IsTriggered()
 }

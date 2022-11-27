@@ -3,7 +3,7 @@ package character
 import "github.com/kemokemo/kuronan-dash/internal/move"
 
 // Tension is the character's tension.
-// If this reaches the max value, the character can shot a special skill.
+// If this reaches the max value, the character can shot a skill skill.
 type Tension struct {
 	max     int
 	val     int
@@ -27,7 +27,7 @@ func (t *Tension) AddByState(state move.State) {
 		t.add(2)
 	case move.Walk:
 		t.add(1)
-	case move.Special:
+	case move.Skill:
 		t.remove(1)
 	default:
 		// not add tension.

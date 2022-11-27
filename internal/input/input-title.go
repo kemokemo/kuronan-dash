@@ -44,6 +44,6 @@ func (i *TitleInputChecker) TriggeredAttack() bool {
 	return false
 }
 
-func (i *TitleInputChecker) TriggeredSpecial() bool {
+func (i *TitleInputChecker) TriggeredSkill() bool {
 	return false
 }

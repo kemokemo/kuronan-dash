@@ -67,8 +67,8 @@ func (vc *KomaVc) decideVbyState() {
 		vc.decideVofWalk()
 	case Dash:
 		vc.decideVofDash()
-	case Special:
-		vc.decideVofSpecial()
+	case Skill:
+		vc.decideVofSkill()
 	case Ascending:
 		vc.deltaX = 0.6
 		vc.deltaY = vc.jumpV0 + vc.gravity*vc.elapsedY
@@ -109,7 +109,7 @@ func (vc *KomaVc) decideVofDash() {
 	vc.deltaY = 0.0
 }
 
-func (vc *KomaVc) decideVofSpecial() {
+func (vc *KomaVc) decideVofSkill() {
 	vc.deltaX += komaInitialVelocitySp * vc.elapsedX
 	if vc.deltaX > komaSpMax {
 		vc.deltaX = komaSpMax

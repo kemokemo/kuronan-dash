@@ -10,7 +10,7 @@ type InputChecker interface {
 	TriggeredStart() bool
 	TriggeredPause() bool
 	TriggeredAttack() bool
-	TriggeredSpecial() bool
+	TriggeredSkill() bool
 }
 
 type VolumeChecker interface {

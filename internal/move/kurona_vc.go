@@ -70,8 +70,8 @@ func (vc *KuronaVc) decideVbyState() {
 		vc.decideVofWalk()
 	case Dash:
 		vc.decideVofDash()
-	case Special:
-		vc.decideVofSpecial()
+	case Skill:
+		vc.decideVofSkill()
 	case Ascending:
 		vc.deltaX = 0.6
 		vc.deltaY = vc.jumpV0 + vc.gravity*vc.elapsedY
@@ -112,7 +112,7 @@ func (vc *KuronaVc) decideVofDash() {
 	vc.deltaY = 0.0
 }
 
-func (vc *KuronaVc) decideVofSpecial() {
+func (vc *KuronaVc) decideVofSkill() {
 	vc.deltaX += kuronaInitialVelocitySp * vc.elapsedX
 	if vc.deltaX > kuronaSpMax {
 		vc.deltaX = kuronaSpMax

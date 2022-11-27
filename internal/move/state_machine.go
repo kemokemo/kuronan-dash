@@ -61,11 +61,11 @@ func NewStateMachine(lanes *field.Lanes, typeSe se.SoundType, atkMaxDuration int
 
 func (sm *StateMachine) SetInputChecker(laneRectArray []image.Rectangle, upBtn, downBtn, atkBtn, spBtn vpad.TriggerButton) {
 	sm.iChecker = &input.PlayerInputChecker{
-		RectArray:  laneRectArray,
-		UpBtn:      upBtn,
-		DownBtn:    downBtn,
-		AttackBtn:  atkBtn,
-		SpecialBtn: spBtn,
+		RectArray: laneRectArray,
+		UpBtn:     upBtn,
+		DownBtn:   downBtn,
+		AttackBtn: atkBtn,
+		SkillBtn:  spBtn,
 	}
 }
 
@@ -98,21 +98,21 @@ func (sm *StateMachine) updateWithStaminaAndMove(stamina int, tension int, chara
 			sm.previous = Dash
 			sm.current = Walk
 		}
-	case Special:
+	case Skill:
 		sm.finishSpEffect = false
-		// TODO: Special状態では障害物で遅くなりにくい、みたいな特性をどうやって表現するか
+		// TODO: Skill状態では障害物で遅くなりにくい、みたいな特性をどうやって表現するか
 		if stamina <= 0 || sm.isBlocked {
-			sm.previous = Special
+			sm.previous = Skill
 			sm.current = Walk
 		} else if tension <= 0 {
-			sm.previous = Special
+			sm.previous = Skill
 			sm.current = Dash
 
 		}
 	case Walk:
 		if stamina > 0 && !sm.isBlocked {
-			if sm.previous == Special {
-				sm.current = Special
+			if sm.previous == Skill {
+				sm.current = Skill
 			} else {
 				sm.current = Dash
 			}
@@ -124,7 +124,7 @@ func (sm *StateMachine) updateWithStaminaAndMove(stamina int, tension int, chara
 }
 
 func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
-	if !(sm.current == Dash) && !(sm.current == Walk) && !(sm.current == Special) && !(sm.current == SpecialEffect) {
+	if !(sm.current == Dash) && !(sm.current == Walk) && !(sm.current == Skill) && !(sm.current == SkillEffect) {
 		return
 	}
 
@@ -165,20 +165,20 @@ func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
 		}
 	}
 
-	if sm.iChecker.TriggeredSpecial() && isMaxTension {
+	if sm.iChecker.TriggeredSkill() && isMaxTension {
 		sm.previous = sm.current
-		sm.current = SpecialEffect
+		sm.current = SkillEffect
 		sm.startSpEffect = true
 	}
 }
 
-func (sm *StateMachine) UpdateSpecialEffect() {
+func (sm *StateMachine) UpdateSkillEffect() {
 	sm.startSpEffect = false
 	sm.spDuration++
 	if sm.spDuration >= sm.spMaxDuration {
 		sm.spDuration = 0
 		sm.finishSpEffect = true
-		sm.current = Special
+		sm.current = Skill
 	}
 }
 
