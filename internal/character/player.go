@@ -3,6 +3,7 @@ package character
 import (
 	"fmt"
 	"image"
+	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	vpad "github.com/kemokemo/ebiten-virtualpad"
@@ -24,8 +25,8 @@ type Player struct {
 	animation      *anime.StepAnimation
 	jumpSe         *se.Player
 	dropSe         *se.Player
+	attackSe       *se.Player
 	spVoice        *se.Player
-	typeSe         se.SoundType
 	atkMaxDuration int
 	spMaxDuration  int
 
@@ -51,6 +52,8 @@ type Player struct {
 	sumTicks     float64
 	power        float64
 	tension      *Tension
+
+	soundTypeCh chan se.SoundType
 }
 
 // InitializeWithLanesInfo sets the lanes information.
@@ -62,10 +65,12 @@ func (p *Player) InitializeWithLanes(lanes *field.Lanes) error {
 	p.tension.Initialize()
 
 	var err error
-	p.stateMachine, err = move.NewStateMachine(lanes, p.typeSe, p.atkMaxDuration, p.spMaxDuration)
+	p.soundTypeCh = make(chan se.SoundType)
+	p.stateMachine, err = move.NewStateMachine(lanes, p.atkMaxDuration, p.spMaxDuration)
 	if err != nil {
 		return err
 	}
+	p.stateMachine.SetSeChan(p.soundTypeCh)
 
 	// set the player at the top lane.
 	w, h := p.StandingImage.Size()
@@ -102,6 +107,23 @@ func (p *Player) SetInputChecker(laneRectArray []image.Rectangle, upBtn, downBtn
 // Start starts playing.
 func (p *Player) Start() {
 	p.current = move.Dash
+
+	go p.playSounds()
+}
+
+func (p *Player) playSounds() {
+	for s := range p.soundTypeCh {
+		switch s {
+		case se.Jump:
+			p.jumpSe.Play()
+		case se.Drop:
+			p.dropSe.Play()
+		case se.Attack:
+			p.attackSe.Play()
+		default:
+			log.Println("unknown sound type, ", s)
+		}
+	}
 }
 
 // Pause pauses this character.
@@ -235,6 +257,9 @@ func (p *Player) Close() error {
 	if e != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
+
+	close(p.soundTypeCh)
+
 	return err
 }
 
@@ -279,5 +304,8 @@ func (p *Player) FinishSpEffect() bool {
 
 func (p *Player) SetVolumeFlag(isVolumeOn bool) {
 	p.spVoice.SetVolumeFlag(isVolumeOn)
-	p.stateMachine.SetVolumeFlag(isVolumeOn)
+
+	p.jumpSe.SetVolumeFlag(isVolumeOn)
+	p.dropSe.SetVolumeFlag(isVolumeOn)
+	p.attackSe.SetVolumeFlag(isVolumeOn)
 }

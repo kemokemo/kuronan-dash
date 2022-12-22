@@ -6,11 +6,11 @@ import "fmt"
 var (
 	Click *Player
 
-	Jump *Player
-	Drop *Player
+	JumpSe *Player
+	DropSe *Player
 
-	attackScratch *Player
-	attackSwipe   *Player
+	AttackScratch *Player
+	AttackSwipe   *Player
 
 	TitleCall            *Player
 	CharacterSelectVoice *Player
@@ -30,19 +30,19 @@ func LoadSE() error {
 	if err != nil {
 		return err
 	}
-	Jump, err = loadPlayer(jump_wav)
+	JumpSe, err = loadPlayer(jump_wav)
 	if err != nil {
 		return err
 	}
-	Drop, err = loadPlayer(drop_wav)
+	DropSe, err = loadPlayer(drop_wav)
 	if err != nil {
 		return err
 	}
-	attackScratch, err = loadPlayer(attack_scratch_wav)
+	AttackScratch, err = loadPlayer(attack_scratch_wav)
 	if err != nil {
 		return err
 	}
-	attackSwipe, err = loadPlayer(attack_swipe_wav)
+	AttackSwipe, err = loadPlayer(attack_swipe_wav)
 	if err != nil {
 		return err
 	}
@@ -84,42 +84,24 @@ func LoadSE() error {
 
 // CloseSE closes all sound effects.
 func CloseSE() error {
+	// todo: Close対象が少なすぎる・・
+
 	var err, e error
-	e = Jump.Close()
+	e = JumpSe.Close()
 	if err != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
-	e = Drop.Close()
+	e = DropSe.Close()
 	if err != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
-	e = attackScratch.Close()
+	e = AttackScratch.Close()
 	if err != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
-	e = attackSwipe.Close()
+	e = AttackSwipe.Close()
 	if err != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
 	return err
-}
-
-// sound type
-type SoundType int
-
-const (
-	KuronaSe SoundType = iota
-	KomaSe
-	ShishimaruSe
-)
-
-func GetAttackSe(st SoundType) *Player {
-	switch st {
-	case KuronaSe:
-		return attackScratch
-	case KomaSe, ShishimaruSe:
-		return attackSwipe
-	default:
-		return attackScratch
-	}
 }

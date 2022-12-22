@@ -29,7 +29,7 @@ func TestPlayer(t *testing.T) {
 		name   string
 		player *Player
 	}{
-		{"Jump", Jump},
+		{"Jump", JumpSe},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

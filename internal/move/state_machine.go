@@ -18,9 +18,6 @@ type StateMachine struct {
 	current        State
 	previous       State
 	isBlocked      bool
-	jumpSe         *se.Player
-	dropSe         *se.Player
-	attackSe       *se.Player
 	lanes          *field.Lanes
 	offset         *view.Vector
 	iChecker       input.InputChecker
@@ -32,9 +29,10 @@ type StateMachine struct {
 	finishSpEffect bool
 	spDuration     int
 	spMaxDuration  int
+	soundTypeCh    chan<- se.SoundType
 }
 
-func NewStateMachine(lanes *field.Lanes, typeSe se.SoundType, atkMaxDuration int, spMaxDuration int) (*StateMachine, error) {
+func NewStateMachine(lanes *field.Lanes, atkMaxDuration int, spMaxDuration int) (*StateMachine, error) {
 	heights := lanes.GetLaneHeights()
 	if len(heights) == 0 {
 		return nil, fmt.Errorf("heights is empty")
@@ -45,9 +43,6 @@ func NewStateMachine(lanes *field.Lanes, typeSe se.SoundType, atkMaxDuration int
 		current:        Dash,
 		previous:       Pause,
 		isBlocked:      false,
-		jumpSe:         se.Jump,
-		dropSe:         se.Drop,
-		attackSe:       se.GetAttackSe(typeSe),
 		lanes:          lanes,
 		offset:         &view.Vector{X: 0.0, Y: 0.0},
 		atkMaxDuration: atkMaxDuration,
@@ -76,9 +71,6 @@ func (sm *StateMachine) Update(stamina int, tension int, isMaxTension bool, char
 
 	sm.updateWithStaminaAndMove(stamina, tension, charaPosV)
 	sm.updateWithKey(isMaxTension, charaPosV.Y)
-
-	// Debug
-	// log.Printf("current state: %s, isMaxTension: %v\n", sm.current, isMaxTension)
 
 	return sm.current
 }
@@ -137,7 +129,7 @@ func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
 
 		sm.previous = sm.current
 		sm.current = Ascending
-		sm.jumpSe.Play()
+		sm.soundTypeCh <- se.Jump
 	} else if sm.iChecker.TriggeredDown() {
 		if !sm.lanes.GoToLowerLane() {
 			return
@@ -145,7 +137,7 @@ func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
 
 		sm.previous = sm.current
 		sm.current = Descending
-		sm.dropSe.Play()
+		sm.soundTypeCh <- se.Drop
 	}
 
 	if sm.atkDuration < sm.atkMaxDuration {
@@ -158,7 +150,7 @@ func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
 			sm.attacked = true
 			sm.drawing = true
 			sm.atkDuration = 0
-			sm.attackSe.Play()
+			sm.soundTypeCh <- se.Attack
 		} else {
 			sm.attacked = false
 			sm.drawing = false
@@ -236,8 +228,6 @@ func (sm *StateMachine) FinishSpEffect() bool {
 	return sm.finishSpEffect
 }
 
-func (sm *StateMachine) SetVolumeFlag(isVolumeOn bool) {
-	sm.jumpSe.SetVolumeFlag(isVolumeOn)
-	sm.dropSe.SetVolumeFlag(isVolumeOn)
-	sm.attackSe.SetVolumeFlag(isVolumeOn)
+func (sm *StateMachine) SetSeChan(ch chan<- se.SoundType) {
+	sm.soundTypeCh = ch
 }
