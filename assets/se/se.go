@@ -84,9 +84,12 @@ func LoadSE() error {
 
 // CloseSE closes all sound effects.
 func CloseSE() error {
-	// todo: Close対象が少なすぎる・・
-
 	var err, e error
+
+	e = Click.Close()
+	if err != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
 	e = JumpSe.Close()
 	if err != nil {
 		err = fmt.Errorf("%v:%v", err, e)
@@ -103,5 +106,38 @@ func CloseSE() error {
 	if err != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
+	e = TitleCall.Close()
+	if err != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+	e = CharacterSelectVoice.Close()
+	if err != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+	e = ReadyVoice.Close()
+	if err != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+	e = GoVoice.Close()
+	if err != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+	e = StageClearVoice.Close()
+	if err != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+	e = SpVoiceKurona.Close()
+	if err != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+	e = SpVoiceKoma.Close()
+	if err != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+	e = SpVoiceShishimaru.Close()
+	if err != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+
 	return err
 }

@@ -16,10 +16,8 @@ func TestMain(m *testing.M) {
 		fmt.Println("failed to LoadSE:", err)
 		return
 	}
-	defer func() {
-		e := CloseSE()
-		fmt.Println("failed to CloseSE:", e)
-	}()
+	err = CloseSE()
+	fmt.Println("failed to CloseSE:", err)
 
 	os.Exit(m.Run())
 }
