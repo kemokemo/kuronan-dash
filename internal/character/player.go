@@ -1,7 +1,6 @@
 package character
 
 import (
-	"fmt"
 	"image"
 	"log"
 
@@ -244,23 +243,9 @@ func (p *Player) Eat(foodVol int) {
 
 // Close closes the inner resources.
 func (p *Player) Close() error {
-	var err, e error
-	e = p.jumpSe.Close()
-	if e != nil {
-		err = fmt.Errorf("%v:%v", err, e)
-	}
-	e = p.dropSe.Close()
-	if e != nil {
-		err = fmt.Errorf("%v:%v", err, e)
-	}
-	e = p.spVoice.Close()
-	if e != nil {
-		err = fmt.Errorf("%v:%v", err, e)
-	}
-
+	// assets側でcloseするので、ここではcloseしない
 	close(p.soundTypeCh)
-
-	return err
+	return nil
 }
 
 func (p *Player) GetHeight() float64 {
@@ -290,7 +275,8 @@ func (p *Player) GetMaxTension() float64 {
 
 func (p *Player) StartSpEffect() bool {
 	if p.stateMachine.StartSpEffect() {
-		// todo: SPエフェクトがボイス再生よりも早く終わらないようにしたい
+		// todo:
+		// SPエフェクトがボイス再生よりも早く終わらないようにしたい
 		// SPボイスを聞こえやすくするため、一時的にBGMの音量を下げたい
 		p.spVoice.Play()
 		return true
