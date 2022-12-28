@@ -182,10 +182,6 @@ func (p *Player) updateVelWithOffset(offsetV *view.Vector) {
 	p.charaDrawV.Y = p.tempDrawV.Y + offsetV.Y
 }
 
-func (p *Player) UpdateSkillEffect() {
-	p.stateMachine.UpdateSkillEffect()
-}
-
 // Draw draws the character image.
 func (p *Player) Draw(screen *ebiten.Image) {
 	if p.current == move.Wait {
@@ -275,13 +271,14 @@ func (p *Player) GetMaxTension() float64 {
 
 func (p *Player) StartSpEffect() bool {
 	if p.stateMachine.StartSpEffect() {
-		// todo:
-		// SPエフェクトがボイス再生よりも早く終わらないようにしたい
-		// SPボイスを聞こえやすくするため、一時的にBGMの音量を下げたい
 		p.spVoice.Play()
 		return true
 	}
 	return false
+}
+
+func (p *Player) UpdateSkillEffect() {
+	p.stateMachine.UpdateSkillEffect(p.spVoice.IsPlaying())
 }
 
 func (p *Player) FinishSpEffect() bool {

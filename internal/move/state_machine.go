@@ -164,10 +164,10 @@ func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
 	}
 }
 
-func (sm *StateMachine) UpdateSkillEffect() {
+func (sm *StateMachine) UpdateSkillEffect(playingSound bool) {
 	sm.startSpEffect = false
 	sm.spDuration++
-	if sm.spDuration >= sm.spMaxDuration {
+	if sm.spDuration >= sm.spMaxDuration && !playingSound {
 		sm.spDuration = 0
 		sm.finishSpEffect = true
 		sm.current = Skill
