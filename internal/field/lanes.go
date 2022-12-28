@@ -21,7 +21,7 @@ type Lanes struct {
 
 func NewLanes(lType LaneType) *Lanes {
 	var infos []ScrollInfo
-	// TODO: add new field's lanes
+	// add new field's lanes here
 	switch lType {
 	case PrairieLane:
 		infos = newPrairieLanesInfo()

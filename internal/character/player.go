@@ -190,7 +190,7 @@ func (p *Player) Draw(screen *ebiten.Image) {
 	}
 
 	// TODO: ダッシュ中とか奥義中とか状態に応じて多少前後しつつ、ほぼ画面中央に描画したい
-	if p.current == move.Skill {
+	if p.current == move.SkillDash {
 		screen.DrawImage(p.skillEffect, p.spEffectOp)
 	}
 	screen.DrawImage(p.animation.GetCurrentFrame(), p.op)

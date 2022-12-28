@@ -154,7 +154,7 @@ func (s *Stage01Scene) Update(state *GameState) {
 
 		if s.curtain.IsFinished() {
 			if s.isClosing && s.state == stageClear {
-				// TODO: goto next stage :-)
+				// goto next stage :-)
 				err := state.SceneManager.GoTo(&TitleScene{})
 				if err != nil {
 					log.Println("failed to go to the 2nd stage: ", err)
@@ -341,7 +341,7 @@ func (s *Stage01Scene) drawUI(screen *ebiten.Image) {
 }
 
 func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
-	// TODO: StartとPauseのボタンは見えてないだけで、該当する場所を押せばボタンはトリガーされる。弊害がありそうなら処置する。
+	// StartとPauseのボタンは見えてないだけで、該当する場所を押せばボタンはトリガーされる。弊害がありそうなら処置する。
 	switch s.state {
 	case wait:
 		screen.DrawImage(s.pauseBg, s.pauseBgOp)

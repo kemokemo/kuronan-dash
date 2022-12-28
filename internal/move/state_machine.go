@@ -90,21 +90,20 @@ func (sm *StateMachine) updateWithStaminaAndMove(stamina int, tension int, chara
 			sm.previous = Dash
 			sm.current = Walk
 		}
-	case Skill:
+	case SkillDash:
 		sm.finishSpEffect = false
-		// TODO: Skill状態では障害物で遅くなりにくい、みたいな特性をどうやって表現するか
 		if stamina <= 0 || sm.isBlocked {
-			sm.previous = Skill
+			sm.previous = SkillDash
 			sm.current = Walk
 		} else if tension <= 0 {
-			sm.previous = Skill
+			sm.previous = SkillDash
 			sm.current = Dash
 
 		}
 	case Walk:
 		if stamina > 0 && !sm.isBlocked {
-			if sm.previous == Skill {
-				sm.current = Skill
+			if sm.previous == SkillDash {
+				sm.current = SkillDash
 			} else {
 				sm.current = Dash
 			}
@@ -116,7 +115,7 @@ func (sm *StateMachine) updateWithStaminaAndMove(stamina int, tension int, chara
 }
 
 func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
-	if !(sm.current == Dash) && !(sm.current == Walk) && !(sm.current == Skill) && !(sm.current == SkillEffect) {
+	if !(sm.current == Dash) && !(sm.current == Walk) && !(sm.current == SkillDash) && !(sm.current == SkillEffect) {
 		return
 	}
 
@@ -170,7 +169,7 @@ func (sm *StateMachine) UpdateSkillEffect(playingSound bool) {
 	if sm.spDuration >= sm.spMaxDuration && !playingSound {
 		sm.spDuration = 0
 		sm.finishSpEffect = true
-		sm.current = Skill
+		sm.current = SkillDash
 	}
 }
 

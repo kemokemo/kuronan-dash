@@ -31,7 +31,7 @@ func (s *Stamina) Initialize() {
 // The stamina value does not go below zero.
 func (s *Stamina) ConsumesByState(state move.State) {
 	switch state {
-	case move.Dash, move.Skill:
+	case move.Dash, move.SkillDash:
 		s.consumes(2)
 	case move.Walk:
 		s.consumes(1)
