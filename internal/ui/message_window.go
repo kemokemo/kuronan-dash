@@ -22,6 +22,8 @@ type MessageWindow struct {
 	counter      int
 	enableBlink  bool
 	font         font.Face
+	fontSize     int
+	lineSpacing  int
 }
 
 // NewMessageWindow returns a MessageWindow.
@@ -48,8 +50,15 @@ func NewMessageWindow(x, y, width, height, frameWidth int) *MessageWindow {
 	mw.frameLightOp = &ebiten.DrawImageOptions{}
 	mw.frameLightOp.GeoM.Translate(float64(x-frameWidth), float64(y-frameWidth))
 	mw.font = fonts.GamerFontM
+	mw.fontSize = 20
+	mw.lineSpacing = 2
 
 	return &mw
+}
+
+func (mw *MessageWindow) SetSizeAndSpacing(fontSize, lineSpacing int) {
+	mw.fontSize = fontSize
+	mw.lineSpacing = lineSpacing
 }
 
 // GetWindowRect returns the rectangle of this window.
@@ -86,9 +95,6 @@ func (mw *MessageWindow) DrawWindow(screen *ebiten.Image, msg string) {
 }
 
 func (mw *MessageWindow) drawMessage(screen *ebiten.Image, msg string) {
-	// todo:
-	fontSize := 20
-	lineSpacing := 2
 	rowRunesNum := (mw.rect.Max.X - mw.rect.Min.X) / 15
 
 	startPoint := mw.takeTextPosition()
@@ -102,7 +108,7 @@ func (mw *MessageWindow) drawMessage(screen *ebiten.Image, msg string) {
 		runes := []rune(row)
 
 		for i := 0; i < len(runes); i += (rowRunesNum - 1) {
-			y = y + fontSize + lineSpacing
+			y = y + mw.fontSize + mw.lineSpacing
 			if i+rowRunesNum < len(runes) {
 				rowMsg = string(runes[i : i+rowRunesNum-1])
 			} else {
