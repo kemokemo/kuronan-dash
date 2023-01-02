@@ -6,11 +6,11 @@ import "fmt"
 var (
 	Click *Player
 
-	Jump *Player
-	Drop *Player
+	JumpSe *Player
+	DropSe *Player
 
-	attackScratch *Player
-	attackSwipe   *Player
+	AttackScratch *Player
+	AttackSwipe   *Player
 
 	TitleCall            *Player
 	CharacterSelectVoice *Player
@@ -30,19 +30,19 @@ func LoadSE() error {
 	if err != nil {
 		return err
 	}
-	Jump, err = loadPlayer(jump_wav)
+	JumpSe, err = loadPlayer(jump_wav)
 	if err != nil {
 		return err
 	}
-	Drop, err = loadPlayer(drop_wav)
+	DropSe, err = loadPlayer(drop_wav)
 	if err != nil {
 		return err
 	}
-	attackScratch, err = loadPlayer(attack_scratch_wav)
+	AttackScratch, err = loadPlayer(attack_scratch_wav)
 	if err != nil {
 		return err
 	}
-	attackSwipe, err = loadPlayer(attack_swipe_wav)
+	AttackSwipe, err = loadPlayer(attack_swipe_wav)
 	if err != nil {
 		return err
 	}
@@ -85,41 +85,59 @@ func LoadSE() error {
 // CloseSE closes all sound effects.
 func CloseSE() error {
 	var err, e error
-	e = Jump.Close()
+
+	e = Click.Close()
 	if err != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
-	e = Drop.Close()
+	e = JumpSe.Close()
 	if err != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
-	e = attackScratch.Close()
+	e = DropSe.Close()
 	if err != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
-	e = attackSwipe.Close()
+	e = AttackScratch.Close()
 	if err != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
+	e = AttackSwipe.Close()
+	if err != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+	e = TitleCall.Close()
+	if err != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+	e = CharacterSelectVoice.Close()
+	if err != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+	e = ReadyVoice.Close()
+	if err != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+	e = GoVoice.Close()
+	if err != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+	e = StageClearVoice.Close()
+	if err != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+	e = SpVoiceKurona.Close()
+	if err != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+	e = SpVoiceKoma.Close()
+	if err != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+	e = SpVoiceShishimaru.Close()
+	if err != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+
 	return err
-}
-
-// sound type
-type SoundType int
-
-const (
-	KuronaSe SoundType = iota
-	KomaSe
-	ShishimaruSe
-)
-
-func GetAttackSe(st SoundType) *Player {
-	switch st {
-	case KuronaSe:
-		return attackScratch
-	case KomaSe, ShishimaruSe:
-		return attackSwipe
-	default:
-		return attackScratch
-	}
 }

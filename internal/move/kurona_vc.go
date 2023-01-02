@@ -70,7 +70,7 @@ func (vc *KuronaVc) decideVbyState() {
 		vc.decideVofWalk()
 	case Dash:
 		vc.decideVofDash()
-	case Skill:
+	case SkillDash:
 		vc.decideVofSkill()
 	case Ascending:
 		vc.deltaX = 0.6

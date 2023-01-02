@@ -16,10 +16,8 @@ func TestMain(m *testing.M) {
 		fmt.Println("failed to LoadSE:", err)
 		return
 	}
-	defer func() {
-		e := CloseSE()
-		fmt.Println("failed to CloseSE:", e)
-	}()
+	err = CloseSE()
+	fmt.Println("failed to CloseSE:", err)
 
 	os.Exit(m.Run())
 }
@@ -29,7 +27,7 @@ func TestPlayer(t *testing.T) {
 		name   string
 		player *Player
 	}{
-		{"Jump", Jump},
+		{"Jump", JumpSe},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -67,7 +67,7 @@ func (vc *ShishimaruVc) decideVbyState() {
 		vc.decideVofWalk()
 	case Dash:
 		vc.decideVofDash()
-	case Skill:
+	case SkillDash:
 		vc.decideVofSp()
 	case Ascending:
 		vc.deltaX = 0.6

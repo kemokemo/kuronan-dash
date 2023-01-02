@@ -18,9 +18,6 @@ type StateMachine struct {
 	current        State
 	previous       State
 	isBlocked      bool
-	jumpSe         *se.Player
-	dropSe         *se.Player
-	attackSe       *se.Player
 	lanes          *field.Lanes
 	offset         *view.Vector
 	iChecker       input.InputChecker
@@ -32,9 +29,10 @@ type StateMachine struct {
 	finishSpEffect bool
 	spDuration     int
 	spMaxDuration  int
+	soundTypeCh    chan<- se.SoundType
 }
 
-func NewStateMachine(lanes *field.Lanes, typeSe se.SoundType, atkMaxDuration int, spMaxDuration int) (*StateMachine, error) {
+func NewStateMachine(lanes *field.Lanes, atkMaxDuration int, spMaxDuration int) (*StateMachine, error) {
 	heights := lanes.GetLaneHeights()
 	if len(heights) == 0 {
 		return nil, fmt.Errorf("heights is empty")
@@ -45,9 +43,6 @@ func NewStateMachine(lanes *field.Lanes, typeSe se.SoundType, atkMaxDuration int
 		current:        Dash,
 		previous:       Pause,
 		isBlocked:      false,
-		jumpSe:         se.Jump,
-		dropSe:         se.Drop,
-		attackSe:       se.GetAttackSe(typeSe),
 		lanes:          lanes,
 		offset:         &view.Vector{X: 0.0, Y: 0.0},
 		atkMaxDuration: atkMaxDuration,
@@ -77,9 +72,6 @@ func (sm *StateMachine) Update(stamina int, tension int, isMaxTension bool, char
 	sm.updateWithStaminaAndMove(stamina, tension, charaPosV)
 	sm.updateWithKey(isMaxTension, charaPosV.Y)
 
-	// Debug
-	// log.Printf("current state: %s, isMaxTension: %v\n", sm.current, isMaxTension)
-
 	return sm.current
 }
 
@@ -98,21 +90,20 @@ func (sm *StateMachine) updateWithStaminaAndMove(stamina int, tension int, chara
 			sm.previous = Dash
 			sm.current = Walk
 		}
-	case Skill:
+	case SkillDash:
 		sm.finishSpEffect = false
-		// TODO: Skill状態では障害物で遅くなりにくい、みたいな特性をどうやって表現するか
 		if stamina <= 0 || sm.isBlocked {
-			sm.previous = Skill
+			sm.previous = SkillDash
 			sm.current = Walk
 		} else if tension <= 0 {
-			sm.previous = Skill
+			sm.previous = SkillDash
 			sm.current = Dash
 
 		}
 	case Walk:
 		if stamina > 0 && !sm.isBlocked {
-			if sm.previous == Skill {
-				sm.current = Skill
+			if sm.previous == SkillDash {
+				sm.current = SkillDash
 			} else {
 				sm.current = Dash
 			}
@@ -124,7 +115,7 @@ func (sm *StateMachine) updateWithStaminaAndMove(stamina int, tension int, chara
 }
 
 func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
-	if !(sm.current == Dash) && !(sm.current == Walk) && !(sm.current == Skill) && !(sm.current == SkillEffect) {
+	if !(sm.current == Dash) && !(sm.current == Walk) && !(sm.current == SkillDash) && !(sm.current == SkillEffect) {
 		return
 	}
 
@@ -137,7 +128,7 @@ func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
 
 		sm.previous = sm.current
 		sm.current = Ascending
-		sm.jumpSe.Play()
+		sm.soundTypeCh <- se.Jump
 	} else if sm.iChecker.TriggeredDown() {
 		if !sm.lanes.GoToLowerLane() {
 			return
@@ -145,7 +136,7 @@ func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
 
 		sm.previous = sm.current
 		sm.current = Descending
-		sm.dropSe.Play()
+		sm.soundTypeCh <- se.Drop
 	}
 
 	if sm.atkDuration < sm.atkMaxDuration {
@@ -158,7 +149,7 @@ func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
 			sm.attacked = true
 			sm.drawing = true
 			sm.atkDuration = 0
-			sm.attackSe.Play()
+			sm.soundTypeCh <- se.Attack
 		} else {
 			sm.attacked = false
 			sm.drawing = false
@@ -172,13 +163,13 @@ func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
 	}
 }
 
-func (sm *StateMachine) UpdateSkillEffect() {
+func (sm *StateMachine) UpdateSkillEffect(playingSound bool) {
 	sm.startSpEffect = false
 	sm.spDuration++
-	if sm.spDuration >= sm.spMaxDuration {
+	if sm.spDuration >= sm.spMaxDuration && !playingSound {
 		sm.spDuration = 0
 		sm.finishSpEffect = true
-		sm.current = Skill
+		sm.current = SkillDash
 	}
 }
 
@@ -236,8 +227,6 @@ func (sm *StateMachine) FinishSpEffect() bool {
 	return sm.finishSpEffect
 }
 
-func (sm *StateMachine) SetVolumeFlag(isVolumeOn bool) {
-	sm.jumpSe.SetVolumeFlag(isVolumeOn)
-	sm.dropSe.SetVolumeFlag(isVolumeOn)
-	sm.attackSe.SetVolumeFlag(isVolumeOn)
+func (sm *StateMachine) SetSeChan(ch chan<- se.SoundType) {
+	sm.soundTypeCh = ch
 }

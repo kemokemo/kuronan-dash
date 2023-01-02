@@ -1,8 +1,8 @@
 package character
 
 import (
-	"fmt"
 	"image"
+	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	vpad "github.com/kemokemo/ebiten-virtualpad"
@@ -24,8 +24,8 @@ type Player struct {
 	animation      *anime.StepAnimation
 	jumpSe         *se.Player
 	dropSe         *se.Player
+	attackSe       *se.Player
 	spVoice        *se.Player
-	typeSe         se.SoundType
 	atkMaxDuration int
 	spMaxDuration  int
 
@@ -51,6 +51,8 @@ type Player struct {
 	sumTicks     float64
 	power        float64
 	tension      *Tension
+
+	soundTypeCh chan se.SoundType
 }
 
 // InitializeWithLanesInfo sets the lanes information.
@@ -62,10 +64,12 @@ func (p *Player) InitializeWithLanes(lanes *field.Lanes) error {
 	p.tension.Initialize()
 
 	var err error
-	p.stateMachine, err = move.NewStateMachine(lanes, p.typeSe, p.atkMaxDuration, p.spMaxDuration)
+	p.soundTypeCh = make(chan se.SoundType)
+	p.stateMachine, err = move.NewStateMachine(lanes, p.atkMaxDuration, p.spMaxDuration)
 	if err != nil {
 		return err
 	}
+	p.stateMachine.SetSeChan(p.soundTypeCh)
 
 	// set the player at the top lane.
 	w, h := p.StandingImage.Size()
@@ -102,6 +106,23 @@ func (p *Player) SetInputChecker(laneRectArray []image.Rectangle, upBtn, downBtn
 // Start starts playing.
 func (p *Player) Start() {
 	p.current = move.Dash
+
+	go p.playSounds()
+}
+
+func (p *Player) playSounds() {
+	for s := range p.soundTypeCh {
+		switch s {
+		case se.Jump:
+			p.jumpSe.Play()
+		case se.Drop:
+			p.dropSe.Play()
+		case se.Attack:
+			p.attackSe.Play()
+		default:
+			log.Println("unknown sound type, ", s)
+		}
+	}
 }
 
 // Pause pauses this character.
@@ -161,10 +182,6 @@ func (p *Player) updateVelWithOffset(offsetV *view.Vector) {
 	p.charaDrawV.Y = p.tempDrawV.Y + offsetV.Y
 }
 
-func (p *Player) UpdateSkillEffect() {
-	p.stateMachine.UpdateSkillEffect()
-}
-
 // Draw draws the character image.
 func (p *Player) Draw(screen *ebiten.Image) {
 	if p.current == move.Wait {
@@ -173,7 +190,7 @@ func (p *Player) Draw(screen *ebiten.Image) {
 	}
 
 	// TODO: ダッシュ中とか奥義中とか状態に応じて多少前後しつつ、ほぼ画面中央に描画したい
-	if p.current == move.Skill {
+	if p.current == move.SkillDash {
 		screen.DrawImage(p.skillEffect, p.spEffectOp)
 	}
 	screen.DrawImage(p.animation.GetCurrentFrame(), p.op)
@@ -222,20 +239,9 @@ func (p *Player) Eat(foodVol int) {
 
 // Close closes the inner resources.
 func (p *Player) Close() error {
-	var err, e error
-	e = p.jumpSe.Close()
-	if e != nil {
-		err = fmt.Errorf("%v:%v", err, e)
-	}
-	e = p.dropSe.Close()
-	if e != nil {
-		err = fmt.Errorf("%v:%v", err, e)
-	}
-	e = p.spVoice.Close()
-	if e != nil {
-		err = fmt.Errorf("%v:%v", err, e)
-	}
-	return err
+	// assets側でcloseするので、ここではcloseしない
+	close(p.soundTypeCh)
+	return nil
 }
 
 func (p *Player) GetHeight() float64 {
@@ -265,12 +271,14 @@ func (p *Player) GetMaxTension() float64 {
 
 func (p *Player) StartSpEffect() bool {
 	if p.stateMachine.StartSpEffect() {
-		// todo: SPエフェクトがボイス再生よりも早く終わらないようにしたい
-		// SPボイスを聞こえやすくするため、一時的にBGMの音量を下げたい
 		p.spVoice.Play()
 		return true
 	}
 	return false
+}
+
+func (p *Player) UpdateSkillEffect() {
+	p.stateMachine.UpdateSkillEffect(p.spVoice.IsPlaying())
 }
 
 func (p *Player) FinishSpEffect() bool {
@@ -279,5 +287,8 @@ func (p *Player) FinishSpEffect() bool {
 
 func (p *Player) SetVolumeFlag(isVolumeOn bool) {
 	p.spVoice.SetVolumeFlag(isVolumeOn)
-	p.stateMachine.SetVolumeFlag(isVolumeOn)
+
+	p.jumpSe.SetVolumeFlag(isVolumeOn)
+	p.dropSe.SetVolumeFlag(isVolumeOn)
+	p.attackSe.SetVolumeFlag(isVolumeOn)
 }

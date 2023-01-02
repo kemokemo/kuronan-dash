@@ -27,7 +27,7 @@ func (t *Tension) AddByState(state move.State) {
 		t.add(2)
 	case move.Walk:
 		t.add(1)
-	case move.Skill:
+	case move.SkillDash:
 		t.remove(1)
 	default:
 		// not add tension.
