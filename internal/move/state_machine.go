@@ -82,7 +82,7 @@ func (sm *StateMachine) updateWithStaminaAndMove(stamina int, tension int, chara
 			sm.current = sm.previous
 		}
 	case Descending:
-		if sm.IsReachedLowerLane(charaPosV.Y) {
+		if sm.isReachedLowerLane(charaPosV.Y) {
 			sm.current = sm.previous
 		}
 	case Dash:
@@ -98,7 +98,6 @@ func (sm *StateMachine) updateWithStaminaAndMove(stamina int, tension int, chara
 		} else if tension <= 0 {
 			sm.previous = SkillDash
 			sm.current = Dash
-
 		}
 	case Walk:
 		if stamina > 0 && !sm.isBlocked {
@@ -177,15 +176,15 @@ func (sm *StateMachine) UpdateSkillEffect(playingSound bool) {
 // If reached to the target lane, sm.offset is set.
 func (sm *StateMachine) IsReachedUpperLane(vY float64) bool {
 	if vY > 0 {
-		return sm.IsReachedLowerLane(vY)
+		return sm.isReachedLowerLane(vY)
 	}
 
 	return false
 }
 
-// IsReachedLowerLane returns which the player reached to the target lower lane.
+// isReachedLowerLane returns which the player reached to the target lower lane.
 // If reached to the target lane, sm.offset is set.
-func (sm *StateMachine) IsReachedLowerLane(vY float64) bool {
+func (sm *StateMachine) isReachedLowerLane(vY float64) bool {
 	th := sm.lanes.GetTargetLaneHeight()
 
 	nextPosY := sm.pos.Y + vY
