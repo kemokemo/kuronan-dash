@@ -72,7 +72,7 @@ func (sm *StateMachine) Update(stamina int, tension int, isMaxTension bool, char
 	sm.pos.Add(charaPosV)
 	sm.offset.Y = 0.0
 
-	sm.CheckCollisionAction()
+	sm.checkCollisionAction()
 	sm.updateWithStaminaAndMove(stamina, tension, charaPosV)
 	sm.updateWithKey(isMaxTension, charaPosV.Y)
 	sm.updateXAxisOffset()
@@ -80,7 +80,7 @@ func (sm *StateMachine) Update(stamina int, tension int, isMaxTension bool, char
 	return sm.current
 }
 
-func (sm *StateMachine) CheckCollisionAction() {
+func (sm *StateMachine) checkCollisionAction() {
 	if !sm.isBlocked {
 		return
 	}
@@ -109,15 +109,6 @@ func (sm *StateMachine) updateWithStaminaAndMove(stamina int, tension int, chara
 			sm.previous = Dash
 			sm.current = Walk
 		}
-	case SkillDash:
-		sm.finishSpEffect = false
-		if stamina <= 0 || sm.isBlocked {
-			sm.previous = SkillDash
-			sm.current = Walk
-		} else if tension <= 0 {
-			sm.previous = SkillDash
-			sm.current = Dash
-		}
 	case Walk:
 		if stamina > 0 && !sm.isBlocked {
 			if sm.previous == SkillDash {
@@ -127,9 +118,29 @@ func (sm *StateMachine) updateWithStaminaAndMove(stamina int, tension int, chara
 			}
 			sm.previous = Walk
 		}
+	case SkillDash:
+		sm.finishSpEffect = false
+		if stamina <= 0 || sm.isBlocked {
+			sm.previous = SkillDash
+			sm.current = SkillWalk
+		} else if tension <= 0 {
+			sm.previous = SkillDash
+			sm.current = Dash
+		}
+	case SkillWalk:
+		if stamina > 0 && !sm.isBlocked {
+			sm.previous = SkillWalk
+			sm.current = SkillDash
+		} else if tension <= 0 {
+			sm.previous = SkillWalk
+			sm.current = Dash
+		}
 	default:
 		log.Println("unknown state: ", sm.current)
 	}
+
+	//todo
+	log.Printf("state: %v", sm.current)
 }
 
 func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {

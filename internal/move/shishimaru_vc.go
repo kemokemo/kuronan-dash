@@ -5,13 +5,15 @@ import "github.com/kemokemo/kuronan-dash/internal/view"
 // 獅子丸:
 // 黒菜と独楽の中間性能。バランスがいいよ。
 const (
-	shishimaruWalkMax             = 1.5
-	shishimaruDashMax             = 2.6
-	shishimaruSpMax               = 4.7
-	shishimaruDecelerateRate      = 0.8
-	shishimaruInitialVelocityWalk = 0.07
-	shishimaruInitialVelocityDash = 0.2
-	shishimaruInitialVelocitySp   = 0.25
+	shishimaruWalkMax               = 1.5
+	shishimaruDashMax               = 2.6
+	shishimaruSpWalkMax             = 3.5
+	shishimaruSpMax                 = 4.7
+	shishimaruDecelerateRate        = 0.8
+	shishimaruInitialVelocityWalk   = 0.07
+	shishimaruInitialVelocityDash   = 0.2
+	shishimaruInitialVelocitySpWalk = 0.22
+	shishimaruInitialVelocitySp     = 0.25
 )
 
 // NewShishimaruVc returns a new VelocityController for Kurona.
@@ -68,7 +70,9 @@ func (vc *ShishimaruVc) decideVbyState() {
 	case Dash:
 		vc.decideVofDash()
 	case SkillDash:
-		vc.decideVofSp()
+		vc.decideVofSpDash()
+	case SkillWalk:
+		vc.decideVofSpWalk()
 	case Ascending:
 		vc.deltaX = 0.6
 		vc.deltaY = vc.jumpV0 + vc.gravity*vc.elapsedY
@@ -109,10 +113,18 @@ func (vc *ShishimaruVc) decideVofDash() {
 	vc.deltaY = 0.0
 }
 
-func (vc *ShishimaruVc) decideVofSp() {
+func (vc *ShishimaruVc) decideVofSpDash() {
 	vc.deltaX += shishimaruInitialVelocitySp * vc.elapsedX
 	if vc.deltaX > shishimaruSpMax {
 		vc.deltaX = shishimaruSpMax
+	}
+	vc.deltaY = 0.0
+}
+
+func (vc *ShishimaruVc) decideVofSpWalk() {
+	vc.deltaX += shishimaruInitialVelocitySpWalk * vc.elapsedX
+	if vc.deltaX > shishimaruSpWalkMax {
+		vc.deltaX = shishimaruSpWalkMax
 	}
 	vc.deltaY = 0.0
 }

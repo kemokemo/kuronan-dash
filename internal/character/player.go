@@ -192,8 +192,7 @@ func (p *Player) Draw(screen *ebiten.Image) {
 		return
 	}
 
-	// TODO: ダッシュ中とか奥義中とか状態に応じて多少前後しつつ、ほぼ画面中央に描画したい
-	if p.current == move.SkillDash {
+	if p.current == move.SkillDash || p.current == move.SkillWalk {
 		screen.DrawImage(p.skillEffect, p.spEffectOp)
 	}
 	screen.DrawImage(p.animation.GetCurrentFrame(), p.op)

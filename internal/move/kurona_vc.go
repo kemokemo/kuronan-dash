@@ -7,13 +7,15 @@ import (
 // 黒菜:
 // 移動速度が速い。その代わり、障害物に当るとすぐに速度が落ちちゃう。
 const (
-	kuronaWalkMax             = 1.7
-	kuronaDashMax             = 3.0
-	kuronaSpMax               = 6.0
-	kuronaDecelerateRate      = 1.2
-	kuronaInitialVelocityWalk = 0.1
-	kuronaInitialVelocityDash = 0.35
-	kuronaInitialVelocitySp   = 0.4
+	kuronaWalkMax               = 1.7
+	kuronaDashMax               = 3.0
+	kuronaSpWalkMax             = 4.5
+	kuronaSpMax                 = 6.0
+	kuronaDecelerateRate        = 1.2
+	kuronaInitialVelocityWalk   = 0.1
+	kuronaInitialVelocityDash   = 0.35
+	kuronaInitialVelocitySpWalk = 0.37
+	kuronaInitialVelocitySp     = 0.4
 )
 
 // NewKuronaVc returns a new VelocityController for Kurona.
@@ -71,7 +73,9 @@ func (vc *KuronaVc) decideVbyState() {
 	case Dash:
 		vc.decideVofDash()
 	case SkillDash:
-		vc.decideVofSkill()
+		vc.decideVofSkillDash()
+	case SkillWalk:
+		vc.decideVofSkillWalk()
 	case Ascending:
 		vc.deltaX = 0.6
 		vc.deltaY = vc.jumpV0 + vc.gravity*vc.elapsedY
@@ -112,10 +116,18 @@ func (vc *KuronaVc) decideVofDash() {
 	vc.deltaY = 0.0
 }
 
-func (vc *KuronaVc) decideVofSkill() {
+func (vc *KuronaVc) decideVofSkillDash() {
 	vc.deltaX += kuronaInitialVelocitySp * vc.elapsedX
 	if vc.deltaX > kuronaSpMax {
 		vc.deltaX = kuronaSpMax
+	}
+	vc.deltaY = 0.0
+}
+
+func (vc *KuronaVc) decideVofSkillWalk() {
+	vc.deltaX += kuronaInitialVelocitySpWalk * vc.elapsedX
+	if vc.deltaX > kuronaSpWalkMax {
+		vc.deltaX = kuronaSpWalkMax
 	}
 	vc.deltaY = 0.0
 }

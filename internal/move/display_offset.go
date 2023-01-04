@@ -1,5 +1,7 @@
 package move
 
+import "log"
+
 // 変化量
 const (
 	gradually  = 1.0
@@ -112,5 +114,7 @@ func (d *displayOffset) GetXAxisOffset() float64 {
 	}
 
 	d.currentAllOffset += d.currentOffset
+	// todo
+	log.Printf(" all: %v, current: %v", d.currentAllOffset, d.currentOffset)
 	return d.currentOffset
 }
