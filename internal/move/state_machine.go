@@ -138,9 +138,6 @@ func (sm *StateMachine) updateWithStaminaAndMove(stamina int, tension int, chara
 	default:
 		log.Println("unknown state: ", sm.current)
 	}
-
-	//todo
-	log.Printf("state: %v", sm.current)
 }
 
 func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {

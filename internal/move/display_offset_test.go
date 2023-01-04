@@ -20,9 +20,11 @@ func Test_displayOffset_GetXAxisOffset(t *testing.T) {
 		{"Dash-to-Walk-4", Walk, -1 * gradually},
 		{"Dash-to-Walk-5", Walk, -1 * gradually},
 		{"Dash-to-Walk-6", Walk, -1 * gradually},
-		{"Walk-to-SkillDash-1", SkillDash, moreSpeedy},
+		{"Walk-to-SkillDash-1", SkillEffect, -1 * gradually}, // 無視するStateなので直前と同じ値になる
 		{"Walk-to-SkillDash-2", SkillDash, moreSpeedy},
 		{"SkillDash-to-SkillWalk-1", SkillWalk, gradually},
+		{"SkillDash-to-SkillWalk-2", SkillWalk, gradually},
+		{"SkillDash-to-SkillWalk-3", SkillWalk, gradually},
 		{"SkillWalk-to-Ascending-1", Ascending, -1 * gradually},
 		{"Ascending-to-SkillDash-1", SkillDash, speedy},
 		{"SkillDash-to-Walk-1", Walk, -1 * moreSpeedy},

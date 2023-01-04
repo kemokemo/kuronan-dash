@@ -1,7 +1,5 @@
 package move
 
-import "log"
-
 // 変化量
 const (
 	gradually  = 1.0
@@ -28,7 +26,8 @@ type displayOffset struct {
 }
 
 func (d *displayOffset) Update(s State) {
-	if s == d.currentState {
+	if s == d.currentState ||
+		s == SkillEffect || s == Wait || s == Pause {
 		return
 	}
 
@@ -114,7 +113,5 @@ func (d *displayOffset) GetXAxisOffset() float64 {
 	}
 
 	d.currentAllOffset += d.currentOffset
-	// todo
-	log.Printf(" all: %v, current: %v", d.currentAllOffset, d.currentOffset)
 	return d.currentOffset
 }
