@@ -30,6 +30,7 @@ type StateMachine struct {
 	spDuration     int
 	spMaxDuration  int
 	soundTypeCh    chan<- se.SoundType
+	xOffset        displayOffset
 }
 
 func NewStateMachine(lanes *field.Lanes, atkMaxDuration int, spMaxDuration int) (*StateMachine, error) {
@@ -71,6 +72,7 @@ func (sm *StateMachine) Update(stamina int, tension int, isMaxTension bool, char
 
 	sm.updateWithStaminaAndMove(stamina, tension, charaPosV)
 	sm.updateWithKey(isMaxTension, charaPosV.Y)
+	sm.updateXAxisOffset()
 
 	return sm.current
 }
@@ -160,6 +162,11 @@ func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
 		sm.current = SkillEffect
 		sm.startSpEffect = true
 	}
+}
+
+func (sm *StateMachine) updateXAxisOffset() {
+	sm.xOffset.Update(sm.current)
+	sm.offset.X = sm.xOffset.GetXAxisOffset()
 }
 
 func (sm *StateMachine) UpdateSkillEffect(playingSound bool) {

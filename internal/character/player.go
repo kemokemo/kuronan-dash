@@ -175,10 +175,10 @@ func (p *Player) Update() {
 }
 
 func (p *Player) updateVelWithOffset(offsetV *view.Vector) {
-	p.charaPosV.X = p.tempPosV.X
+	p.charaPosV.X = p.tempPosV.X + offsetV.X
 	p.charaPosV.Y = p.tempPosV.Y + offsetV.Y
 
-	p.charaDrawV.X = p.tempDrawV.X
+	p.charaDrawV.X = p.tempDrawV.X + offsetV.X
 	p.charaDrawV.Y = p.tempDrawV.Y + offsetV.Y
 }
 
