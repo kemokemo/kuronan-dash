@@ -24,6 +24,7 @@ type Player struct {
 	animation      *anime.StepAnimation
 	jumpSe         *se.Player
 	dropSe         *se.Player
+	collisionSe    *se.Player
 	attackSe       *se.Player
 	spVoice        *se.Player
 	atkMaxDuration int
@@ -119,6 +120,8 @@ func (p *Player) playSounds() {
 			p.dropSe.Play()
 		case se.Attack:
 			p.attackSe.Play()
+		case se.Blocked:
+			p.collisionSe.Play()
 		default:
 			log.Println("unknown sound type, ", s)
 		}
@@ -290,5 +293,6 @@ func (p *Player) SetVolumeFlag(isVolumeOn bool) {
 
 	p.jumpSe.SetVolumeFlag(isVolumeOn)
 	p.dropSe.SetVolumeFlag(isVolumeOn)
+	p.collisionSe.SetVolumeFlag(isVolumeOn)
 	p.attackSe.SetVolumeFlag(isVolumeOn)
 }

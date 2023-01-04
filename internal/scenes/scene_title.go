@@ -89,7 +89,7 @@ func (s *TitleScene) Update(state *GameState) {
 	s.updateVolume()
 
 	if !s.titleCall.IsPlaying() {
-		s.disc.SetVolume(0.8)
+		s.disc.SetVolume(0.5)
 	}
 
 	s.iChecker.Update()

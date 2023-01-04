@@ -43,7 +43,19 @@ func (p *Player) SetVolumeFlag(isVolumeOn bool) {
 	if p.disable {
 		p.player.SetVolume(0)
 	} else {
+		p.player.SetVolume(1.0)
+	}
+}
+
+func (p *Player) SetVolumeValue(v float64) {
+	if p.disable {
+		return
+	} else if v < 0 {
+		p.player.SetVolume(0)
+	} else if 1 < v {
 		p.player.SetVolume(1)
+	} else {
+		p.player.SetVolume(v)
 	}
 }
 

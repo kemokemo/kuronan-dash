@@ -14,23 +14,24 @@ import (
 
 // StateMachine manages the player's state.
 type StateMachine struct {
-	pos            *view.Vector
-	current        State
-	previous       State
-	isBlocked      bool
-	lanes          *field.Lanes
-	offset         *view.Vector
-	iChecker       input.InputChecker
-	attacked       bool
-	drawing        bool
-	atkDuration    int
-	atkMaxDuration int
-	startSpEffect  bool
-	finishSpEffect bool
-	spDuration     int
-	spMaxDuration  int
-	soundTypeCh    chan<- se.SoundType
-	xOffset        displayOffset
+	pos              *view.Vector
+	current          State
+	previous         State
+	isBlocked        bool
+	lanes            *field.Lanes
+	offset           *view.Vector
+	iChecker         input.InputChecker
+	attacked         bool
+	drawing          bool
+	atkDuration      int
+	atkMaxDuration   int
+	startSpEffect    bool
+	finishSpEffect   bool
+	spDuration       int
+	spMaxDuration    int
+	soundTypeCh      chan<- se.SoundType
+	xOffset          displayOffset
+	collisionCounter int
 }
 
 func NewStateMachine(lanes *field.Lanes, atkMaxDuration int, spMaxDuration int) (*StateMachine, error) {
@@ -40,16 +41,17 @@ func NewStateMachine(lanes *field.Lanes, atkMaxDuration int, spMaxDuration int) 
 	}
 
 	sm := StateMachine{
-		pos:            &view.Vector{X: view.DrawPosition, Y: lanes.GetTargetLaneHeight()},
-		current:        Dash,
-		previous:       Pause,
-		isBlocked:      false,
-		lanes:          lanes,
-		offset:         &view.Vector{X: 0.0, Y: 0.0},
-		atkMaxDuration: atkMaxDuration,
-		atkDuration:    atkMaxDuration,
-		spDuration:     0,
-		spMaxDuration:  spMaxDuration,
+		pos:              &view.Vector{X: view.DrawPosition, Y: lanes.GetTargetLaneHeight()},
+		current:          Dash,
+		previous:         Pause,
+		isBlocked:        false,
+		lanes:            lanes,
+		offset:           &view.Vector{X: 0.0, Y: 0.0},
+		atkMaxDuration:   atkMaxDuration,
+		atkDuration:      atkMaxDuration,
+		spDuration:       0,
+		spMaxDuration:    spMaxDuration,
+		collisionCounter: 100,
 	}
 
 	return &sm, nil
@@ -70,11 +72,26 @@ func (sm *StateMachine) Update(stamina int, tension int, isMaxTension bool, char
 	sm.pos.Add(charaPosV)
 	sm.offset.Y = 0.0
 
+	sm.CheckCollisionAction()
 	sm.updateWithStaminaAndMove(stamina, tension, charaPosV)
 	sm.updateWithKey(isMaxTension, charaPosV.Y)
 	sm.updateXAxisOffset()
 
 	return sm.current
+}
+
+func (sm *StateMachine) CheckCollisionAction() {
+	if !sm.isBlocked {
+		return
+	}
+
+	sm.collisionCounter++
+	if sm.collisionCounter < 30 {
+		return
+	}
+
+	sm.soundTypeCh <- se.Blocked
+	sm.collisionCounter = 0
 }
 
 func (sm *StateMachine) updateWithStaminaAndMove(stamina int, tension int, charaPosV *view.Vector) {
@@ -206,6 +223,10 @@ func (sm *StateMachine) isReachedLowerLane(vY float64) bool {
 
 // SetBlockState sets the blocked state of player.
 func (sm *StateMachine) SetBlockState(isBlocked bool) {
+	if !sm.isBlocked && isBlocked {
+		// 障害物に当たり始めたタイミングで音を鳴らしたい
+		sm.collisionCounter = 100
+	}
 	sm.isBlocked = isBlocked
 }
 

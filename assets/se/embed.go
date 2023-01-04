@@ -10,6 +10,8 @@ var (
 	jump_wav []byte
 	//go:embed drop.wav
 	drop_wav []byte
+	//go:embed collision.wav
+	collision_wav []byte
 
 	//go:embed attack-scratch.wav
 	attack_scratch_wav []byte
