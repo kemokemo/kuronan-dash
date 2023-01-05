@@ -2,9 +2,9 @@ package move
 
 // 変化量
 const (
-	gradually  = 0.7
-	speedy     = 2.0
-	moreSpeedy = 4.0
+	gradually  = 1.0
+	speedy     = 3.0
+	moreSpeedy = 6.0
 )
 
 // Target Offsets

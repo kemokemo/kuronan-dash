@@ -1,7 +1,6 @@
 package move
 
 import (
-	"log"
 	"testing"
 )
 
@@ -22,22 +21,34 @@ func Test_displayOffset_GetXAxisOffset(t *testing.T) {
 		{"Dash-to-Walk-6", Walk, -1 * gradually},
 		{"Walk-to-SkillDash-1", SkillEffect, -1 * gradually}, // 無視するStateなので直前と同じ値になる
 		{"Walk-to-SkillDash-2", SkillDash, moreSpeedy},
-		{"SkillDash-to-SkillWalk-1", SkillWalk, gradually},
-		{"SkillDash-to-SkillWalk-2", SkillWalk, gradually},
-		{"SkillDash-to-SkillWalk-3", SkillWalk, gradually},
-		{"SkillWalk-to-Ascending-1", Ascending, -1 * gradually},
-		{"Ascending-to-SkillDash-1", SkillDash, speedy},
-		{"SkillDash-to-Walk-1", Walk, -1 * moreSpeedy},
-		{"SkillDash-to-Walk-2", Walk, -1 * moreSpeedy},
-		{"SkillDash-to-Walk-3", Walk, -1 * moreSpeedy},
-		{"Walk-to-Dash-1", Dash, gradually},
+		{"Walk-to-SkillDash-3", SkillDash, moreSpeedy},
+		{"Walk-to-SkillDash-4", SkillDash, moreSpeedy},
+		{"Walk-to-SkillDash-5", SkillDash, moreSpeedy},
+		{"Walk-to-SkillDash-6", SkillDash, moreSpeedy},
+		{"Walk-to-SkillDash-7", SkillDash, moreSpeedy},
+		{"SkillDash-to-SkillWalk-1", SkillWalk, -1 * gradually},
+		{"SkillDash-to-SkillWalk-2", SkillWalk, -1 * gradually},
+		{"SkillDash-to-SkillWalk-3", SkillWalk, -1 * gradually},
+		{"SkillWalk-to-SkillAscending-1", SkillAscending, gradually},
+		{"SkillWalk-to-SkillAscending-2", SkillAscending, gradually},
+		{"SkillWalk-to-SkillAscending-3", SkillAscending, gradually},
+		{"SkillWalk-to-SkillAscending-4", SkillAscending, gradually},
+		{"SkillWalk-to-SkillAscending-5", SkillAscending, gradually},
+		{"SkillAscending-to-SkillDash-1", SkillDash, 0},
+		{"SkillDash-to-Walk-1", Walk, -1 * gradually},
+		{"SkillDash-to-Walk-2", Walk, -1 * gradually},
+		{"SkillDash-to-Walk-3", Walk, -1 * gradually},
+		{"SkillDash-to-Walk-4", Walk, -1 * gradually},
+		{"SkillDash-to-Walk-5", Walk, -1 * gradually},
+		{"SkillDash-to-Walk-6", Walk, -1 * gradually},
+		{"Walk-to-Dash-1", Dash, -1 * gradually},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			d.Update(tt.state)
-			log.Printf("name %v, total %v, target %v", tt.name, d.currentAllOffset, d.targetOffset)
 			if got := d.GetXAxisOffset(); got != tt.want {
 				t.Errorf("displayOffset.GetXAxisOffset() = %v, want %v", got, tt.want)
+				t.Errorf("target %v, here %v", d.targetOffset, d.currentAllOffset)
 			}
 		})
 	}
