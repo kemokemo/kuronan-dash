@@ -78,7 +78,7 @@ func (d *displayOffset) updateFactors() {
 			d.factor = 0
 		}
 
-	case SkillDash:
+	case SkillDash, SkillAscending, SkillDescending:
 		d.targetOffset = skillDashX
 		switch d.prevState {
 		case Walk:

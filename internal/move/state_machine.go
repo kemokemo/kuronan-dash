@@ -96,11 +96,11 @@ func (sm *StateMachine) checkCollisionAction() {
 
 func (sm *StateMachine) updateWithStaminaAndMove(stamina int, tension int, charaPosV *view.Vector) {
 	switch sm.current {
-	case Ascending:
+	case Ascending, SkillAscending:
 		if sm.IsReachedUpperLane(charaPosV.Y) {
 			sm.current = sm.previous
 		}
-	case Descending:
+	case Descending, SkillDescending:
 		if sm.isReachedLowerLane(charaPosV.Y) {
 			sm.current = sm.previous
 		}
@@ -152,16 +152,26 @@ func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
 			return
 		}
 
-		sm.previous = sm.current
-		sm.current = Ascending
+		if sm.current == SkillWalk || sm.current == SkillDash {
+			sm.previous = sm.current
+			sm.current = SkillAscending
+		} else {
+			sm.previous = sm.current
+			sm.current = Ascending
+		}
 		sm.soundTypeCh <- se.Jump
 	} else if sm.iChecker.TriggeredDown() {
 		if !sm.lanes.GoToLowerLane() {
 			return
 		}
 
-		sm.previous = sm.current
-		sm.current = Descending
+		if sm.current == SkillWalk || sm.current == SkillDash {
+			sm.previous = sm.current
+			sm.current = SkillDescending
+		} else {
+			sm.previous = sm.current
+			sm.current = Descending
+		}
 		sm.soundTypeCh <- se.Drop
 	}
 

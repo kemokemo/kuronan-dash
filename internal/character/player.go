@@ -192,7 +192,7 @@ func (p *Player) Draw(screen *ebiten.Image) {
 		return
 	}
 
-	if p.current == move.SkillDash || p.current == move.SkillWalk {
+	if p.current == move.SkillDash || p.current == move.SkillWalk || p.current == move.SkillAscending || p.current == move.SkillDescending {
 		screen.DrawImage(p.skillEffect, p.spEffectOp)
 	}
 	screen.DrawImage(p.animation.GetCurrentFrame(), p.op)

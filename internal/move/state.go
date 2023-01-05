@@ -14,6 +14,8 @@ const (
 	SkillEffect
 	SkillDash
 	SkillWalk
+	SkillAscending
+	SkillDescending
 )
 
 func (s State) String() string {
@@ -37,6 +39,10 @@ func (s State) String() string {
 		str = "SkillDash"
 	case SkillWalk:
 		str = "SkillWalk"
+	case SkillAscending:
+		str = "SkillAscending"
+	case SkillDescending:
+		str = "SkillDescending"
 	}
 	return str
 }

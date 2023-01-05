@@ -73,11 +73,19 @@ func (vc *KomaVc) decideVbyState() {
 		vc.decideVofSkillDash()
 	case SkillWalk:
 		vc.decideVofSkillWalk()
-	case Ascending:
-		vc.deltaX = 0.6
+	case Ascending, SkillAscending:
+		if vc.currentState == Ascending {
+			vc.deltaX = 0.6
+		} else if vc.currentState == SkillAscending {
+			vc.deltaX = 1.2
+		}
 		vc.deltaY = vc.jumpV0 + vc.gravity*vc.elapsedY
-	case Descending:
-		vc.deltaX = 0.6
+	case Descending, SkillDescending:
+		if vc.currentState == Descending {
+			vc.deltaX = 0.6
+		} else if vc.currentState == SkillDescending {
+			vc.deltaX = 1.2
+		}
 		if vc.deltaY > 9.0 {
 			vc.deltaY = 9.0
 		} else {
