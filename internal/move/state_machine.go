@@ -5,6 +5,7 @@ import (
 	"image"
 	"log"
 
+	"github.com/hajimehoshi/ebiten/v2"
 	vpad "github.com/kemokemo/ebiten-virtualpad"
 	"github.com/kemokemo/kuronan-dash/assets/se"
 	"github.com/kemokemo/kuronan-dash/internal/field"
@@ -64,6 +65,7 @@ func (sm *StateMachine) SetInputChecker(laneRectArray []image.Rectangle, upBtn, 
 		DownBtn:   downBtn,
 		AttackBtn: atkBtn,
 		SkillBtn:  spBtn,
+		DoubleClk: input.NewDoubleClick(ebiten.MouseButtonLeft),
 	}
 }
 
