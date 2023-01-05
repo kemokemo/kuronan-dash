@@ -47,7 +47,8 @@ func (d *displayOffset) updateFactors() {
 		case SkillWalk:
 			d.factor = speedy
 		case SkillDash:
-			d.factor = moreSpeedy
+			// スキル終了時。急に変えるとキャラクターが固まったようになるので緩やかに戻す。
+			d.factor = gradually
 		default:
 			d.factor = 0
 		}
@@ -60,7 +61,8 @@ func (d *displayOffset) updateFactors() {
 		case SkillWalk:
 			d.factor = gradually
 		case SkillDash:
-			d.factor = speedy
+			// スキル終了時。急に変えるとキャラクターが固まったようになるので緩やかに戻す。
+			d.factor = gradually
 		default:
 			d.factor = 0
 		}
