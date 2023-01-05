@@ -5,13 +5,15 @@ import "github.com/kemokemo/kuronan-dash/internal/view"
 // 独楽:
 // 移動速度はやや遅め。その代わり、障害物に当たっても速度が落ちにくい。
 const (
-	komaWalkMax             = 1.2
-	komaDashMax             = 2.2
-	komaSpMax               = 4.0
-	komaDecelerateRate      = 0.2
-	komaInitialVelocityWalk = 0.03
-	komaInitialVelocityDash = 0.1
-	komaInitialVelocitySp   = 0.15
+	komaWalkMax               = 1.2
+	komaDashMax               = 2.2
+	komaSpWalkMax             = 3.0
+	komaSpMax                 = 4.0
+	komaDecelerateRate        = 0.2
+	komaInitialVelocityWalk   = 0.03
+	komaInitialVelocityDash   = 0.1
+	komaInitialVelocitySpWalk = 0.12
+	komaInitialVelocitySp     = 0.15
 )
 
 // NewKomaVc returns a new VelocityController for Kurona.
@@ -68,12 +70,22 @@ func (vc *KomaVc) decideVbyState() {
 	case Dash:
 		vc.decideVofDash()
 	case SkillDash:
-		vc.decideVofSkill()
-	case Ascending:
-		vc.deltaX = 0.6
+		vc.decideVofSkillDash()
+	case SkillWalk:
+		vc.decideVofSkillWalk()
+	case Ascending, SkillAscending:
+		if vc.currentState == Ascending {
+			vc.deltaX = 0.6
+		} else if vc.currentState == SkillAscending {
+			vc.deltaX = 1.2
+		}
 		vc.deltaY = vc.jumpV0 + vc.gravity*vc.elapsedY
-	case Descending:
-		vc.deltaX = 0.6
+	case Descending, SkillDescending:
+		if vc.currentState == Descending {
+			vc.deltaX = 0.6
+		} else if vc.currentState == SkillDescending {
+			vc.deltaX = 1.2
+		}
 		if vc.deltaY > 9.0 {
 			vc.deltaY = 9.0
 		} else {
@@ -109,10 +121,18 @@ func (vc *KomaVc) decideVofDash() {
 	vc.deltaY = 0.0
 }
 
-func (vc *KomaVc) decideVofSkill() {
+func (vc *KomaVc) decideVofSkillDash() {
 	vc.deltaX += komaInitialVelocitySp * vc.elapsedX
 	if vc.deltaX > komaSpMax {
 		vc.deltaX = komaSpMax
+	}
+	vc.deltaY = 0.0
+}
+
+func (vc *KomaVc) decideVofSkillWalk() {
+	vc.deltaX += komaInitialVelocitySpWalk * vc.elapsedX
+	if vc.deltaX > komaSpWalkMax {
+		vc.deltaX = komaSpWalkMax
 	}
 	vc.deltaY = 0.0
 }

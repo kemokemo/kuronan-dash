@@ -7,4 +7,5 @@ const (
 	Jump SoundType = iota
 	Drop
 	Attack
+	Blocked
 )

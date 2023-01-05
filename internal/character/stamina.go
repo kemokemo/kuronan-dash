@@ -33,7 +33,7 @@ func (s *Stamina) ConsumesByState(state move.State) {
 	switch state {
 	case move.Dash, move.SkillDash:
 		s.consumes(2)
-	case move.Walk:
+	case move.Walk, move.SkillWalk:
 		s.consumes(1)
 	default:
 		// not consume stamina.

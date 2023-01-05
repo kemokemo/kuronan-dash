@@ -48,6 +48,6 @@ func (d *Disc) SetVolumeFlag(isVolumeOn bool) {
 		d.player.SetVolume(0)
 		d.Pause()
 	} else {
-		d.player.SetVolume(1)
+		d.player.SetVolume(0.5)
 	}
 }

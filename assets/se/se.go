@@ -6,8 +6,9 @@ import "fmt"
 var (
 	Click *Player
 
-	JumpSe *Player
-	DropSe *Player
+	JumpSe      *Player
+	DropSe      *Player
+	CollisionSe *Player
 
 	AttackScratch *Player
 	AttackSwipe   *Player
@@ -35,6 +36,10 @@ func LoadSE() error {
 		return err
 	}
 	DropSe, err = loadPlayer(drop_wav)
+	if err != nil {
+		return err
+	}
+	CollisionSe, err = loadPlayer(collision_wav)
 	if err != nil {
 		return err
 	}

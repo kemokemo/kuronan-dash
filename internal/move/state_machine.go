@@ -14,22 +14,24 @@ import (
 
 // StateMachine manages the player's state.
 type StateMachine struct {
-	pos            *view.Vector
-	current        State
-	previous       State
-	isBlocked      bool
-	lanes          *field.Lanes
-	offset         *view.Vector
-	iChecker       input.InputChecker
-	attacked       bool
-	drawing        bool
-	atkDuration    int
-	atkMaxDuration int
-	startSpEffect  bool
-	finishSpEffect bool
-	spDuration     int
-	spMaxDuration  int
-	soundTypeCh    chan<- se.SoundType
+	pos              *view.Vector
+	current          State
+	previous         State
+	isBlocked        bool
+	lanes            *field.Lanes
+	offset           *view.Vector
+	iChecker         input.InputChecker
+	attacked         bool
+	drawing          bool
+	atkDuration      int
+	atkMaxDuration   int
+	startSpEffect    bool
+	finishSpEffect   bool
+	spDuration       int
+	spMaxDuration    int
+	soundTypeCh      chan<- se.SoundType
+	xOffset          displayOffset
+	collisionCounter int
 }
 
 func NewStateMachine(lanes *field.Lanes, atkMaxDuration int, spMaxDuration int) (*StateMachine, error) {
@@ -39,16 +41,17 @@ func NewStateMachine(lanes *field.Lanes, atkMaxDuration int, spMaxDuration int) 
 	}
 
 	sm := StateMachine{
-		pos:            &view.Vector{X: view.DrawPosition, Y: lanes.GetTargetLaneHeight()},
-		current:        Dash,
-		previous:       Pause,
-		isBlocked:      false,
-		lanes:          lanes,
-		offset:         &view.Vector{X: 0.0, Y: 0.0},
-		atkMaxDuration: atkMaxDuration,
-		atkDuration:    atkMaxDuration,
-		spDuration:     0,
-		spMaxDuration:  spMaxDuration,
+		pos:              &view.Vector{X: view.DrawPosition, Y: lanes.GetTargetLaneHeight()},
+		current:          Dash,
+		previous:         Pause,
+		isBlocked:        false,
+		lanes:            lanes,
+		offset:           &view.Vector{X: 0.0, Y: 0.0},
+		atkMaxDuration:   atkMaxDuration,
+		atkDuration:      atkMaxDuration,
+		spDuration:       0,
+		spMaxDuration:    spMaxDuration,
+		collisionCounter: 100,
 	}
 
 	return &sm, nil
@@ -69,36 +72,42 @@ func (sm *StateMachine) Update(stamina int, tension int, isMaxTension bool, char
 	sm.pos.Add(charaPosV)
 	sm.offset.Y = 0.0
 
+	sm.checkCollisionAction()
 	sm.updateWithStaminaAndMove(stamina, tension, charaPosV)
 	sm.updateWithKey(isMaxTension, charaPosV.Y)
+	sm.updateXAxisOffset()
 
 	return sm.current
 }
 
+func (sm *StateMachine) checkCollisionAction() {
+	if !sm.isBlocked {
+		return
+	}
+
+	sm.collisionCounter++
+	if sm.collisionCounter < 10 {
+		return
+	}
+
+	sm.soundTypeCh <- se.Blocked
+	sm.collisionCounter = 0
+}
+
 func (sm *StateMachine) updateWithStaminaAndMove(stamina int, tension int, charaPosV *view.Vector) {
 	switch sm.current {
-	case Ascending:
+	case Ascending, SkillAscending:
 		if sm.IsReachedUpperLane(charaPosV.Y) {
 			sm.current = sm.previous
 		}
-	case Descending:
-		if sm.IsReachedLowerLane(charaPosV.Y) {
+	case Descending, SkillDescending:
+		if sm.isReachedLowerLane(charaPosV.Y) {
 			sm.current = sm.previous
 		}
 	case Dash:
 		if stamina <= 0 || sm.isBlocked {
 			sm.previous = Dash
 			sm.current = Walk
-		}
-	case SkillDash:
-		sm.finishSpEffect = false
-		if stamina <= 0 || sm.isBlocked {
-			sm.previous = SkillDash
-			sm.current = Walk
-		} else if tension <= 0 {
-			sm.previous = SkillDash
-			sm.current = Dash
-
 		}
 	case Walk:
 		if stamina > 0 && !sm.isBlocked {
@@ -108,6 +117,23 @@ func (sm *StateMachine) updateWithStaminaAndMove(stamina int, tension int, chara
 				sm.current = Dash
 			}
 			sm.previous = Walk
+		}
+	case SkillDash:
+		sm.finishSpEffect = false
+		if stamina <= 0 || sm.isBlocked {
+			sm.previous = SkillDash
+			sm.current = SkillWalk
+		} else if tension <= 0 {
+			sm.previous = SkillDash
+			sm.current = Dash
+		}
+	case SkillWalk:
+		if stamina > 0 && !sm.isBlocked {
+			sm.previous = SkillWalk
+			sm.current = SkillDash
+		} else if tension <= 0 {
+			sm.previous = SkillWalk
+			sm.current = Dash
 		}
 	default:
 		log.Println("unknown state: ", sm.current)
@@ -126,16 +152,26 @@ func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
 			return
 		}
 
-		sm.previous = sm.current
-		sm.current = Ascending
+		if sm.current == SkillWalk || sm.current == SkillDash {
+			sm.previous = sm.current
+			sm.current = SkillAscending
+		} else {
+			sm.previous = sm.current
+			sm.current = Ascending
+		}
 		sm.soundTypeCh <- se.Jump
 	} else if sm.iChecker.TriggeredDown() {
 		if !sm.lanes.GoToLowerLane() {
 			return
 		}
 
-		sm.previous = sm.current
-		sm.current = Descending
+		if sm.current == SkillWalk || sm.current == SkillDash {
+			sm.previous = sm.current
+			sm.current = SkillDescending
+		} else {
+			sm.previous = sm.current
+			sm.current = Descending
+		}
 		sm.soundTypeCh <- se.Drop
 	}
 
@@ -163,6 +199,11 @@ func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
 	}
 }
 
+func (sm *StateMachine) updateXAxisOffset() {
+	sm.xOffset.Update(sm.current)
+	sm.offset.X = sm.xOffset.GetXAxisOffset()
+}
+
 func (sm *StateMachine) UpdateSkillEffect(playingSound bool) {
 	sm.startSpEffect = false
 	sm.spDuration++
@@ -177,15 +218,15 @@ func (sm *StateMachine) UpdateSkillEffect(playingSound bool) {
 // If reached to the target lane, sm.offset is set.
 func (sm *StateMachine) IsReachedUpperLane(vY float64) bool {
 	if vY > 0 {
-		return sm.IsReachedLowerLane(vY)
+		return sm.isReachedLowerLane(vY)
 	}
 
 	return false
 }
 
-// IsReachedLowerLane returns which the player reached to the target lower lane.
+// isReachedLowerLane returns which the player reached to the target lower lane.
 // If reached to the target lane, sm.offset is set.
-func (sm *StateMachine) IsReachedLowerLane(vY float64) bool {
+func (sm *StateMachine) isReachedLowerLane(vY float64) bool {
 	th := sm.lanes.GetTargetLaneHeight()
 
 	nextPosY := sm.pos.Y + vY
@@ -200,6 +241,10 @@ func (sm *StateMachine) IsReachedLowerLane(vY float64) bool {
 
 // SetBlockState sets the blocked state of player.
 func (sm *StateMachine) SetBlockState(isBlocked bool) {
+	if !sm.isBlocked && isBlocked {
+		// 障害物に当たり始めたタイミングで音を鳴らしたい
+		sm.collisionCounter = 100
+	}
 	sm.isBlocked = isBlocked
 }
 

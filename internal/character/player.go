@@ -24,6 +24,7 @@ type Player struct {
 	animation      *anime.StepAnimation
 	jumpSe         *se.Player
 	dropSe         *se.Player
+	collisionSe    *se.Player
 	attackSe       *se.Player
 	spVoice        *se.Player
 	atkMaxDuration int
@@ -119,6 +120,8 @@ func (p *Player) playSounds() {
 			p.dropSe.Play()
 		case se.Attack:
 			p.attackSe.Play()
+		case se.Blocked:
+			p.collisionSe.Play()
 		default:
 			log.Println("unknown sound type, ", s)
 		}
@@ -175,10 +178,10 @@ func (p *Player) Update() {
 }
 
 func (p *Player) updateVelWithOffset(offsetV *view.Vector) {
-	p.charaPosV.X = p.tempPosV.X
+	p.charaPosV.X = p.tempPosV.X + offsetV.X
 	p.charaPosV.Y = p.tempPosV.Y + offsetV.Y
 
-	p.charaDrawV.X = p.tempDrawV.X
+	p.charaDrawV.X = p.tempDrawV.X + offsetV.X
 	p.charaDrawV.Y = p.tempDrawV.Y + offsetV.Y
 }
 
@@ -189,8 +192,7 @@ func (p *Player) Draw(screen *ebiten.Image) {
 		return
 	}
 
-	// TODO: ダッシュ中とか奥義中とか状態に応じて多少前後しつつ、ほぼ画面中央に描画したい
-	if p.current == move.SkillDash {
+	if p.current == move.SkillDash || p.current == move.SkillWalk || p.current == move.SkillAscending || p.current == move.SkillDescending {
 		screen.DrawImage(p.skillEffect, p.spEffectOp)
 	}
 	screen.DrawImage(p.animation.GetCurrentFrame(), p.op)
@@ -290,5 +292,6 @@ func (p *Player) SetVolumeFlag(isVolumeOn bool) {
 
 	p.jumpSe.SetVolumeFlag(isVolumeOn)
 	p.dropSe.SetVolumeFlag(isVolumeOn)
+	p.collisionSe.SetVolumeFlag(isVolumeOn)
 	p.attackSe.SetVolumeFlag(isVolumeOn)
 }

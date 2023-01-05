@@ -13,7 +13,9 @@ const (
 	Pause
 	SkillEffect
 	SkillDash
-	SkillWalk // TODO: Skill中に障害物に当たったりスタミナ切れした場合のState
+	SkillWalk
+	SkillAscending
+	SkillDescending
 )
 
 func (s State) String() string {
@@ -35,6 +37,12 @@ func (s State) String() string {
 		str = "SkillEffect"
 	case SkillDash:
 		str = "SkillDash"
+	case SkillWalk:
+		str = "SkillWalk"
+	case SkillAscending:
+		str = "SkillAscending"
+	case SkillDescending:
+		str = "SkillDescending"
 	}
 	return str
 }

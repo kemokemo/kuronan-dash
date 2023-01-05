@@ -135,7 +135,7 @@ func (s *SelectScene) Update(state *GameState) {
 	s.updateVolume()
 
 	if !s.selectVoice.IsPlaying() {
-		s.disc.SetVolume(0.8)
+		s.disc.SetVolume(0.5)
 	}
 
 	s.selectChanged = false
