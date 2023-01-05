@@ -14,10 +14,12 @@ type PlayerInputChecker struct {
 	DownBtn      vpad.TriggerButton
 	AttackBtn    vpad.TriggerButton
 	SkillBtn     vpad.TriggerButton
+	DoubleClk    *DoubleClick
 	currentIndex int
 	mousePos     image.Point
 	isUp         bool
 	isDown       bool
+	isAttack     bool
 	tIDs         []ebiten.TouchID
 	touchPos     image.Point
 }
@@ -43,6 +45,7 @@ func (i *PlayerInputChecker) Update() {
 		return
 	}
 
+	i.isAttack = false
 	// Mouse
 	i.mousePos.X, i.mousePos.Y = ebiten.CursorPosition()
 	for index := range i.RectArray {
@@ -63,6 +66,7 @@ func (i *PlayerInputChecker) Update() {
 	if i.isUp || i.isDown {
 		return
 	}
+	i.isAttack = inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonRight)
 
 	// Touches
 	i.tIDs = inpututil.AppendJustPressedTouchIDs(nil)
@@ -111,9 +115,9 @@ func (i *PlayerInputChecker) TriggeredPause() bool {
 }
 
 func (i *PlayerInputChecker) TriggeredAttack() bool {
-	return i.AttackBtn.IsTriggered()
+	return i.AttackBtn.IsTriggered() || i.isAttack
 }
 
 func (i *PlayerInputChecker) TriggeredSkill() bool {
-	return i.SkillBtn.IsTriggered()
+	return i.SkillBtn.IsTriggered() || i.DoubleClk.Triggered()
 }
