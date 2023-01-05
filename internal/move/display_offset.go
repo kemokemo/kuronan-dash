@@ -2,17 +2,17 @@ package move
 
 // 変化量
 const (
-	gradually  = 1.0
-	speedy     = 2.5
-	moreSpeedy = 5.0
+	gradually  = 0.7
+	speedy     = 2.0
+	moreSpeedy = 4.0
 )
 
 // Target Offsets
 const (
-	walkX      = -80.0
+	walkX      = -50.0
 	dashX      = 0.0
-	skillWalkX = 40.0
-	skillDashX = 80.0
+	skillWalkX = 25.0
+	skillDashX = 50.0
 )
 
 type displayOffset struct {

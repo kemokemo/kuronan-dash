@@ -86,7 +86,7 @@ func (sm *StateMachine) checkCollisionAction() {
 	}
 
 	sm.collisionCounter++
-	if sm.collisionCounter < 30 {
+	if sm.collisionCounter < 10 {
 		return
 	}
 
