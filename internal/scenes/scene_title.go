@@ -41,7 +41,7 @@ type TitleScene struct {
 func (s *TitleScene) Initialize() error {
 	s.bg = images.TitleBackground
 	s.disc = music.Title
-	s.clickSe = se.Click
+	s.clickSe = se.MenuSelect
 	s.titleCall = se.TitleCall
 	s.verPos = view.Vector{X: 10, Y: float64(view.ScreenHeight) - 15}
 	s.titlePos = view.Vector{

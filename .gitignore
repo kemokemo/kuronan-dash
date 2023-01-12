@@ -25,3 +25,7 @@ _assets/*
 
 # build result
 public/kuronan-dash.wasm
+
+# macOS
+*DS_Store
+._*

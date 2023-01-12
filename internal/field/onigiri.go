@@ -2,6 +2,7 @@ package field
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/kemokemo/kuronan-dash/assets/se"
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
 
@@ -12,17 +13,20 @@ type Onigiri struct {
 	rect    *view.HitRectangle
 	stamina int
 	eaten   bool
+	sound   *se.Player
 }
 
 // Initialize initializes the object.
-//  args:
-//   img: the image to draw
-//   pos: the initial position
-//   vel: the velocity to move this object
+//
+//	args:
+//	 img: the image to draw
+//	 pos: the initial position
+//	 vel: the velocity to move this object
 func (o *Onigiri) Initialize(img *ebiten.Image, pos *view.Vector, kv float64) {
 	o.image = img
 	o.stamina = 5
 	o.eaten = false
+	o.sound = se.PickupItem
 
 	o.op = &ebiten.DrawImageOptions{}
 	o.op.GeoM.Translate(pos.X, pos.Y+FieldOffset)
@@ -34,8 +38,9 @@ func (o *Onigiri) Initialize(img *ebiten.Image, pos *view.Vector, kv float64) {
 }
 
 // Update updates the position and velocity of this object.
-//  args:
-//   scrollV: the velocity to scroll this field parts.
+//
+//	args:
+//	 scrollV: the velocity to scroll this field parts.
 func (o *Onigiri) Update(scrollV *view.Vector) {
 	if o.eaten {
 		return
@@ -64,5 +69,6 @@ func (o *Onigiri) IsCollided(hr *view.HitRectangle) bool {
 // Eat eats this food. This func reteruns the value to restore character's stamina.
 func (o *Onigiri) Eat() int {
 	o.eaten = true
+	o.sound.Play()
 	return o.stamina
 }

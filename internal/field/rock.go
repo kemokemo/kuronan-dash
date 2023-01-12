@@ -1,6 +1,7 @@
 package field
 
 import (
+	"github.com/kemokemo/kuronan-dash/assets/se"
 	"github.com/kemokemo/kuronan-dash/internal/view"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -13,16 +14,19 @@ type Rock struct {
 	rect     *view.HitRectangle
 	hardness float64
 	broken   bool
+	sound    *se.Player
 }
 
 // Initialize initializes the object.
-//  args:
-//   img: the image to draw
-//   pos: the initial position
-//   vel: the velocity to move this object
+//
+//	args:
+//	 img: the image to draw
+//	 pos: the initial position
+//	 vel: the velocity to move this object
 func (r *Rock) Initialize(img *ebiten.Image, pos *view.Vector, kv float64) {
 	r.image = img
 	r.hardness = 2
+	r.sound = se.BreakRock
 
 	r.op = &ebiten.DrawImageOptions{}
 	r.op.GeoM.Translate(pos.X, pos.Y+FieldOffset)
@@ -34,8 +38,9 @@ func (r *Rock) Initialize(img *ebiten.Image, pos *view.Vector, kv float64) {
 }
 
 // Update updates the position and velocity of this object.
-//  args:
-//   scrollV: the velocity to scroll this field parts.
+//
+//	args:
+//	 scrollV: the velocity to scroll this field parts.
 func (r *Rock) Update(scrollV *view.Vector) {
 	if r.broken {
 		return
@@ -63,6 +68,7 @@ func (r *Rock) Attack(damage float64) {
 	r.hardness -= damage
 	if r.hardness <= 0 {
 		r.broken = true
+		r.sound.Play()
 	}
 }
 
