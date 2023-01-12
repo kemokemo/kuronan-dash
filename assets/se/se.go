@@ -9,6 +9,8 @@ var (
 	JumpSe      *Player
 	DropSe      *Player
 	CollisionSe *Player
+	BreakRock   *Player
+	PickupItem  *Player
 
 	AttackScratch *Player
 	AttackPunch   *Player
@@ -40,6 +42,14 @@ func LoadSE() error {
 		return err
 	}
 	CollisionSe, err = loadPlayer(collision_wav)
+	if err != nil {
+		return err
+	}
+	BreakRock, err = loadPlayer(break_rock_wav)
+	if err != nil {
+		return err
+	}
+	PickupItem, err = loadPlayer(pickup_item_wav)
 	if err != nil {
 		return err
 	}
@@ -100,6 +110,18 @@ func CloseSE() error {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
 	e = DropSe.Close()
+	if err != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+	e = CollisionSe.Close()
+	if err != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+	e = BreakRock.Close()
+	if err != nil {
+		err = fmt.Errorf("%v:%v", err, e)
+	}
+	e = PickupItem.Close()
 	if err != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}

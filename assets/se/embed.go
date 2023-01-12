@@ -12,6 +12,10 @@ var (
 	drop_wav []byte
 	//go:embed collision.wav
 	collision_wav []byte
+	//go:embed break-rock.wav
+	break_rock_wav []byte
+	//go:embed pickup-item.wav
+	pickup_item_wav []byte
 
 	//go:embed attack-scratch.wav
 	attack_scratch_wav []byte
