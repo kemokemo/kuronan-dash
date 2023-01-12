@@ -66,7 +66,7 @@ func (s *Stage01Scene) Initialize() error {
 	s.timeLimit = 90
 	s.time = s.timeLimit
 	s.disc = music.Stage01
-	s.clickSe = se.Click
+	s.clickSe = se.MenuSelect
 	s.readyVoice = se.ReadyVoice
 	s.goVoice = se.GoVoice
 	s.stageClearVoice = se.StageClearVoice

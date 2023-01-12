@@ -4,14 +4,14 @@ import "fmt"
 
 // sound effect
 var (
-	Click *Player
+	MenuSelect *Player
 
 	JumpSe      *Player
 	DropSe      *Player
 	CollisionSe *Player
 
 	AttackScratch *Player
-	AttackSwipe   *Player
+	AttackPunch   *Player
 
 	TitleCall            *Player
 	CharacterSelectVoice *Player
@@ -27,7 +27,7 @@ var (
 func LoadSE() error {
 	var err error
 
-	Click, err = loadPlayer(click_wav)
+	MenuSelect, err = loadPlayer(menu_select_wav)
 	if err != nil {
 		return err
 	}
@@ -47,7 +47,7 @@ func LoadSE() error {
 	if err != nil {
 		return err
 	}
-	AttackSwipe, err = loadPlayer(attack_swipe_wav)
+	AttackPunch, err = loadPlayer(attack_punch_wav)
 	if err != nil {
 		return err
 	}
@@ -91,7 +91,7 @@ func LoadSE() error {
 func CloseSE() error {
 	var err, e error
 
-	e = Click.Close()
+	e = MenuSelect.Close()
 	if err != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
@@ -107,7 +107,7 @@ func CloseSE() error {
 	if err != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
-	e = AttackSwipe.Close()
+	e = AttackPunch.Close()
 	if err != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}

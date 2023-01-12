@@ -3,8 +3,8 @@ package se
 import _ "embed"
 
 var (
-	//go:embed click.wav
-	click_wav []byte
+	//go:embed menu-select.wav
+	menu_select_wav []byte
 
 	//go:embed jump.wav
 	jump_wav []byte
@@ -15,8 +15,8 @@ var (
 
 	//go:embed attack-scratch.wav
 	attack_scratch_wav []byte
-	//go:embed attack-swipe.wav
-	attack_swipe_wav []byte
+	//go:embed attack-punch.wav
+	attack_punch_wav []byte
 
 	//go:embed title-call.wav
 	title_call_wav []byte
