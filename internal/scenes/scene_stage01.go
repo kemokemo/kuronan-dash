@@ -179,6 +179,7 @@ func (s *Stage01Scene) Update(state *GameState) {
 	switch s.state {
 	case wait:
 		if s.iChecker.TriggeredStart() {
+			s.clickSe.Play()
 			s.state = readyCall
 			s.readyVoice.Play()
 			s.sumTicks = 0
@@ -218,15 +219,15 @@ func (s *Stage01Scene) Update(state *GameState) {
 		}
 	case stageClear:
 		if s.iChecker.TriggeredStart() {
+			s.clickSe.Play()
 			s.isClosing = true
 			s.curtain.Start(true)
-			s.clickSe.Play()
 		}
 	case gameOver:
 		if s.iChecker.TriggeredStart() {
+			s.clickSe.Play()
 			s.isClosing = true
 			s.curtain.Start(true)
-			s.clickSe.Play()
 		}
 	default:
 		log.Println("unknown state of Stage01Scene:", s.state)
