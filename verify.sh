@@ -18,7 +18,7 @@ if [ $? -ne 0 ]; then
     exit $?
 fi
 
-go test -v ./...
+go test -v -covermode=count ./...
 if [ $? -ne 0 ]; then
     echo "## failed to run 'go test'. ##"
     exit $?
