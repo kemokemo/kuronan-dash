@@ -66,7 +66,7 @@ func (o *Onigiri) IsCollided(hr *view.HitRectangle) bool {
 	return o.rect.Overlaps(hr)
 }
 
-// Eat eats this food. This func reteruns the value to restore character's stamina.
+// Eat eats this food. This func returns the value to restore character's stamina.
 func (o *Onigiri) Eat() int {
 	o.eaten = true
 	o.sound.Play()

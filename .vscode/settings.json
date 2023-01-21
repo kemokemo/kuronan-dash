@@ -1,17 +1,12 @@
 {
-	"cSpell.words": [
-		"chara",
-		"charatype",
-		"hajimehoshi",
-		"Koma",
-		"Kurona",
-		"kuronan",
-		"kuronandash",
-		"Onigiri",
-		"repos",
-		"Shishimaru",
-		"taiki",
-		"vpad",
-		"wasm"
-	]
+	"cSpell.customDictionaries": {
+    "words": {
+      "name": "words",
+      "path": "${workspaceRoot}/.cspell/words.txt",
+      "description": "Words used in this project",
+      "addWords": true
+    },
+    "custom": true, // Enable the `custom` dictionary
+    "internal-terms": false // Disable the `internal-terms` dictionary
+  }
 }
