@@ -94,7 +94,7 @@ func (p *Player) InitializeWithLanes(lanes *field.Lanes) error {
 		view.Vector{X: view.DrawPosition + rectOffset, Y: initialY + rectOffset},
 		view.Vector{X: view.DrawPosition + float64(w) - rectOffset, Y: initialY + float64(h) - rectOffset})
 	p.atkRect = view.NewHitRectangle(
-		view.Vector{X: view.DrawPosition + float64(w) + 5 + rectOffset, Y: initialY + 20 + rectOffset},
+		view.Vector{X: view.DrawPosition + rectOffset, Y: initialY + 20 + rectOffset},
 		view.Vector{X: view.DrawPosition + float64(w) + 5 + float64(aw) - rectOffset, Y: initialY + 20 + float64(ah) - rectOffset})
 
 	return nil
