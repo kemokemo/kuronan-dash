@@ -64,7 +64,7 @@ func (s *SelectScene) Initialize() error {
 	s.bgViewPort.SetSize(s.bg.Size())
 	s.bgViewPort.SetVelocity(1.0)
 	s.bgViewPort.SetLoop(true)
-	s.disc = music.Title
+	s.disc = music.Select
 	s.clickSe = se.MenuSelect
 	s.selectVoice = se.CharacterSelectVoice
 
