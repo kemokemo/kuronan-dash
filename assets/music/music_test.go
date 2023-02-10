@@ -28,6 +28,7 @@ func TestDisc(t *testing.T) {
 		disc *Disc
 	}{
 		{"Title", Title},
+		{"Select", Select},
 		{"Stage01", Stage01},
 	}
 	for _, tt := range tests {
