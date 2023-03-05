@@ -7,7 +7,7 @@ require (
 	github.com/hajimehoshi/ebiten/v2 v2.4.13
 	github.com/kemokemo/ebiten-gauge v0.0.2
 	github.com/kemokemo/ebiten-virtualpad v0.5.0
-	golang.org/x/image v0.1.0
+	golang.org/x/image v0.5.0
 )
 
 require (
