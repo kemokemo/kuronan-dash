@@ -11,14 +11,16 @@ import (
 // genPosFunc generates the positions to place objects.
 type genPosFunc func(height int, laneHeights []float64, g genPosSet) []*view.Vector
 
+var fieldRand *rand.Rand
+
 // genPosField generates the positions of objects to be placed on the field.
 func genPosField(height int, laneHeights []float64, g genPosSet) []*view.Vector {
 	var points []*view.Vector
 
-	rand.Seed(time.Now().UnixNano())
+	fieldRand = rand.New(rand.NewSource(time.Now().UnixNano()))
 	for _, h := range laneHeights {
 		for index := 0; index < g.amount; index++ {
-			r := rand.Float64()
+			r := fieldRand.Float64()
 			pos := &view.Vector{
 				X: float64((index+1)*g.randomRough) + float64(g.randomFine)*(1-r),
 				Y: h - float64(height-1),
@@ -33,7 +35,7 @@ func genPosField(height int, laneHeights []float64, g genPosSet) []*view.Vector 
 func genPosAir(h int, laneHeights []float64, g genPosSet) []*view.Vector {
 	var points []*view.Vector
 
-	rand.Seed(time.Now().UnixNano())
+	fieldRand = rand.New(rand.NewSource(time.Now().UnixNano()))
 	var upperH float64
 	polarity := -1.0
 	for _, h := range laneHeights {
@@ -94,6 +96,6 @@ func genRocks(img *ebiten.Image, laneHeights []float64, gpf genPosFunc, gps genP
 }
 
 func randBool() bool {
-	rand.Seed(time.Now().UnixNano())
+	fieldRand = rand.New(rand.NewSource(time.Now().UnixNano()))
 	return rand.Intn(2) == 0
 }
