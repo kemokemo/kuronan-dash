@@ -1,6 +1,9 @@
 package kuronandash
 
 import (
+	"log"
+	"sync"
+
 	"github.com/hajimehoshi/ebiten/v2"
 
 	"github.com/kemokemo/kuronan-dash/assets"
@@ -13,6 +16,7 @@ import (
 // Game controls all things in the screen.
 type Game struct {
 	scenes *scenes.SceneManager
+	once   sync.Once
 }
 
 // NewGame returns a new game instance.
@@ -29,18 +33,20 @@ func NewGame(ver string) (*Game, error) {
 	}
 
 	sm := scenes.NewSceneManager(ver)
-	err = sm.GoTo(&scenes.TitleScene{})
-	if err != nil {
-		return nil, err
-	}
-
 	return &Game{
 		scenes: sm,
 	}, nil
 }
 
 func (g *Game) Update() error {
+	g.once.Do(func() {
+		err := g.scenes.GoTo(&scenes.TitleScene{})
+		if err != nil {
+			log.Println("failed to run title screen")
+		}
+	})
 	g.scenes.Update()
+
 	return nil
 }
 

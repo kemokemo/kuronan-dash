@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"image/color"
 	"log"
+	"sync"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
@@ -35,6 +36,8 @@ type TitleScene struct {
 	curtain       *Curtain
 	isStarting    bool
 	isClosing     bool
+	once          sync.Once
+	secondOrLater bool
 }
 
 // Initialize initializes all resources.
@@ -140,8 +143,17 @@ func (s *TitleScene) StartMusic(isVolumeOn bool) {
 		s.disc.Play()
 		s.titleCall.Play()
 	}
-	s.isStarting = true
-	s.curtain.Start(false)
+
+	if s.secondOrLater {
+		s.isStarting = true
+		s.curtain.Start(false)
+	} else {
+		s.isStarting = false
+	}
+
+	s.once.Do(func() {
+		s.secondOrLater = true
+	})
 }
 
 // StopMusic stops playing music and sound effects
