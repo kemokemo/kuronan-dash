@@ -12,6 +12,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/text"
 
 	gauge "github.com/kemokemo/ebiten-gauge"
+	progress "github.com/kemokemo/ebiten-progress"
 	"github.com/kemokemo/kuronan-dash/assets/fonts"
 	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/assets/messages"
@@ -43,6 +44,8 @@ type Stage01Scene struct {
 	msgWindow       *ui.MessageWindow
 	staminaGauge    *gauge.Gauge
 	tensionGauge    *gauge.Gauge
+	progMap         *progress.Progress
+	progPercent     int
 	uiMsg           string
 	iChecker        input.InputChecker
 	vChecker        input.VolumeChecker
@@ -96,6 +99,8 @@ func (s *Stage01Scene) Initialize() error {
 	s.staminaGauge = gauge.NewGaugeWithColor(405, int(lowerLaneY)+windowMargin+15, s.player.GetMaxStamina(), color.RGBA{255, 255, 255, 255})
 	s.staminaGauge.SetBlink(false)
 	s.tensionGauge = gauge.NewGaugeWithColor(405, int(lowerLaneY)+windowMargin+35, s.player.GetMaxTension(), color.RGBA{248, 169, 0, 255})
+	s.progMap = progress.NewProgress(s.player.MapIcon, 400, 10, view.ScreenWidth-800)
+	s.progPercent = 0
 
 	laneRectArray := []image.Rectangle{}
 	previousHeight := 0
@@ -304,6 +309,8 @@ func (s *Stage01Scene) run() {
 
 		s.staminaGauge.Update(float64(s.player.GetStamina()))
 		s.tensionGauge.Update(float64(s.player.GetTension()))
+		s.progPercent = int((s.player.GetPosition().X - view.DrawPosition) * 100 / s.goalX)
+		s.progMap.SetPercent(s.progPercent)
 	}
 }
 
@@ -334,6 +341,7 @@ func (s *Stage01Scene) drawUI(screen *ebiten.Image) {
 	s.msgWindow.DrawWindow(screen, s.uiMsg)
 	s.staminaGauge.Draw(screen)
 	s.tensionGauge.Draw(screen)
+	s.progMap.Draw(screen)
 
 	s.upBtn.Draw(screen)
 	s.downBtn.Draw(screen)

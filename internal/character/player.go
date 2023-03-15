@@ -17,6 +17,7 @@ import (
 type Player struct {
 	// Specified at creation and not changed
 	StandingImage  *ebiten.Image
+	MapIcon        *ebiten.Image
 	Description    string
 	attackImage    *ebiten.Image
 	skillImage     *ebiten.Image

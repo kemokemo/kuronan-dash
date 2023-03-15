@@ -30,6 +30,9 @@ var (
 	kurona_05_png []byte
 	//go:embed kurona_sp_back.png
 	kurona_sp_back_png []byte
+	//go:embed kurona_map_icon.png
+	kurona_map_icon_png []byte
+
 	//go:embed koma_sp_back.png
 	koma_sp_back_png []byte
 	//go:embed shishimaru_sp_back.png
@@ -49,6 +52,8 @@ var (
 	koma_04_png []byte
 	//go:embed koma_05.png
 	koma_05_png []byte
+	//go:embed koma_map_icon.png
+	koma_map_icon_png []byte
 
 	//go:embed shishimaru_taiki.png
 	shishimaru_taiki_png []byte
@@ -64,6 +69,8 @@ var (
 	shishimaru_04_png []byte
 	//go:embed shishimaru_05.png
 	shishimaru_05_png []byte
+	//go:embed shishimaru_map_icon.png
+	shishimaru_map_icon_png []byte
 
 	//go:embed koma-fist.png
 	koma_fist_png []byte

@@ -22,6 +22,7 @@ var (
 func NewPlayers() error {
 	Kurona = &Player{
 		StandingImage:  images.KuronaStanding,
+		MapIcon:        images.KuronaMapIcon,
 		Description:    messages.DescKurona,
 		attackImage:    images.AttackScratch,
 		skillEffect:    images.KuronaSpEffect,
@@ -42,6 +43,7 @@ func NewPlayers() error {
 
 	Koma = &Player{
 		StandingImage:  images.KomaStanding,
+		MapIcon:        images.KomaMapIcon,
 		Description:    messages.DescKoma,
 		attackImage:    images.AttackKomaFist,
 		skillEffect:    images.KomaSpEffect,
@@ -62,6 +64,7 @@ func NewPlayers() error {
 
 	Shishimaru = &Player{
 		StandingImage:  images.ShishimaruStanding,
+		MapIcon:        images.ShishimaruMapIcon,
 		Description:    messages.DescShishimaru,
 		attackImage:    images.AttackShishimaruFist,
 		skillEffect:    images.ShishimaruSpEffect,
