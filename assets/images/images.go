@@ -19,8 +19,9 @@ var (
 // field parts
 // - general
 var (
-	Goal_back  *ebiten.Image
-	Goal_front *ebiten.Image
+	Goal_back     *ebiten.Image
+	Goal_front    *ebiten.Image
+	MapBackground *ebiten.Image
 )
 
 // - prairie  field
@@ -77,6 +78,11 @@ var (
 	KuronaSpBack     *ebiten.Image
 	KomaSpBack       *ebiten.Image
 	ShishimaruSpBack *ebiten.Image
+
+	// character map icon
+	KuronaMapIcon     *ebiten.Image
+	KomaMapIcon       *ebiten.Image
+	ShishimaruMapIcon *ebiten.Image
 )
 
 // LoadImages loads all public images.

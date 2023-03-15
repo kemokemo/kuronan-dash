@@ -12,6 +12,10 @@ func loadFieldParts() error {
 	if err != nil {
 		return err
 	}
+	MapBackground, err = loadSingleImage(map_background_png)
+	if err != nil {
+		return err
+	}
 
 	// Prairie field
 	TilePrairie, err = loadSingleImage(tile_prairie_png)

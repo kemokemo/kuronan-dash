@@ -25,6 +25,8 @@ github.com/jfreymuth/oggvorbis v1.0.4/go.mod h1:1U4pqWmghcoVsCJJ4fRBKv9peUJMBHix
 github.com/jfreymuth/vorbis v1.0.2/go.mod h1:DoftRo4AznKnShRl1GxiTFCseHr4zR9BN3TWXyuzrqQ=
 github.com/kemokemo/ebiten-gauge v0.0.2 h1:e/RqwchOLR/3Du/6yNcF8CM/PnGto+6qk+m4ysFgBfA=
 github.com/kemokemo/ebiten-gauge v0.0.2/go.mod h1:H0DBxyM/wN+uBeLYJ8Ot52JEgtLDP31MbgLPYKzIUy4=
+github.com/kemokemo/ebiten-progress v0.0.0-20230312125234-b79f0b067eab h1:7eB+wML7meN4WV+Ocs0qyIlzDhQ2uA5QU+Q/7eSvLbI=
+github.com/kemokemo/ebiten-progress v0.0.0-20230312125234-b79f0b067eab/go.mod h1:pHOk1JntjJdjLjBAYacSfzY2j7NMZ64aRtALsVLd/so=
 github.com/kemokemo/ebiten-virtualpad v0.5.0 h1:iUVFGzKxAoZ7zgji05ccnXeEpxp0siN4JPrRFDsBj8U=
 github.com/kemokemo/ebiten-virtualpad v0.5.0/go.mod h1:wsmg7B0F2mtYoD8Bb+tEvpjQU5SKoFHEUXbxN/hvrYQ=
 github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8/go.mod h1:HKlIX3XHQyzLZPlr7++PzdhaXEj94dEiJgZDTsxEqUI=

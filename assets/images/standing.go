@@ -60,6 +60,18 @@ func loadCharacters() error {
 	if err != nil {
 		return err
 	}
+	KuronaMapIcon, err = loadSingleImage(kurona_map_icon_png)
+	if err != nil {
+		return err
+	}
+	KomaMapIcon, err = loadSingleImage(koma_map_icon_png)
+	if err != nil {
+		return err
+	}
+	ShishimaruMapIcon, err = loadSingleImage(shishimaru_map_icon_png)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
