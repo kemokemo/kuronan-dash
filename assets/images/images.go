@@ -19,8 +19,9 @@ var (
 // field parts
 // - general
 var (
-	Goal_back  *ebiten.Image
-	Goal_front *ebiten.Image
+	Goal_back     *ebiten.Image
+	Goal_front    *ebiten.Image
+	MapBackground *ebiten.Image
 )
 
 // - prairie  field
