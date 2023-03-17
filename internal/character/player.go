@@ -193,7 +193,7 @@ func (p *Player) Update() {
 		p.spReadyIconOp.Update()
 	}
 	p.walkIconOp.Op.GeoM.Translate(p.charaDrawV.X, p.charaDrawV.Y)
-	if p.stamina.GetStamina() <= 0 {
+	if p.current == move.Walk || p.current == move.SkillWalk {
 		p.walkIconOp.Update()
 	}
 	p.atkOp.GeoM.Translate(p.charaDrawV.X, p.charaDrawV.Y)
