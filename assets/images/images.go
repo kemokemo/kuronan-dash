@@ -83,6 +83,10 @@ var (
 	KuronaMapIcon     *ebiten.Image
 	KomaMapIcon       *ebiten.Image
 	ShishimaruMapIcon *ebiten.Image
+
+	// character state icon
+	SpecialReadyIcon *ebiten.Image
+	WalkStateIcon    *ebiten.Image
 )
 
 // LoadImages loads all public images.

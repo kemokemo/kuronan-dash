@@ -82,6 +82,11 @@ var (
 	//go:embed Scratch.png
 	scratch_png []byte
 
+	//go:embed sp_charge_icon.png
+	sp_charge_icon_png []byte
+	//go:embed walk_icon.png
+	walk_icon_png []byte
+
 	//go:embed cloud_far.png
 	cloud_far_png []byte
 	//go:embed cloud_near.png
