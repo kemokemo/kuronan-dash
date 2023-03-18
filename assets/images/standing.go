@@ -72,6 +72,18 @@ func loadCharacters() error {
 	if err != nil {
 		return err
 	}
+	SpecialReadyIcon, err = loadSingleImage(sp_charge_icon_png)
+	if err != nil {
+		return err
+	}
+	WalkStateIcon, err = loadSingleImage(walk_icon_png)
+	if err != nil {
+		return err
+	}
+	StaminaEmptyIcon, err = loadSingleImage(stamina_empty_png)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

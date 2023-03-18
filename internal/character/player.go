@@ -5,7 +5,9 @@ import (
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	gauge "github.com/kemokemo/ebiten-gauge"
 	vpad "github.com/kemokemo/ebiten-virtualpad"
+	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/assets/se"
 	"github.com/kemokemo/kuronan-dash/internal/anime"
 	"github.com/kemokemo/kuronan-dash/internal/field"
@@ -16,20 +18,26 @@ import (
 // Player is a player character.
 type Player struct {
 	// Specified at creation and not changed
-	StandingImage  *ebiten.Image
-	MapIcon        *ebiten.Image
-	Description    string
-	attackImage    *ebiten.Image
-	skillImage     *ebiten.Image
-	skillEffect    *ebiten.Image
-	animation      *anime.StepAnimation
-	jumpSe         *se.Player
-	dropSe         *se.Player
-	collisionSe    *se.Player
-	attackSe       *se.Player
-	spVoice        *se.Player
-	atkMaxDuration int
-	spMaxDuration  int
+	StandingImage      *ebiten.Image
+	MapIcon            *ebiten.Image
+	Description        string
+	attackImage        *ebiten.Image
+	skillImage         *ebiten.Image
+	skillEffect        *ebiten.Image
+	animation          *anime.StepAnimation
+	spReadyIcon        *ebiten.Image
+	spReadyIconOp      *gauge.BlinkingOp
+	walkIcon           *ebiten.Image
+	walkIconOp         *gauge.BlinkingOp
+	staminaEmptyIcon   *ebiten.Image
+	staminaEmptyIconOp *gauge.BlinkingOp
+	jumpSe             *se.Player
+	dropSe             *se.Player
+	collisionSe        *se.Player
+	attackSe           *se.Player
+	spVoice            *se.Player
+	atkMaxDuration     int
+	spMaxDuration      int
 
 	// Update each time based on the internal status and other information
 	op         *ebiten.DrawImageOptions
@@ -89,6 +97,19 @@ func (p *Player) InitializeWithLanes(lanes *field.Lanes) error {
 	p.atkOp = &ebiten.DrawImageOptions{}
 	p.atkOp.GeoM.Translate(view.DrawPosition+float64(w)+5, initialY+20)
 	p.spOp = &ebiten.DrawImageOptions{}
+
+	p.spReadyIcon = images.SpecialReadyIcon
+	p.spReadyIconOp = gauge.NewBlinkingOp()
+	p.spReadyIconOp.SetInterval(20)
+	p.spReadyIconOp.Op.GeoM.Translate(view.DrawPosition+float64(w-2), initialY-7.0)
+	p.walkIcon = images.WalkStateIcon
+	p.walkIconOp = gauge.NewBlinkingOp()
+	p.walkIconOp.SetInterval(20)
+	p.walkIconOp.Op.GeoM.Translate(view.DrawPosition-float64(5), initialY-7.0)
+	p.staminaEmptyIcon = images.StaminaEmptyIcon
+	p.staminaEmptyIconOp = gauge.NewBlinkingOp()
+	p.staminaEmptyIconOp.SetInterval(20)
+	p.staminaEmptyIconOp.Op.GeoM.Translate(view.DrawPosition+float64(w/2-10), initialY-30.0)
 
 	rectOffset := 3.0
 	p.rect = view.NewHitRectangle(
@@ -173,6 +194,18 @@ func (p *Player) Update() {
 	p.animation.AddStep(p.charaPosV.X)
 	p.op.GeoM.Translate(p.charaDrawV.X, p.charaDrawV.Y)
 	p.spEffectOp.GeoM.Translate(p.charaDrawV.X, p.charaDrawV.Y)
+	p.spReadyIconOp.Op.GeoM.Translate(p.charaDrawV.X, p.charaDrawV.Y)
+	if p.tension.IsMax() {
+		p.spReadyIconOp.Update()
+	}
+	p.walkIconOp.Op.GeoM.Translate(p.charaDrawV.X, p.charaDrawV.Y)
+	if p.current == move.Walk || p.current == move.SkillWalk {
+		p.walkIconOp.Update()
+	}
+	p.staminaEmptyIconOp.Op.GeoM.Translate(p.charaDrawV.X, p.charaDrawV.Y)
+	if p.stamina.GetStamina() <= 0 {
+		p.staminaEmptyIconOp.Update()
+	}
 	p.atkOp.GeoM.Translate(p.charaDrawV.X, p.charaDrawV.Y)
 	p.rect.Add(p.charaDrawV)
 	p.atkRect.Add(p.charaDrawV)
@@ -199,6 +232,18 @@ func (p *Player) Draw(screen *ebiten.Image) {
 	screen.DrawImage(p.animation.GetCurrentFrame(), p.op)
 	if p.stateMachine.DrawAttack() {
 		screen.DrawImage(p.attackImage, p.atkOp)
+	}
+
+	if p.current == move.Walk || p.current == move.SkillWalk {
+		screen.DrawImage(p.walkIcon, p.walkIconOp.Op)
+	}
+
+	if p.tension.IsMax() {
+		screen.DrawImage(p.spReadyIcon, p.spReadyIconOp.Op)
+	}
+
+	if p.stamina.GetStamina() <= 0 {
+		screen.DrawImage(p.staminaEmptyIcon, p.staminaEmptyIconOp.Op)
 	}
 }
 
