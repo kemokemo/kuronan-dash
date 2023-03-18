@@ -80,6 +80,10 @@ func loadCharacters() error {
 	if err != nil {
 		return err
 	}
+	StaminaEmptyIcon, err = loadSingleImage(stamina_empty_png)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

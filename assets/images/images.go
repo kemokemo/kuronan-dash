@@ -87,6 +87,7 @@ var (
 	// character state icon
 	SpecialReadyIcon *ebiten.Image
 	WalkStateIcon    *ebiten.Image
+	StaminaEmptyIcon *ebiten.Image
 )
 
 // LoadImages loads all public images.

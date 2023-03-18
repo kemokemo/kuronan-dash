@@ -86,6 +86,8 @@ var (
 	sp_charge_icon_png []byte
 	//go:embed walk_icon.png
 	walk_icon_png []byte
+	//go:embed stamina_empty.png
+	stamina_empty_png []byte
 
 	//go:embed cloud_far.png
 	cloud_far_png []byte

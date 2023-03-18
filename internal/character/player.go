@@ -18,24 +18,26 @@ import (
 // Player is a player character.
 type Player struct {
 	// Specified at creation and not changed
-	StandingImage  *ebiten.Image
-	MapIcon        *ebiten.Image
-	Description    string
-	attackImage    *ebiten.Image
-	skillImage     *ebiten.Image
-	skillEffect    *ebiten.Image
-	animation      *anime.StepAnimation
-	spReadyIcon    *ebiten.Image
-	spReadyIconOp  *gauge.BlinkingOp
-	walkIcon       *ebiten.Image
-	walkIconOp     *gauge.BlinkingOp
-	jumpSe         *se.Player
-	dropSe         *se.Player
-	collisionSe    *se.Player
-	attackSe       *se.Player
-	spVoice        *se.Player
-	atkMaxDuration int
-	spMaxDuration  int
+	StandingImage      *ebiten.Image
+	MapIcon            *ebiten.Image
+	Description        string
+	attackImage        *ebiten.Image
+	skillImage         *ebiten.Image
+	skillEffect        *ebiten.Image
+	animation          *anime.StepAnimation
+	spReadyIcon        *ebiten.Image
+	spReadyIconOp      *gauge.BlinkingOp
+	walkIcon           *ebiten.Image
+	walkIconOp         *gauge.BlinkingOp
+	staminaEmptyIcon   *ebiten.Image
+	staminaEmptyIconOp *gauge.BlinkingOp
+	jumpSe             *se.Player
+	dropSe             *se.Player
+	collisionSe        *se.Player
+	attackSe           *se.Player
+	spVoice            *se.Player
+	atkMaxDuration     int
+	spMaxDuration      int
 
 	// Update each time based on the internal status and other information
 	op         *ebiten.DrawImageOptions
@@ -104,6 +106,10 @@ func (p *Player) InitializeWithLanes(lanes *field.Lanes) error {
 	p.walkIconOp = gauge.NewBlinkingOp()
 	p.walkIconOp.SetInterval(20)
 	p.walkIconOp.Op.GeoM.Translate(view.DrawPosition-float64(5), initialY-7.0)
+	p.staminaEmptyIcon = images.StaminaEmptyIcon
+	p.staminaEmptyIconOp = gauge.NewBlinkingOp()
+	p.staminaEmptyIconOp.SetInterval(20)
+	p.staminaEmptyIconOp.Op.GeoM.Translate(view.DrawPosition+float64(w/2-10), initialY-30.0)
 
 	rectOffset := 3.0
 	p.rect = view.NewHitRectangle(
@@ -196,6 +202,10 @@ func (p *Player) Update() {
 	if p.current == move.Walk || p.current == move.SkillWalk {
 		p.walkIconOp.Update()
 	}
+	p.staminaEmptyIconOp.Op.GeoM.Translate(p.charaDrawV.X, p.charaDrawV.Y)
+	if p.stamina.GetStamina() <= 0 {
+		p.staminaEmptyIconOp.Update()
+	}
 	p.atkOp.GeoM.Translate(p.charaDrawV.X, p.charaDrawV.Y)
 	p.rect.Add(p.charaDrawV)
 	p.atkRect.Add(p.charaDrawV)
@@ -230,6 +240,10 @@ func (p *Player) Draw(screen *ebiten.Image) {
 
 	if p.tension.IsMax() {
 		screen.DrawImage(p.spReadyIcon, p.spReadyIconOp.Op)
+	}
+
+	if p.stamina.GetStamina() <= 0 {
+		screen.DrawImage(p.staminaEmptyIcon, p.staminaEmptyIconOp.Op)
 	}
 }
 
