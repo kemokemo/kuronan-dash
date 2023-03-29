@@ -14,6 +14,17 @@ var (
 	//go:embed curtain.png
 	curtain_png []byte
 
+	//go:embed confetti/confetti_0001.png
+	confetti_0001_png []byte
+	//go:embed confetti/confetti_0002.png
+	confetti_0002_png []byte
+	//go:embed confetti/confetti_0003.png
+	confetti_0003_png []byte
+	//go:embed confetti/confetti_0004.png
+	confetti_0004_png []byte
+	//go:embed confetti/confetti_0005.png
+	confetti_0005_png []byte
+
 	//go:embed kurona_sp_back.png
 	kurona_sp_back_png []byte
 	//go:embed koma_sp_back.png
