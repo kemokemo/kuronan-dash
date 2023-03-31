@@ -63,6 +63,7 @@ type Stage01Scene struct {
 	curtain         *Curtain
 	isStarting      bool
 	isClosing       bool
+	resultEffects   *ResultEffect
 }
 
 // Initialize initializes all resources.
@@ -75,6 +76,8 @@ func (s *Stage01Scene) Initialize() error {
 	s.readyVoice = se.ReadyVoice
 	s.goVoice = se.GoVoice
 	s.stageClearVoice = se.StageClearVoice
+	s.resultEffects = &ResultEffect{}
+	s.resultEffects.Initialize()
 
 	s.player = chara.Selected
 	lanes := field.NewLanes(field.PrairieLane)
@@ -121,7 +124,8 @@ func (s *Stage01Scene) Initialize() error {
 	}
 
 	s.upBtn = vpad.NewTriggerButton(images.UpButton, vpad.JustPressed, vpad.SelectColor)
-	bW, bH := images.UpButton.Size()
+	bW := images.UpButton.Bounds().Dx()
+	bH := images.UpButton.Bounds().Dy()
 	s.upBtn.SetLocation(20, view.ScreenHeight-bH-45)
 	s.upBtn.SetTriggerButton([]ebiten.Key{ebiten.KeyArrowUp})
 	s.downBtn = vpad.NewTriggerButton(images.DownButton, vpad.JustPressed, vpad.SelectColor)
@@ -229,6 +233,7 @@ func (s *Stage01Scene) Update(state *GameState) {
 			s.state = run
 		}
 	case stageClear:
+		s.resultEffects.Update()
 		if s.iChecker.TriggeredStart() {
 			s.clickSe.Play()
 			s.isClosing = true
@@ -334,6 +339,8 @@ func (s *Stage01Scene) Draw(screen *ebiten.Image) {
 
 	if s.isStarting || s.isClosing {
 		s.curtain.Draw(screen)
+	} else if s.state == stageClear {
+		s.resultEffects.Draw(screen)
 	}
 }
 

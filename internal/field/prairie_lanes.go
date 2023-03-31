@@ -12,7 +12,7 @@ const (
 )
 
 func newPrairieLanesInfo() []ScrollInfo {
-	w, _ := images.TilePrairie.Size()
+	w := images.TilePrairie.Bounds().Dx()
 	width := float64(w)
 
 	infos := []ScrollInfo{

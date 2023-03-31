@@ -31,7 +31,8 @@ func (r *Rock) Initialize(img *ebiten.Image, pos *view.Vector, kv float64) {
 	r.op = &ebiten.DrawImageOptions{}
 	r.op.GeoM.Translate(pos.X, pos.Y+FieldOffset)
 
-	w, h := img.Size()
+	w := img.Bounds().Dx()
+	h := img.Bounds().Dy()
 	r.rect = view.NewHitRectangle(
 		view.Vector{X: pos.X + rectOffset, Y: pos.Y + rectOffset},
 		view.Vector{X: pos.X + float64(w) - rectOffset, Y: pos.Y + float64(h) - rectOffset})

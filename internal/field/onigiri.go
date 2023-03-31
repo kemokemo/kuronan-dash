@@ -31,7 +31,8 @@ func (o *Onigiri) Initialize(img *ebiten.Image, pos *view.Vector, kv float64) {
 	o.op = &ebiten.DrawImageOptions{}
 	o.op.GeoM.Translate(pos.X, pos.Y+FieldOffset)
 
-	w, h := img.Size()
+	w := img.Bounds().Dx()
+	h := img.Bounds().Dy()
 	o.rect = view.NewHitRectangle(
 		view.Vector{X: pos.X + rectOffset, Y: pos.Y + rectOffset},
 		view.Vector{X: pos.X + float64(w) - rectOffset, Y: pos.Y + float64(h) - rectOffset})

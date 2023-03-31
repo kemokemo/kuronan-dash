@@ -42,17 +42,18 @@ var (
 	Onigiri *ebiten.Image
 
 	// UI parts
-	CharaWindow       *ebiten.Image
-	CharaSelectButton *ebiten.Image
-	PauseButton       *ebiten.Image
-	StartButton       *ebiten.Image
-	UpButton          *ebiten.Image
-	DownButton        *ebiten.Image
-	AttackButton      *ebiten.Image
-	SkillButton       *ebiten.Image
-	VolumeOnButton    *ebiten.Image
-	VolumeOffButton   *ebiten.Image
-	StartTitleButton  *ebiten.Image
+	CharaWindow             *ebiten.Image
+	CharaSelectButton       *ebiten.Image
+	PauseButton             *ebiten.Image
+	StartButton             *ebiten.Image
+	UpButton                *ebiten.Image
+	DownButton              *ebiten.Image
+	AttackButton            *ebiten.Image
+	SkillButton             *ebiten.Image
+	VolumeOnButton          *ebiten.Image
+	VolumeOffButton         *ebiten.Image
+	StartTitleButton        *ebiten.Image
+	ResultConfettiAnimation []*ebiten.Image
 
 	// character standing image
 	KuronaStanding     *ebiten.Image

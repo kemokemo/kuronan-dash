@@ -61,7 +61,7 @@ type SelectScene struct {
 func (s *SelectScene) Initialize() error {
 	s.bg = images.SelectBackground
 	s.bgViewPort = &view.Viewport{}
-	s.bgViewPort.SetSize(s.bg.Size())
+	s.bgViewPort.SetSize(s.bg.Bounds().Dx(), s.bg.Bounds().Dy())
 	s.bgViewPort.SetVelocity(1.0)
 	s.bgViewPort.SetLoop(true)
 	s.disc = music.Select
@@ -75,7 +75,8 @@ func (s *SelectScene) Initialize() error {
 	s.selectedIndex = 0
 	chara.InitializeCharacter() // インデックスを更新したら選択キャラクターも初期化しよう
 
-	iw, ih := images.CharaWindow.Size()
+	iw := images.CharaWindow.Bounds().Dx()
+	ih := images.CharaWindow.Bounds().Dy()
 	for i := range s.selectArray {
 		window := vpad.NewSelectButton(images.CharaWindow, vpad.JustPressed, vpad.SelectColor)
 		x := windowMargin + (iw+windowSpacing)*int(i)
@@ -230,11 +231,12 @@ func (s *SelectScene) drawBackground(screen *ebiten.Image) {
 
 	// Draw bgImage on the screen repeatedly.
 	const repeat = 3
-	w, h := s.bg.Size()
+	w := s.bg.Bounds().Dx()
+	h := s.bg.Bounds().Dy()
 	for j := 0; j < repeat; j++ {
 		for i := 0; i < repeat; i++ {
 			op := &ebiten.DrawImageOptions{}
-			screenWidth, _ := screen.Size()
+			screenWidth := screen.Bounds().Dx()
 			op.GeoM.Translate(float64(screenWidth)-float64(w*(i+1)), float64(h*j))
 			op.GeoM.Translate(offsetX, offsetY)
 			screen.DrawImage(s.bg, op)
@@ -262,7 +264,7 @@ func (s *SelectScene) drawChara(screen *ebiten.Image, i int) {
 
 func (s *SelectScene) takeHorizontalCenterPosition(i int) (x, y float64) {
 	rect := s.winRectArray[i]
-	width, _ := s.charaList[i].StandingImage.Size()
+	width := s.charaList[i].StandingImage.Bounds().Dx()
 	x = float64((rect.Max.X-rect.Min.X)/2 + rect.Min.X - (width*scale)/2)
 	y = float64(rect.Min.Y + margin)
 	return x, y
@@ -295,7 +297,7 @@ func (s *SelectScene) drawMessage(screen *ebiten.Image, i int) {
 func (s *SelectScene) takeTextPosition(i int) image.Point {
 	rect := s.winRectArray[i]
 	x := rect.Min.X + margin
-	_, height := s.charaList[i].StandingImage.Size()
+	height := s.charaList[i].StandingImage.Bounds().Dy()
 	y := rect.Min.Y + margin*2 + height*scale
 	return image.Point{X: x, Y: y}
 }

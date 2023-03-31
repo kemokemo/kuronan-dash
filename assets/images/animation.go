@@ -36,6 +36,14 @@ var (
 		bytes.NewReader(shishimaru_04_png),
 		bytes.NewReader(shishimaru_05_png),
 	}
+
+	resultConfettiFrames = []*bytes.Reader{
+		bytes.NewReader(confetti_0001_png),
+		bytes.NewReader(confetti_0002_png),
+		bytes.NewReader(confetti_0003_png),
+		bytes.NewReader(confetti_0004_png),
+		bytes.NewReader(confetti_0005_png),
+	}
 )
 
 func loadAnimation() error {
@@ -50,6 +58,10 @@ func loadAnimation() error {
 		return err
 	}
 	ShishimaruAnimation, err = loadFrames(shishimaruFrames)
+	if err != nil {
+		return err
+	}
+	ResultConfettiAnimation, err = loadFrames(resultConfettiFrames)
 	if err != nil {
 		return err
 	}

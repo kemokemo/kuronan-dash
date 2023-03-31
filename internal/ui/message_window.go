@@ -70,12 +70,12 @@ func (mw *MessageWindow) GetWindowRect() image.Rectangle {
 // normal color.
 // If you need to blink the frame, please use the SetBlinkFrame method.
 func (mw *MessageWindow) SetColors(inner, frameDark, frameLight color.RGBA) {
-	mw.innerOp.ColorM.Scale(colorScale(inner))
+	mw.innerOp.ColorScale.Scale(colorScale(inner))
 	if mw.frameDarkOp != nil {
-		mw.frameDarkOp.ColorM.Scale(colorScale(frameDark))
+		mw.frameDarkOp.ColorScale.Scale(colorScale(frameDark))
 	}
 	if mw.frameLightOp != nil {
-		mw.frameLightOp.ColorM.Scale(colorScale(frameLight))
+		mw.frameLightOp.ColorScale.Scale(colorScale(frameLight))
 	}
 }
 
