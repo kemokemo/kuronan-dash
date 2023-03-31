@@ -30,3 +30,4 @@ virtualpad
 vpad
 tabidati
 toki
+colorm

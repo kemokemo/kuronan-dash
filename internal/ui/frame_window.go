@@ -56,12 +56,12 @@ func (w *FrameWindow) GetWindowRect() image.Rectangle {
 // normal color.
 // If you need to blink the frame, please use the SetBlinkFrame method.
 func (w *FrameWindow) SetColors(inner, frameDark, frameLight color.RGBA) {
-	w.innerOp.ColorM.Scale(colorScale(inner))
+	w.innerOp.ColorScale.Scale(colorScale(inner))
 	if w.frameDarkOp != nil {
-		w.frameDarkOp.ColorM.Scale(colorScale(frameDark))
+		w.frameDarkOp.ColorScale.Scale(colorScale(frameDark))
 	}
 	if w.frameLightOp != nil {
-		w.frameLightOp.ColorM.Scale(colorScale(frameLight))
+		w.frameLightOp.ColorScale.Scale(colorScale(frameLight))
 	}
 }
 
@@ -97,15 +97,15 @@ func (w *FrameWindow) getFrameOp() *ebiten.DrawImageOptions {
 	}
 }
 
-func colorScale(clr color.Color) (rf, gf, bf, af float64) {
+func colorScale(clr color.Color) (rf, gf, bf, af float32) {
 	r, g, b, a := clr.RGBA()
 	if a == 0 {
 		return 0, 0, 0, 0
 	}
 
-	rf = float64(r) / float64(a)
-	gf = float64(g) / float64(a)
-	bf = float64(b) / float64(a)
-	af = float64(a) / 0xffff
+	rf = float32(r) / float32(a)
+	gf = float32(g) / float32(a)
+	bf = float32(b) / float32(a)
+	af = float32(a) / 0xffff
 	return
 }

@@ -124,7 +124,8 @@ func (s *Stage01Scene) Initialize() error {
 	}
 
 	s.upBtn = vpad.NewTriggerButton(images.UpButton, vpad.JustPressed, vpad.SelectColor)
-	bW, bH := images.UpButton.Size()
+	bW := images.UpButton.Bounds().Dx()
+	bH := images.UpButton.Bounds().Dy()
 	s.upBtn.SetLocation(20, view.ScreenHeight-bH-45)
 	s.upBtn.SetTriggerButton([]ebiten.Key{ebiten.KeyArrowUp})
 	s.downBtn = vpad.NewTriggerButton(images.DownButton, vpad.JustPressed, vpad.SelectColor)

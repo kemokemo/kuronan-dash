@@ -57,7 +57,7 @@ func genPosAir(h int, laneHeights []float64, g genPosSet) []*view.Vector {
 func genParts(img *ebiten.Image, laneHeights []float64, gpf genPosFunc, gps genPosSet, kv float64) []*Parts {
 	var array []*Parts
 
-	_, hP := img.Size()
+	hP := img.Bounds().Dy()
 	points := gpf(hP, laneHeights, gps)
 	for _, point := range points {
 		fp := &Parts{}
@@ -71,7 +71,7 @@ func genParts(img *ebiten.Image, laneHeights []float64, gpf genPosFunc, gps genP
 func genOnigiri(img *ebiten.Image, laneHeights []float64, gpf genPosFunc, gps genPosSet, kv float64) []*Onigiri {
 	var array []*Onigiri
 
-	_, hP := img.Size()
+	hP := img.Bounds().Dy()
 	points := gpf(hP, laneHeights, gps)
 	for _, point := range points {
 		oni := &Onigiri{}
@@ -85,7 +85,7 @@ func genOnigiri(img *ebiten.Image, laneHeights []float64, gpf genPosFunc, gps ge
 func genRocks(img *ebiten.Image, laneHeights []float64, gpf genPosFunc, gps genPosSet, kv float64) []*Rock {
 	var array []*Rock
 
-	_, hP := img.Size()
+	hP := img.Bounds().Dy()
 	points := gpf(hP, laneHeights, gps)
 	for _, point := range points {
 		r := &Rock{}

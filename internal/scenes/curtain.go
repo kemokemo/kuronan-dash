@@ -20,7 +20,7 @@ type Curtain struct {
 	counter          int
 	changing         bool
 	visibility       bool
-	alpha            float64
+	alpha            float32
 }
 
 // Start starts to change visible this image gradually.
@@ -39,13 +39,13 @@ func (c *Curtain) Update() {
 
 	c.counter++
 	if c.visibility {
-		c.alpha = 0.05 * float64(c.counter)
+		c.alpha = 0.05 * float32(c.counter)
 	} else {
-		c.alpha = 1.0 - (0.05 * float64(c.counter))
+		c.alpha = 1.0 - (0.05 * float32(c.counter))
 	}
 
-	c.op.ColorM.Reset()
-	c.op.ColorM.Scale(1.0, 1.0, 1.0, c.alpha)
+	c.op.ColorScale.Reset()
+	c.op.ColorScale.Scale(c.alpha, c.alpha, c.alpha, c.alpha)
 }
 
 func (c *Curtain) Draw(screen *ebiten.Image) {

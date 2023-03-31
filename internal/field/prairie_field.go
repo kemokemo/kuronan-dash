@@ -95,7 +95,8 @@ func (p *PrairieField) createParts(goalX float64) {
 	}
 
 	// Goal
-	w, h := images.Goal_back.Size()
+	w := images.Goal_back.Bounds().Dx()
+	h := images.Goal_back.Bounds().Dy()
 	for _, lh := range p.lanes.laneHeights {
 		goal := Goal{}
 		goal.Initialize(

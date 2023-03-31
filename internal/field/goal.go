@@ -26,7 +26,7 @@ func (g *Goal) Initialize(bkImg, frImg *ebiten.Image, pos *view.Vector, vel *vie
 
 	g.bkOp = &ebiten.DrawImageOptions{}
 	g.bkOp.GeoM.Translate(pos.X, pos.Y)
-	w, _ := frImg.Size()
+	w := frImg.Bounds().Dx()
 	g.frOp = &ebiten.DrawImageOptions{}
 	g.frOp.GeoM.Translate(pos.X+float64(w), pos.Y)
 }

@@ -17,7 +17,7 @@ type SceneManager struct {
 	transitionTo    *ebiten.Image
 	op              *ebiten.DrawImageOptions
 	transitionCount int
-	alpha           float64
+	alpha           float32
 }
 
 // versionInfo is the version info of this game.
@@ -62,8 +62,8 @@ func (s *SceneManager) Draw(r *ebiten.Image) {
 	s.next.Draw(s.transitionTo)
 	r.DrawImage(s.transitionFrom, nil)
 
-	s.alpha = 1 - float64(s.transitionCount)/float64(transitionMaxCount)
-	s.op.ColorM.Scale(1, 1, 1, s.alpha)
+	s.alpha = 1 - float32(s.transitionCount)/float32(transitionMaxCount)
+	s.op.ColorScale.Scale(s.alpha, s.alpha, s.alpha, s.alpha)
 	r.DrawImage(s.transitionTo, s.op)
 }
 
