@@ -82,9 +82,12 @@ func (p *Player) InitializeWithLanes(lanes *field.Lanes) error {
 	p.stateMachine.SetSeChan(p.soundTypeCh)
 
 	// set the player at the top lane.
-	w, h := p.StandingImage.Size()
-	sw, sh := p.skillEffect.Size()
-	aw, ah := p.attackImage.Size()
+	w := p.StandingImage.Bounds().Dx()
+	h := p.StandingImage.Bounds().Dy()
+	sw := p.skillEffect.Bounds().Dx()
+	sh := p.skillEffect.Bounds().Dy()
+	aw := p.attackImage.Bounds().Dx()
+	ah := p.attackImage.Bounds().Dy()
 
 	initialY := lanes.GetTargetLaneHeight() - float64(h) + field.FieldOffset
 	p.charaPosV = &view.Vector{X: 0.0, Y: 0.0}
@@ -293,7 +296,7 @@ func (p *Player) Close() error {
 }
 
 func (p *Player) GetHeight() float64 {
-	_, h := p.StandingImage.Size()
+	h := p.StandingImage.Bounds().Dy()
 	return float64(h)
 }
 

@@ -26,7 +26,7 @@ func (l *SingleLane) Initialize(img *ebiten.Image, pos *view.Vector, vel *view.V
 	l.op.GeoM.Translate(pos.X, pos.Y)
 	l.pos = &view.Vector{X: pos.X, Y: pos.Y}
 
-	w, _ := img.Size()
+	w := img.Bounds().Dx()
 	l.width = float64(w)
 	l.repos = &view.Vector{X: 2.0 * l.width, Y: 0.0}
 }
