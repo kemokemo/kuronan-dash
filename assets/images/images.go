@@ -54,6 +54,7 @@ var (
 	VolumeOffButton         *ebiten.Image
 	StartTitleButton        *ebiten.Image
 	ResultConfettiAnimation []*ebiten.Image
+	OnigiriAnimation        []*ebiten.Image
 
 	// character standing image
 	KuronaStanding     *ebiten.Image

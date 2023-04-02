@@ -2,13 +2,15 @@ package field
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/assets/se"
+	"github.com/kemokemo/kuronan-dash/internal/anime"
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
 
 // Onigiri is a kind of Food. Delicious!
 type Onigiri struct {
-	image   *ebiten.Image
+	anime   *anime.TimeAnimation
 	op      *ebiten.DrawImageOptions
 	rect    *view.HitRectangle
 	stamina int
@@ -19,11 +21,13 @@ type Onigiri struct {
 // Initialize initializes the object.
 //
 //	args:
-//	 img: the image to draw
+//	 img: the image to draw (ignore to use animation)
 //	 pos: the initial position
 //	 vel: the velocity to move this object
 func (o *Onigiri) Initialize(img *ebiten.Image, pos *view.Vector, kv float64) {
-	o.image = img
+	// ignore img
+
+	o.anime = anime.NewTimeAnimation(images.OnigiriAnimation, 1.0)
 	o.stamina = 5
 	o.eaten = false
 	o.sound = se.PickupItem
@@ -31,8 +35,9 @@ func (o *Onigiri) Initialize(img *ebiten.Image, pos *view.Vector, kv float64) {
 	o.op = &ebiten.DrawImageOptions{}
 	o.op.GeoM.Translate(pos.X, pos.Y+FieldOffset)
 
-	w := img.Bounds().Dx()
-	h := img.Bounds().Dy()
+	firstFrame := images.OnigiriAnimation[0]
+	w := firstFrame.Bounds().Dx()
+	h := firstFrame.Bounds().Dy()
 	o.rect = view.NewHitRectangle(
 		view.Vector{X: pos.X + rectOffset, Y: pos.Y + rectOffset},
 		view.Vector{X: pos.X + float64(w) - rectOffset, Y: pos.Y + float64(h) - rectOffset})
@@ -55,7 +60,7 @@ func (o *Onigiri) Draw(screen *ebiten.Image) {
 	if o.eaten {
 		return
 	}
-	screen.DrawImage(o.image, o.op)
+	screen.DrawImage(o.anime.GetCurrentFrame(), o.op)
 }
 
 // IsCollided returns whether this obstacle is collided the arg.

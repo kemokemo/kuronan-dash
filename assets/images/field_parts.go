@@ -54,10 +54,6 @@ func loadFieldParts() error {
 	if err != nil {
 		return err
 	}
-	Onigiri, err = loadSingleImage(onigiri_png)
-	if err != nil {
-		return err
-	}
 
 	// UI
 	CharaWindow, err = loadSingleImage(chara_window_png)
