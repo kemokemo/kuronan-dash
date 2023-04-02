@@ -118,8 +118,14 @@ var (
 	//go:embed tile_prairie.png
 	tile_prairie_png []byte
 
-	//go:embed onigiri.png
-	onigiri_png []byte
+	//go:embed onigiri_anime/onigiri_anime_0001.png
+	onigiri_anime_0001_png []byte
+	//go:embed onigiri_anime/onigiri_anime_0002.png
+	onigiri_anime_0002_png []byte
+	//go:embed onigiri_anime/onigiri_anime_0003.png
+	onigiri_anime_0003_png []byte
+	//go:embed onigiri_anime/onigiri_anime_0004.png
+	onigiri_anime_0004_png []byte
 
 	//go:embed rock_normal.png
 	rock_normal_png []byte

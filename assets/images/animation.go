@@ -44,6 +44,13 @@ var (
 		bytes.NewReader(confetti_0004_png),
 		bytes.NewReader(confetti_0005_png),
 	}
+
+	onigiriFrames = []*bytes.Reader{
+		bytes.NewReader(onigiri_anime_0001_png),
+		bytes.NewReader(onigiri_anime_0002_png),
+		bytes.NewReader(onigiri_anime_0003_png),
+		bytes.NewReader(onigiri_anime_0004_png),
+	}
 )
 
 func loadAnimation() error {
@@ -62,6 +69,10 @@ func loadAnimation() error {
 		return err
 	}
 	ResultConfettiAnimation, err = loadFrames(resultConfettiFrames)
+	if err != nil {
+		return err
+	}
+	OnigiriAnimation, err = loadFrames(onigiriFrames)
 	if err != nil {
 		return err
 	}

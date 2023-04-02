@@ -57,7 +57,7 @@ func (p *PrairieField) createParts(goalX float64) {
 
 	// Foods
 	assets = []ast{
-		{images.Onigiri, genPosField, genPosSet{30, 1000, 550}, 1.0},
+		{images.OnigiriAnimation[0], genPosField, genPosSet{30, 1000, 550}, 1.0},
 	}
 	for _, asset := range assets {
 		array := genOnigiri(asset.img, p.lanes.GetLaneHeights(), asset.gpf, asset.gps, asset.kv)
