@@ -388,7 +388,8 @@ func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 		text.Draw(screen, fmt.Sprintf("Music: %s", s.disc.Name), fonts.GamerFontS, 10, 20, color.White)
 		screen.DrawImage(s.pauseBg, s.pauseBgOp)
 		text.Draw(screen, messages.GameStageClear, fonts.GamerFontL, view.ScreenWidth/2-200, view.ScreenHeight/2-134, color.White)
-		text.Draw(screen, messages.GameStageClear2, fonts.GamerFontL, view.ScreenWidth/2-500, view.ScreenHeight/2+30, color.White)
+		text.Draw(screen, messages.GameStageClear2, fonts.GamerFontL, view.ScreenWidth/2-400, view.ScreenHeight/2+30, color.White)
+		text.Draw(screen, messages.GameStageClear3, fonts.GamerFontL, view.ScreenWidth/2-180, view.ScreenHeight/2+75, color.White)
 		s.startBtn.Draw(screen)
 	case gameOver:
 		text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),

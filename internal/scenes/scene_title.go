@@ -14,6 +14,7 @@ import (
 	vpad "github.com/kemokemo/ebiten-virtualpad"
 	"github.com/kemokemo/kuronan-dash/assets/fonts"
 	"github.com/kemokemo/kuronan-dash/assets/images"
+	"github.com/kemokemo/kuronan-dash/assets/messages"
 	"github.com/kemokemo/kuronan-dash/assets/music"
 	"github.com/kemokemo/kuronan-dash/assets/se"
 	"github.com/kemokemo/kuronan-dash/internal/input"
@@ -54,7 +55,7 @@ func (s *TitleScene) Initialize() error {
 		X: float64(view.ScreenWidth/2) - 200,
 		Y: float64(view.ScreenHeight/2) + 50}
 	s.startTitleBtn = vpad.NewTriggerButton(images.StartTitleButton, vpad.JustReleased, vpad.SelectColor)
-	s.startTitleBtn.SetLocation(view.ScreenWidth/2-64, view.ScreenHeight/2-30)
+	s.startTitleBtn.SetLocation(view.ScreenWidth/2-220, view.ScreenHeight/2+20)
 	s.startTitleBtn.SetTriggerButton([]ebiten.Key{ebiten.KeySpace})
 	s.volumeBtn = vpad.NewSelectButton(images.VolumeOffButton, vpad.JustPressed, vpad.SelectColor)
 	s.volumeBtn.SetLocation(view.ScreenWidth-58, 10)
@@ -129,6 +130,7 @@ func (s *TitleScene) Draw(screen *ebiten.Image) {
 	text.Draw(screen, versionInfo, fonts.GamerFontSS, view.ScreenWidth-180, view.ScreenHeight-15, color.White)
 	s.startTitleBtn.Draw(screen)
 	s.volumeBtn.Draw(screen)
+	text.Draw(screen, messages.TitleStart, fonts.GamerFontM, view.ScreenWidth/2-220, view.ScreenHeight/2-30, color.Black)
 
 	if s.isStarting || s.isClosing {
 		s.curtain.Draw(screen)

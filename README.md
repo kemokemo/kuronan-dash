@@ -1,7 +1,6 @@
 # 黒菜んダッシュ :dash:
 
 [![License](https://img.shields.io/github/license/kemokemo/kuronan-dash)](https://opensource.org/licenses/Apache-2.0) [![Go Version](https://img.shields.io/github/go-mod/go-version/kemokemo/kuronan-dash)](https://github.com/kemokemo/kuronan-dash/blob/main/go.mod) [![Go Report Card](https://goreportcard.com/badge/github.com/kemokemo/kuronan-dash)](https://goreportcard.com/report/github.com/kemokemo/kuronan-dash) [![LatestVersion](https://img.shields.io/github/v/release/kemokemo/kuronan-dash?color=8783f7)](https://github.com/kemokemo/kuronan-dash/releases/latest) [![OpenIssues](https://img.shields.io/github/issues-raw/kemokemo/kuronan-dash?color=fca438)](https://github.com/kemokemo/kuronan-dash/issues)
-[![Test and Build](https://github.com/kemokemo/kuronan-dash/actions/workflows/test-and-build.yml/badge.svg)](https://github.com/kemokemo/kuronan-dash/actions/workflows/test-and-build.yml) ![Deploy GitHub pages](https://github.com/kemokemo/kuronan-dash/workflows/Deploy%20GitHub%20pages/badge.svg)
 
 ## 概要
 
@@ -12,22 +11,25 @@
 
 ## ゲーム紹介
 
-タイトル画面です。`Space`キーまたはマウスの左クリックでキャラクター選択画面へと進みます。
+タイトル画面です。キーボードの`Space`キーを押すか、`スタート`ボタンをマウスやタッチで押します。
 
 ![TitleScreen](media/title_screen.png)
 
-キャラクターを1人選びます。選択可能なキャラクターは「黒菜」「独楽」「獅子丸」の3人です。
-キーボードの矢印キーの左右でキャラクターを選択して、`Space`キーで選択します。
-マウスをキャラクターの枠の内側に持っていって左クリックしても選択できます。
+キャラクター選択画面です。「黒菜」「独楽」「獅子丸」の3人から1人選びましょう。
+キーボードの矢印キーの左右を押すか、キャラクターの枠をマウスやタッチで押してキャラクターを選択します。
+キーボードの`Space`キーを押すか、`しゅっぱつ!`ボタンをマウスやタッチで押して進みます。
 
 ![SelectScreen](media/select_screen.png)
 
-コースをダッシュで走り抜けます。`Space`キーまたはマウスの左クリックでゲームを開始します。
-キーボードの矢印キーの上下または、マウスの左クリックでレーンを移動しながら進み、タイムがゼロになる前にゴールまでたどり着けたらステージクリアです。岩などの障害物に当たっている間やスタミナが`0`の間は走れなくなり、速度がゆっくりになります。
+コースをダッシュで走り抜けます。`Space`キーまたはマウスやタッチで開始ボタンを押してゲームを開始します。
+
+キーボードの矢印キーの上下、マウスで別の高さのエリアを左クリック、`うえへ`や`したへ`のボタンをタッチしてレーンを上下に移動しながら進み、タイムがゼロになる前にゴールまでたどり着けたらステージクリアです。岩などの障害物に当たっている間やスタミナが`0`の間は走れなくなり、速度がゆっくりになります。
 
 ![GameScreenKurona](media/game_screen_kurona.png)
 
-`Space`キーまたはマウスの右クリックで一時停止ができます。
+`Space`キーまたは右上のポーズボタンをマウスやタッチで押すと一時停止ができます。
+
+岩などの障害物は`A`キーを押すかマウスの右クリック、`こうげき`ボタンをタッチするなどして攻撃を繰り出すことで壊せます。テンションゲージがMaxになったら、`S`キーを押すかマウスダブルクリック、`スキル`ボタンをタッチしてスキルを発動して速度などをあげて走ることができます。
 
 ### プレイ方法
 
