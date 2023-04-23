@@ -42,13 +42,13 @@ type Stage01Scene struct {
 	time            int // second
 	sumTicks        float64
 	msgWindow       *ui.MessageWindow
+	msgWindowTopY   int
 	staminaGauge    *gauge.Gauge
 	tensionGauge    *gauge.Gauge
 	progMap         *progress.Progress
 	progPercent     int
 	progMapBk       *ebiten.Image
 	opMapBk         *ebiten.DrawImageOptions
-	uiMsg           string
 	iChecker        input.InputChecker
 	vChecker        input.VolumeChecker
 	startBtn        vpad.TriggerButton
@@ -68,8 +68,8 @@ type Stage01Scene struct {
 
 // Initialize initializes all resources.
 func (s *Stage01Scene) Initialize() error {
-	s.goalX = 3900.0
-	s.timeLimit = 90
+	s.goalX = 4100.0
+	s.timeLimit = 40
 	s.time = s.timeLimit
 	s.disc = music.Stage01
 	s.clickSe = se.MenuSelect
@@ -90,25 +90,25 @@ func (s *Stage01Scene) Initialize() error {
 	s.field.Initialize(lanes, s.goalX)
 
 	heights := lanes.GetLaneHeights()
-	lowerLaneY := heights[len(heights)-1]
+	s.msgWindowTopY = int(heights[len(heights)-1]) + windowMargin
 	s.msgWindow = ui.NewMessageWindow(
 		300,
-		int(lowerLaneY)+windowMargin+5,
+		s.msgWindowTopY+5,
 		680,
-		view.ScreenHeight-windowMargin*2-int(lowerLaneY),
+		view.ScreenHeight-windowMargin*2-(s.msgWindowTopY-windowMargin),
 		frameWidth)
 	s.msgWindow.SetColors(
 		color.RGBA{64, 64, 64, 255},
 		color.RGBA{192, 192, 192, 255},
 		color.RGBA{33, 228, 68, 255})
-	s.staminaGauge = gauge.NewGaugeWithColor(405, int(lowerLaneY)+windowMargin+15, s.player.GetMaxStamina(), color.RGBA{255, 255, 255, 255})
+	s.staminaGauge = gauge.NewGaugeWithScale(440, s.msgWindowTopY+57, s.player.GetMaxStamina(), color.RGBA{255, 255, 255, 255}, 2.3)
 	s.staminaGauge.SetBlink(false)
-	s.tensionGauge = gauge.NewGaugeWithColor(405, int(lowerLaneY)+windowMargin+35, s.player.GetMaxTension(), color.RGBA{248, 169, 0, 255})
-	s.progMap = progress.NewProgress(s.player.MapIcon, 400-16, 10, view.ScreenWidth-800+16)
+	s.tensionGauge = gauge.NewGaugeWithScale(760, s.msgWindowTopY+57, s.player.GetMaxTension(), color.RGBA{248, 169, 0, 255}, 2.3)
+	s.progMap = progress.NewProgress(s.player.MapIcon, 400-16, float64(s.msgWindowTopY+22), view.ScreenWidth-800+16)
 	s.progPercent = 0
 	s.progMapBk = images.MapBackground
 	opMapBk := &ebiten.DrawImageOptions{}
-	opMapBk.GeoM.Translate(400, 10)
+	opMapBk.GeoM.Translate(400, float64(s.msgWindowTopY+22))
 	s.opMapBk = opMapBk
 
 	laneRectArray := []image.Rectangle{}
@@ -346,16 +346,20 @@ func (s *Stage01Scene) Draw(screen *ebiten.Image) {
 
 // description
 func (s *Stage01Scene) drawUI(screen *ebiten.Image) {
-	s.uiMsg = fmt.Sprintf("スタミナ :\nテンション:\nタイム: 　%v\nすすんだきょり: %.1f\nゴールのいち: 　%.1f",
-		s.time,
-		s.player.GetPosition().X-view.DrawPosition,
-		s.goalX,
-	)
-	s.msgWindow.DrawWindow(screen, s.uiMsg)
-	s.staminaGauge.Draw(screen)
-	s.tensionGauge.Draw(screen)
+	s.msgWindow.DrawWindow(screen, "")
+
+	text.Draw(screen, "スタート", fonts.GamerFontS, 330, s.msgWindowTopY+37, color.White)
 	screen.DrawImage(s.progMapBk, s.opMapBk)
 	s.progMap.Draw(screen)
+	text.Draw(screen, "ゴール", fonts.GamerFontS, 910, s.msgWindowTopY+37, color.White)
+
+	text.Draw(screen, "スタミナ:", fonts.GamerFontM, 350, s.msgWindowTopY+82, color.White)
+	s.staminaGauge.Draw(screen)
+
+	text.Draw(screen, "テンション:", fonts.GamerFontM, 660, s.msgWindowTopY+82, color.White)
+	s.tensionGauge.Draw(screen)
+
+	text.Draw(screen, fmt.Sprintf("のこりタイム: %v", s.time), fonts.GamerFontM, 350, s.msgWindowTopY+125, color.White)
 
 	s.upBtn.Draw(screen)
 	s.downBtn.Draw(screen)
