@@ -14,8 +14,8 @@ github.com/hajimehoshi/oto/v2 v2.4.0 h1:2A8QvGJZ7nXwcfIIthaqWdzDn9Ul/er6oASiKcsf
 github.com/hajimehoshi/oto/v2 v2.4.0/go.mod h1:74bRBgfJaEDpP3NyVyHIYBJE4DgzJ2IP5l/st5qcJog=
 github.com/jezek/xgb v1.1.0 h1:wnpxJzP1+rkbGclEkmwpVFQWpuE2PUGNUzP8SbfFobk=
 github.com/jezek/xgb v1.1.0/go.mod h1:nrhwO0FX/enq75I7Y7G8iN1ubpSGZEiA3v9e9GyRFlk=
-github.com/kemokemo/ebiten-gauge v0.0.5 h1:KaodFBunJh608HM+/aewOboxZd08oRQb8tKdAo9avjo=
-github.com/kemokemo/ebiten-gauge v0.0.5/go.mod h1:E5jW2v4rJ4oNzhkhnMsAKLrNuPI9PN2wvGxqAfdgOQ8=
+github.com/kemokemo/ebiten-gauge v0.0.7 h1:DW10g/o1hp3FptA8GM4t+Zh6dPaKl7TlRXYFrKrugZ4=
+github.com/kemokemo/ebiten-gauge v0.0.7/go.mod h1:E5jW2v4rJ4oNzhkhnMsAKLrNuPI9PN2wvGxqAfdgOQ8=
 github.com/kemokemo/ebiten-progress v0.0.0-20230312125234-b79f0b067eab h1:7eB+wML7meN4WV+Ocs0qyIlzDhQ2uA5QU+Q/7eSvLbI=
 github.com/kemokemo/ebiten-progress v0.0.0-20230312125234-b79f0b067eab/go.mod h1:pHOk1JntjJdjLjBAYacSfzY2j7NMZ64aRtALsVLd/so=
 github.com/kemokemo/ebiten-virtualpad v0.5.0 h1:iUVFGzKxAoZ7zgji05ccnXeEpxp0siN4JPrRFDsBj8U=

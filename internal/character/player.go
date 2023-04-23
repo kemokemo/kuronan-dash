@@ -2,6 +2,7 @@ package character
 
 import (
 	"image"
+	"image/color"
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -102,16 +103,13 @@ func (p *Player) InitializeWithLanes(lanes *field.Lanes) error {
 	p.spOp = &ebiten.DrawImageOptions{}
 
 	p.spReadyIcon = images.SpecialReadyIcon
-	p.spReadyIconOp = gauge.NewBlinkingOp()
-	p.spReadyIconOp.SetInterval(20)
+	p.spReadyIconOp = gauge.NewBlinkingOp(color.RGBA{R: 255, G: 255, B: 255, A: 255})
 	p.spReadyIconOp.Op.GeoM.Translate(view.DrawPosition+float64(w-2), initialY-7.0)
 	p.walkIcon = images.WalkStateIcon
-	p.walkIconOp = gauge.NewBlinkingOp()
-	p.walkIconOp.SetInterval(20)
+	p.walkIconOp = gauge.NewBlinkingOp(color.RGBA{R: 255, G: 255, B: 255, A: 255})
 	p.walkIconOp.Op.GeoM.Translate(view.DrawPosition-float64(5), initialY-7.0)
 	p.staminaEmptyIcon = images.StaminaEmptyIcon
-	p.staminaEmptyIconOp = gauge.NewBlinkingOp()
-	p.staminaEmptyIconOp.SetInterval(20)
+	p.staminaEmptyIconOp = gauge.NewBlinkingOp(color.RGBA{R: 255, G: 255, B: 255, A: 255})
 	p.staminaEmptyIconOp.Op.GeoM.Translate(view.DrawPosition+float64(w/2-10), initialY-30.0)
 
 	rectOffset := 3.0

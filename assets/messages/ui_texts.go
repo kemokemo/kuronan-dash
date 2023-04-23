@@ -11,5 +11,5 @@ const (
 	GameStageClear  = "やったね！ ステージクリアー だよ！"
 	GameStageClear2 = "Spaceキー を おすか マウス や タッチ で ボタン を おして"
 	GameStageClear3 = "つぎの ステージ へ すすもう。"
-	GameOver        = "ゲームオーバー！ Spaceキー を おすか ボタン を おして タイトル へ もどろう"
+	GameOver        = "ゲームオーバー！ Spaceキー を おすか ボタン を おして\nタイトル へ もどろう"
 )

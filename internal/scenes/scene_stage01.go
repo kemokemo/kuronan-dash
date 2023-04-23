@@ -101,9 +101,9 @@ func (s *Stage01Scene) Initialize() error {
 		color.RGBA{64, 64, 64, 255},
 		color.RGBA{192, 192, 192, 255},
 		color.RGBA{33, 228, 68, 255})
-	s.staminaGauge = gauge.NewGaugeWithScale(440, s.msgWindowTopY+57, s.player.GetMaxStamina(), color.RGBA{255, 255, 255, 255}, 2.3)
+	s.staminaGauge = gauge.NewGaugeWithScale(440, s.msgWindowTopY+57, s.player.GetMaxStamina(), color.RGBA{255, 255, 255, 255}, 2.0)
 	s.staminaGauge.SetBlink(false)
-	s.tensionGauge = gauge.NewGaugeWithScale(760, s.msgWindowTopY+57, s.player.GetMaxTension(), color.RGBA{248, 169, 0, 255}, 2.3)
+	s.tensionGauge = gauge.NewGaugeWithScale(760, s.msgWindowTopY+57, s.player.GetMaxTension(), color.RGBA{248, 169, 0, 255}, 2.0)
 	s.progMap = progress.NewProgress(s.player.MapIcon, 400-16, float64(s.msgWindowTopY+24), view.ScreenWidth-800+16)
 	s.progPercent = 0
 	s.progMapBk = images.MapBackground
@@ -399,7 +399,7 @@ func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 		text.Draw(screen, fmt.Sprintf("Now Playing: %s", s.disc.Name),
 			fonts.GamerFontS, 12, view.ScreenHeight-10, color.White)
 		screen.DrawImage(s.pauseBg, s.pauseBgOp)
-		text.Draw(screen, messages.GameOver, fonts.GamerFontL, view.ScreenWidth/2-420, view.ScreenHeight/2, color.White)
+		text.Draw(screen, messages.GameOver, fonts.GamerFontL, view.ScreenWidth/2-420, view.ScreenHeight/2+20, color.White)
 		s.startBtn.Draw(screen)
 	default:
 		// nothing to draw
