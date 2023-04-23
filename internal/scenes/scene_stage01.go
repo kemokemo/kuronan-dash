@@ -104,11 +104,11 @@ func (s *Stage01Scene) Initialize() error {
 	s.staminaGauge = gauge.NewGaugeWithScale(440, s.msgWindowTopY+57, s.player.GetMaxStamina(), color.RGBA{255, 255, 255, 255}, 2.3)
 	s.staminaGauge.SetBlink(false)
 	s.tensionGauge = gauge.NewGaugeWithScale(760, s.msgWindowTopY+57, s.player.GetMaxTension(), color.RGBA{248, 169, 0, 255}, 2.3)
-	s.progMap = progress.NewProgress(s.player.MapIcon, 400-16, float64(s.msgWindowTopY+22), view.ScreenWidth-800+16)
+	s.progMap = progress.NewProgress(s.player.MapIcon, 400-16, float64(s.msgWindowTopY+24), view.ScreenWidth-800+16)
 	s.progPercent = 0
 	s.progMapBk = images.MapBackground
 	opMapBk := &ebiten.DrawImageOptions{}
-	opMapBk.GeoM.Translate(400, float64(s.msgWindowTopY+22))
+	opMapBk.GeoM.Translate(400, float64(s.msgWindowTopY+21))
 	s.opMapBk = opMapBk
 
 	laneRectArray := []image.Rectangle{}
