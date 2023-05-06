@@ -164,4 +164,7 @@ var (
 	shishimaru_sp_effect_png []byte
 	//go:embed button_start_title.png
 	button_start_title_png []byte
+
+	//go:embed Star.png
+	star_png []byte
 )

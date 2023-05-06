@@ -342,3 +342,12 @@ func (p *Player) SetVolumeFlag(isVolumeOn bool) {
 	p.collisionSe.SetVolumeFlag(isVolumeOn)
 	p.attackSe.SetVolumeFlag(isVolumeOn)
 }
+
+// GetDisplayParameters returns the speed, power and stamina of this player character.
+func (p *Player) GetDisplayParameters() (speed, power, stamina float64) {
+	speed = p.vc.GetDashMax()
+	power = p.power
+	stamina = p.GetMaxStamina()
+
+	return
+}
