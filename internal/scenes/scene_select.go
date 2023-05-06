@@ -83,9 +83,6 @@ func (s *SelectScene) Initialize() error {
 	for i := 0; i < len(s.charaList); i++ {
 		ratingList := []*rating.Rating{}
 		sp, po, st := s.charaList[i].GetDisplayParameters()
-		const offset = 150
-		const offsetX = 421
-		const offsetY = 450
 		spRate := rating.NewRating(images.RatingStar, ratingOffsetInitialX+i*ratingOffsetX, ratingOffsetY, 10)
 		spRate.SetValue(sp)
 		ratingList = append(ratingList, spRate)
