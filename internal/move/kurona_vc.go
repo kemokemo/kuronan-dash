@@ -151,3 +151,7 @@ func (vc *KuronaVc) updateVelocity() {
 	vc.scrollV.X = -vc.deltaX
 	vc.scrollV.Y = 0.0
 }
+
+func (vc *KuronaVc) GetDashMax() float64 {
+	return kuronaDashMax
+}

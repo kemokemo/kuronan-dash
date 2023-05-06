@@ -148,3 +148,7 @@ func (vc *KomaVc) updateVelocity() {
 	vc.scrollV.X = -vc.deltaX
 	vc.scrollV.Y = 0.0
 }
+
+func (vc *KomaVc) GetDashMax() float64 {
+	return komaDashMax
+}

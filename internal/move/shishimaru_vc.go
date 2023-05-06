@@ -148,3 +148,7 @@ func (vc *ShishimaruVc) updateVelocity() {
 	vc.scrollV.X = -vc.deltaX
 	vc.scrollV.Y = 0.0
 }
+
+func (vc *ShishimaruVc) GetDashMax() float64 {
+	return shishimaruDashMax
+}

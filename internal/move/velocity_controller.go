@@ -14,4 +14,7 @@ type VelocityController interface {
 
 	// GetVelocity returns the velocities to scroll screen, move character's internal position, move character's drawing position.
 	GetVelocity() (scrollV, charaPosV, charaDrawV *view.Vector)
+
+	// GetDashMax returns the max velocity for dash state.
+	GetDashMax() float64
 }

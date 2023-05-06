@@ -11,6 +11,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"golang.org/x/image/font"
 
+	rating "github.com/kemokemo/ebiten-rating"
 	vpad "github.com/kemokemo/ebiten-virtualpad"
 	"github.com/kemokemo/kuronan-dash/assets/fonts"
 	"github.com/kemokemo/kuronan-dash/assets/images"
@@ -24,13 +25,16 @@ import (
 )
 
 const (
-	frameWidth    = 5
-	margin        = 30
-	scale         = 2
-	windowSpacing = 20
-	windowMargin  = 20
-	fontSize      = 20
-	lineSpacing   = 2
+	frameWidth           = 5
+	margin               = 30
+	scale                = 2
+	windowSpacing        = 20
+	windowMargin         = 20
+	fontSize             = 20
+	lineSpacing          = 2
+	ratingOffsetInitialX = 155
+	ratingOffsetX        = 421
+	ratingOffsetY        = 450
 )
 
 // SelectScene is the scene to select the player character.
@@ -47,6 +51,7 @@ type SelectScene struct {
 	volumeBtn     vpad.SelectButton
 	goButton      vpad.TriggerButton
 	charaList     []*chara.Player
+	ratingMatrix  [][]*rating.Rating
 	winRectArray  []image.Rectangle
 	selectArray   []vpad.SelectButton
 	selectedIndex int
@@ -74,6 +79,24 @@ func (s *SelectScene) Initialize() error {
 	s.selectArray = make([]vpad.SelectButton, s.lenChara)
 	s.selectedIndex = 0
 	chara.InitializeCharacter() // インデックスを更新したら選択キャラクターも初期化しよう
+
+	for i := 0; i < len(s.charaList); i++ {
+		ratingList := []*rating.Rating{}
+		sp, po, st := s.charaList[i].GetDisplayParameters()
+		const offset = 150
+		const offsetX = 421
+		const offsetY = 450
+		spRate := rating.NewRating(images.RatingStar, ratingOffsetInitialX+i*ratingOffsetX, ratingOffsetY, 10)
+		spRate.SetValue(sp)
+		ratingList = append(ratingList, spRate)
+		poRate := rating.NewRating(images.RatingStar, ratingOffsetInitialX+i*ratingOffsetX, ratingOffsetY+40, 10)
+		poRate.SetValue(po)
+		ratingList = append(ratingList, poRate)
+		stRate := rating.NewRating(images.RatingStar, ratingOffsetInitialX+i*ratingOffsetX, ratingOffsetY+80, 10)
+		stRate.SetValue(st / 15.0)
+		ratingList = append(ratingList, stRate)
+		s.ratingMatrix = append(s.ratingMatrix, ratingList)
+	}
 
 	iw := images.CharaWindow.Bounds().Dx()
 	ih := images.CharaWindow.Bounds().Dy()
@@ -252,6 +275,16 @@ func (s *SelectScene) drawCharacters(screen *ebiten.Image) {
 	for i := range s.charaList {
 		s.drawChara(screen, i)
 		s.drawMessage(screen, i)
+	}
+
+	for i := range s.ratingMatrix {
+		text.Draw(screen, "スピード:", fonts.GamerFontM, ratingOffsetInitialX+ratingOffsetX*i-85, ratingOffsetY+23, color.White)
+		text.Draw(screen, "パワー:", fonts.GamerFontM, ratingOffsetInitialX+ratingOffsetX*i-85, ratingOffsetY+40+23, color.White)
+		text.Draw(screen, "スタミナ:", fonts.GamerFontM, ratingOffsetInitialX+ratingOffsetX*i-85, ratingOffsetY+80+23, color.White)
+
+		for j := range s.ratingMatrix[i] {
+			s.ratingMatrix[i][j].Draw(screen)
+		}
 	}
 }
 

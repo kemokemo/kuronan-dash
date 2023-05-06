@@ -53,6 +53,7 @@ var (
 	VolumeOnButton          *ebiten.Image
 	VolumeOffButton         *ebiten.Image
 	StartTitleButton        *ebiten.Image
+	RatingStar              *ebiten.Image
 	ResultConfettiAnimation []*ebiten.Image
 	OnigiriAnimation        []*ebiten.Image
 

@@ -100,6 +100,10 @@ func loadFieldParts() error {
 	if err != nil {
 		return err
 	}
+	RatingStar, err = loadSingleImage(star_png)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
