@@ -8,8 +8,8 @@ import (
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
 
-// Onigiri is a kind of Food. Delicious!
-type Onigiri struct {
+// YakiManjuu is a kind of Food. Delicious!
+type YakiManjuu struct {
 	anime   *anime.TimeAnimation
 	op      *ebiten.DrawImageOptions
 	rect    *view.HitRectangle
@@ -25,22 +25,22 @@ type Onigiri struct {
 //	 img: the image to draw (ignore to use animation)
 //	 pos: the initial position
 //	 vel: the velocity to move this object
-func (o *Onigiri) Initialize(img *ebiten.Image, pos *view.Vector, kv float64) {
+func (y *YakiManjuu) Initialize(img *ebiten.Image, pos *view.Vector, kv float64) {
 	// ignore img
 
-	o.anime = anime.NewTimeAnimation(images.OnigiriAnimation, 1.0)
-	o.stamina = 5
-	o.tension = 0
-	o.eaten = false
-	o.sound = se.PickupItem
+	y.anime = anime.NewTimeAnimation(images.YakiManjuuAnimation, 1.0)
+	y.stamina = 20
+	y.tension = 5
+	y.eaten = false
+	y.sound = se.PickupItem
 
-	o.op = &ebiten.DrawImageOptions{}
-	o.op.GeoM.Translate(pos.X, pos.Y+FieldOffset)
+	y.op = &ebiten.DrawImageOptions{}
+	y.op.GeoM.Translate(pos.X, pos.Y+FieldOffset)
 
-	firstFrame := images.OnigiriAnimation[0]
+	firstFrame := images.YakiManjuuAnimation[0]
 	w := firstFrame.Bounds().Dx()
 	h := firstFrame.Bounds().Dy()
-	o.rect = view.NewHitRectangle(
+	y.rect = view.NewHitRectangle(
 		view.Vector{X: pos.X + rectOffset, Y: pos.Y + rectOffset},
 		view.Vector{X: pos.X + float64(w) - rectOffset, Y: pos.Y + float64(h) - rectOffset})
 }
@@ -49,34 +49,34 @@ func (o *Onigiri) Initialize(img *ebiten.Image, pos *view.Vector, kv float64) {
 //
 //	args:
 //	 scrollV: the velocity to scroll this field parts.
-func (o *Onigiri) Update(scrollV *view.Vector) {
-	if o.eaten {
+func (y *YakiManjuu) Update(scrollV *view.Vector) {
+	if y.eaten {
 		return
 	}
-	o.op.GeoM.Translate(scrollV.X, scrollV.Y)
-	o.rect.Add(scrollV)
+	y.op.GeoM.Translate(scrollV.X, scrollV.Y)
+	y.rect.Add(scrollV)
 }
 
 // Draw draws this object to the screen.
-func (o *Onigiri) Draw(screen *ebiten.Image) {
-	if o.eaten {
+func (y *YakiManjuu) Draw(screen *ebiten.Image) {
+	if y.eaten {
 		return
 	}
-	screen.DrawImage(o.anime.GetCurrentFrame(), o.op)
+	screen.DrawImage(y.anime.GetCurrentFrame(), y.op)
 }
 
 // IsCollided returns whether this obstacle is collided the arg.
-func (o *Onigiri) IsCollided(hr *view.HitRectangle) bool {
+func (y *YakiManjuu) IsCollided(hr *view.HitRectangle) bool {
 	// The food that is eaten is no longer subject to a hit decision.
-	if o.eaten {
+	if y.eaten {
 		return false
 	}
-	return o.rect.Overlaps(hr)
+	return y.rect.Overlaps(hr)
 }
 
 // Eat eats this food. This func returns the value to restore character's stamina and tension.
-func (o *Onigiri) Eat() (int, int) {
-	o.eaten = true
-	o.sound.Play()
-	return o.stamina, o.tension
+func (y *YakiManjuu) Eat() (int, int) {
+	y.eaten = true
+	y.sound.Play()
+	return y.stamina, y.tension
 }

@@ -56,15 +56,20 @@ func (p *PrairieField) createParts(goalX float64) {
 	}
 
 	// Foods
-	assets = []ast{
-		{images.OnigiriAnimation[0], genPosField, genPosSet{30, 1000, 550}, 1.0},
+	oniArray := genOnigiri(images.OnigiriAnimation[0], p.lanes.GetLaneHeights(), genPosField, genPosSet{30, 1000, 550}, 1.0)
+	for i := range oniArray {
+		p.closerParts = append(p.closerParts, oniArray[i])
+		p.foods = append(p.foods, oniArray[i])
 	}
-	for _, asset := range assets {
-		array := genOnigiri(asset.img, p.lanes.GetLaneHeights(), asset.gpf, asset.gps, asset.kv)
-		for i := range array {
-			p.closerParts = append(p.closerParts, array[i])
-			p.foods = append(p.foods, array[i])
-		}
+	manjuuArray := genYakiManjuu(images.IkariYakiAnimation[0], p.lanes.GetLaneHeights(), genPosField, genPosSet{10, 1500, 500}, 1.0)
+	for i := range manjuuArray {
+		p.closerParts = append(p.closerParts, manjuuArray[i])
+		p.foods = append(p.foods, manjuuArray[i])
+	}
+	ikariArray := genIkariYaki(images.IkariYakiAnimation[0], p.lanes.GetLaneHeights(), genPosField, genPosSet{3, 2400, 600}, 1.0)
+	for i := range ikariArray {
+		p.closerParts = append(p.closerParts, ikariArray[i])
+		p.foods = append(p.foods, ikariArray[i])
 	}
 
 	// Obstacles
@@ -167,16 +172,19 @@ func (p *PrairieField) IsCollidedWithObstacles(hr *view.HitRectangle) bool {
 }
 
 // EatFoods determines if there is a conflict between the player and the food.
-// If it hits, it returns the stamina gained.
-func (p *PrairieField) EatFoods(hr *view.HitRectangle) int {
-	var stamina int
+// If it hits, it returns the stamina and tension gained.
+func (p *PrairieField) EatFoods(hr *view.HitRectangle) (int, int) {
+	var stamina, tension int
+	var s, t int
 	for i := range p.foods {
 		if p.foods[i].IsCollided(hr) {
-			stamina += p.foods[i].Eat()
+			s, t = p.foods[i].Eat()
+			stamina += s
+			tension += t
 		}
 	}
 
-	return stamina
+	return stamina, tension
 }
 
 func (p *PrairieField) AttackObstacles(hr *view.HitRectangle, power float64) (int, int) {

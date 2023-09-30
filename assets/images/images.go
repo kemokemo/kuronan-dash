@@ -56,6 +56,8 @@ var (
 	RatingStar              *ebiten.Image
 	ResultConfettiAnimation []*ebiten.Image
 	OnigiriAnimation        []*ebiten.Image
+	YakiManjuuAnimation     []*ebiten.Image
+	IkariYakiAnimation      []*ebiten.Image
 
 	// character standing image
 	KuronaStanding     *ebiten.Image

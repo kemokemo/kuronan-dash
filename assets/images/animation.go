@@ -51,6 +51,20 @@ var (
 		bytes.NewReader(onigiri_anime_0003_png),
 		bytes.NewReader(onigiri_anime_0004_png),
 	}
+
+	yakiManjuuFrames = []*bytes.Reader{
+		bytes.NewReader(yaki_manjuu_anime_0001_png),
+		bytes.NewReader(yaki_manjuu_anime_0002_png),
+		bytes.NewReader(yaki_manjuu_anime_0003_png),
+		bytes.NewReader(yaki_manjuu_anime_0004_png),
+	}
+
+	ikariYakiFrames = []*bytes.Reader{
+		bytes.NewReader(ikari_yaki_anime_0001_png),
+		bytes.NewReader(ikari_yaki_anime_0002_png),
+		bytes.NewReader(ikari_yaki_anime_0003_png),
+		bytes.NewReader(ikari_yaki_anime_0004_png),
+	}
 )
 
 func loadAnimation() error {
@@ -73,6 +87,14 @@ func loadAnimation() error {
 		return err
 	}
 	OnigiriAnimation, err = loadFrames(onigiriFrames)
+	if err != nil {
+		return err
+	}
+	YakiManjuuAnimation, err = loadFrames(yakiManjuuFrames)
+	if err != nil {
+		return err
+	}
+	IkariYakiAnimation, err = loadFrames(ikariYakiFrames)
 	if err != nil {
 		return err
 	}
