@@ -61,6 +61,11 @@ func (p *PrairieField) createParts(goalX float64) {
 		p.closerParts = append(p.closerParts, oniArray[i])
 		p.foods = append(p.foods, oniArray[i])
 	}
+	manjuuArray := genYakiManjuu(images.IkariYakiAnimation[0], p.lanes.GetLaneHeights(), genPosField, genPosSet{10, 1500, 500}, 1.0)
+	for i := range manjuuArray {
+		p.closerParts = append(p.closerParts, manjuuArray[i])
+		p.foods = append(p.foods, manjuuArray[i])
+	}
 	ikariArray := genIkariYaki(images.IkariYakiAnimation[0], p.lanes.GetLaneHeights(), genPosField, genPosSet{3, 2400, 600}, 1.0)
 	for i := range ikariArray {
 		p.closerParts = append(p.closerParts, ikariArray[i])

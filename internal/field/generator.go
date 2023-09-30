@@ -81,6 +81,19 @@ func genOnigiri(img *ebiten.Image, laneHeights []float64, gpf genPosFunc, gps ge
 	return array
 }
 
+func genYakiManjuu(img *ebiten.Image, laneHeights []float64, gpf genPosFunc, gps genPosSet, kv float64) []*YakiManjuu {
+	var array []*YakiManjuu
+
+	hP := img.Bounds().Dy()
+	points := gpf(hP, laneHeights, gps)
+	for _, point := range points {
+		manjuu := &YakiManjuu{}
+		manjuu.Initialize(img, point, kv)
+		array = append(array, manjuu)
+	}
+	return array
+}
+
 func genIkariYaki(img *ebiten.Image, laneHeights []float64, gpf genPosFunc, gps genPosSet, kv float64) []*IkariYaki {
 	var array []*IkariYaki
 

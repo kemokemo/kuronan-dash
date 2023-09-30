@@ -127,6 +127,15 @@ var (
 	//go:embed onigiri_anime/onigiri_anime_0004.png
 	onigiri_anime_0004_png []byte
 
+	//go:embed yaki_manjuu_anime/yaki_manjuu_anime_0001.png
+	yaki_manjuu_anime_0001_png []byte
+	//go:embed yaki_manjuu_anime/yaki_manjuu_anime_0002.png
+	yaki_manjuu_anime_0002_png []byte
+	//go:embed yaki_manjuu_anime/yaki_manjuu_anime_0003.png
+	yaki_manjuu_anime_0003_png []byte
+	//go:embed yaki_manjuu_anime/yaki_manjuu_anime_0004.png
+	yaki_manjuu_anime_0004_png []byte
+
 	//go:embed ikari_yaki_anime/ikari_yaki_anime_0001.png
 	ikari_yaki_anime_0001_png []byte
 	//go:embed ikari_yaki_anime/ikari_yaki_anime_0002.png
