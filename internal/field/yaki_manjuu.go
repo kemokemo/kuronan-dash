@@ -30,7 +30,7 @@ func (y *YakiManjuu) Initialize(img *ebiten.Image, pos *view.Vector, kv float64)
 
 	y.anime = anime.NewTimeAnimation(images.YakiManjuuAnimation, 1.0)
 	y.stamina = 20
-	y.tension = 0
+	y.tension = 5
 	y.eaten = false
 	y.sound = se.PickupItem
 

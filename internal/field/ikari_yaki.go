@@ -29,8 +29,8 @@ func (i *IkariYaki) Initialize(img *ebiten.Image, pos *view.Vector, kv float64) 
 	// ignore img
 
 	i.anime = anime.NewTimeAnimation(images.IkariYakiAnimation, 1.0)
-	i.stamina = 999
-	i.tension = 999
+	i.stamina = 50
+	i.tension = 15
 	i.eaten = false
 	i.sound = se.PickupItem
 
