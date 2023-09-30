@@ -24,9 +24,9 @@ func (t *Tension) Initialize() {
 func (t *Tension) AddByState(state move.State) {
 	switch state {
 	case move.Dash:
-		t.add(2)
+		t.Add(2)
 	case move.Walk:
-		t.add(1)
+		t.Add(1)
 	case move.SkillDash, move.SkillWalk:
 		t.remove(1)
 	default:
@@ -35,10 +35,10 @@ func (t *Tension) AddByState(state move.State) {
 }
 
 func (t *Tension) AddByAttack(brokenNum int) {
-	t.add(brokenNum * 5)
+	t.Add(brokenNum * 5)
 }
 
-func (t *Tension) add(val int) {
+func (t *Tension) Add(val int) {
 	for i := 0; i < val; i++ {
 		t.valRate++
 		if t.valRate >= t.languor {

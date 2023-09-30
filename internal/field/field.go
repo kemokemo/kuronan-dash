@@ -23,8 +23,8 @@ type Field interface {
 	IsCollidedWithObstacles(hr *view.HitRectangle) bool
 
 	// EatFoods determines if there is a conflict between the player and the food.
-	// If it hits, it returns the stamina gained.
-	EatFoods(hr *view.HitRectangle) int
+	// If it hits, it returns the stamina and tension gained.
+	EatFoods(hr *view.HitRectangle) (stamina int, tension int)
 
 	// AttackObstacles attacks obstacles.
 	// If any obstacle is collided or broken, returns the number of collided or broken obstacles.

@@ -81,6 +81,19 @@ func genOnigiri(img *ebiten.Image, laneHeights []float64, gpf genPosFunc, gps ge
 	return array
 }
 
+func genIkariYaki(img *ebiten.Image, laneHeights []float64, gpf genPosFunc, gps genPosSet, kv float64) []*IkariYaki {
+	var array []*IkariYaki
+
+	hP := img.Bounds().Dy()
+	points := gpf(hP, laneHeights, gps)
+	for _, point := range points {
+		ikari := &IkariYaki{}
+		ikari.Initialize(img, point, kv)
+		array = append(array, ikari)
+	}
+	return array
+}
+
 // genRocks generates scrollable objects.
 func genRocks(img *ebiten.Image, laneHeights []float64, gpf genPosFunc, gps genPosSet, kv float64) []*Rock {
 	var array []*Rock

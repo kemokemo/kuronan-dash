@@ -281,9 +281,10 @@ func (p *Player) BeBlocked(isBlocked bool) {
 	p.stateMachine.SetBlockState(isBlocked)
 }
 
-// Eat eats foods and restore stamina value by argument value.
-func (p *Player) Eat(foodVol int) {
-	p.stamina.Add(foodVol)
+// Eat eats foods and restore stamina and tension value by argument value.
+func (p *Player) Eat(stamina, tension int) {
+	p.stamina.Add(stamina)
+	p.tension.Add(tension)
 }
 
 // Close closes the inner resources.

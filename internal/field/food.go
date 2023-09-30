@@ -9,6 +9,6 @@ type Food interface {
 	// IsCollided returns whether this obstacle is collided the arg.
 	IsCollided(*view.HitRectangle) bool
 
-	// Eat eats this food. This func returns the value to restore character's stamina.
-	Eat() int
+	// Eat eats this food. This func returns the value to restore character's stamina and tension.
+	Eat() (stamina int, tension int)
 }
