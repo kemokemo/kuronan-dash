@@ -31,3 +31,6 @@ vpad
 tabidati
 toki
 colorm
+yaki
+manjuu
+ikari
