@@ -17,10 +17,19 @@
     }
     
     const go = new Go();
+    let mod, inst;
     WebAssembly.instantiateStreaming(fetch("kuronan-dash.wasm"), go.importObject).then(result => {
       document.getElementById('loading').remove();
       go.run(result.instance);
+    }).catch((err) => {
+      console.error(err);
     });
+
+		async function run() {
+			console.clear();
+			await go.run(inst);
+			inst = await WebAssembly.instantiate(mod, go.importObject);
+		}
     </script>
   </body>
 </html>
