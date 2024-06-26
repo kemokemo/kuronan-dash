@@ -9,7 +9,7 @@ require (
 	github.com/kemokemo/ebiten-progress v0.0.0-20230312125234-b79f0b067eab
 	github.com/kemokemo/ebiten-rating v0.0.1
 	github.com/kemokemo/ebiten-virtualpad v0.5.0
-	golang.org/x/image v0.12.0
+	golang.org/x/image v0.18.0
 )
 
 require (
