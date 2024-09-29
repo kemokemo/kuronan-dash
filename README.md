@@ -49,7 +49,7 @@
 * 道中にはいろいろな食べ物が置いてあり、通過すれば食べられます。食べてスタミナを回復しましょう。
 * マウスの`右クリック`で攻撃を繰り出せます。障害物は攻撃して壊してしまいましょう。
   * ただし攻撃が障害物にあたるとスタミナを消費するので、レーン移動で障害物を避けるのも手です。
-  * <u>攻撃で障害物を壊せるとテンションがたまります。スペシャル技を狙う方は積極的に壊しましょう。</u>
+  * 攻撃で障害物を壊せるとテンションがたまります。スペシャル技を狙う方は積極的に壊しましょう。
 
 （キーボードの場合は、`A`キーで攻撃できます。）
 
@@ -75,8 +75,9 @@
 
 ## 開発者向けの情報
 
-- [Developers Guide](documents/developers-guide.md)
-- [Specification List](documents/spec-list.md)
+* [Developers Guide](documents/developers-guide.md)
+* [Specification List](documents/spec-list.md)
+* [Design documents](documents/design/README.md)
 
 ## 作者
 

@@ -40,7 +40,7 @@ miniweb -p 9000 public
 
 ### Mobile
 
-スマホにデプロイして遊んでみる場合は、[gomobile](<<https://github.com/golang/mobile>)を使うのが便利です。[公式の手順](https://github.com/golang/go/wiki/Mobile)を見ながらインストールします。
+スマホにデプロイして遊んでみる場合は、[gomobile](https://github.com/golang/mobile)を使うのが便利です。[公式の手順](https://github.com/golang/go/wiki/Mobile)を見ながらインストールします。
 
 [Android端末へのインストール](https://github.com/golang/go/wiki/Mobile#building-and-deploying-to-android)は比較的簡単で、PCからアプリをインストール可能な状態にした端末をPCに接続し、以下を実行します。
 
