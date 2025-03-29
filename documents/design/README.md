@@ -58,11 +58,14 @@ sequenceDiagram
 
 * SceneManager: ゲームの各画面を`Scene`と表現しており、それらの画面遷移を制御する仕組み
 
-### Titleシーンの懸案事項
+### `SceneManager`の懸案事項
 
-`Scene`の`Update`メソッドで`GameState`という状態を示す情報を渡しているが、現状この内部は`SceneManager`のポインタが入っているのみ。
+`Scene`の`Update`メソッドで`GameState`という状態を示す情報を渡しているが、
+現状この内部は`SceneManager`のポインタが入っているのみ。
 
-画面遷移するため`Scene`から`SceneManager`の`GoTo`メソッドを呼び出したかったのだと思うが、これでは各`Scene`が「自分の次はXX画面に遷移する」という情報を知っている必要があり、設計的に微妙。これでは、`SceneManager`に仕事してもらえていない状態。
+画面遷移するため`Scene`から`SceneManager`の`GoTo`メソッドを呼び出したかったのだと思うが、これでは各`Scene`が「自分の次はXX画面に遷移する」という情報を知っている必要があり、設計的に微妙。画面遷移の順序を自由にするため、`Scene`同士はできるだけ疎結合にしたい。
+
+`Scene`から`Scene`への遷移については、`SceneManager`に任せたい。
 
 例えば、`Scene`作成時にチャンネルを渡しておいて、そのチャンネルに対して通知すれば`SceneManager`が次の画面への遷移を実行してくれる・・という機構にすれば、各所が名前の通りの働きになるのではないだろうか。その方が画面遷移の制御コードが`SceneManager`に集約できるのと、ジワッと画面遷移するような処理も一箇所で実装するだけで済みそう。
 
@@ -225,8 +228,12 @@ classDiagram
     - tension
   }
 
+  class VelocityController {
+    <<interface>>
+  }
+
   Scene <|-- Stage01Scene
-  Field <|-- PrairieLane
+  Field <|-- PrairieField
 
   Stage01Scene --> charaPlayer
   Stage01Scene --> Field
@@ -240,6 +247,11 @@ classDiagram
 
   charaPlayer --> StateMachine
   charaPlayer --> StepAnimation
+  charaPlayer --> VelocityController
+
+  VelocityController <|-- KuronaVc
+  VelocityController <|-- KomaVc
+  VelocityController <|-- ShishimaruVc
 ```
 
 ### GameStateのステートマシン図
@@ -269,5 +281,95 @@ stateDiagram-v2
 
 ### プレイヤーStateのステートマシン図
 
-WIP
+`chara.Player`が内部で`StateMachine`実装に移譲して管理しているプレイヤーキャラのStateについて記述する。
 
+まずは現状を書き出してみる。
+
+```mermaid
+stateDiagram-v2
+  [*] --> Dash
+
+  Dash --> Walk: 1
+  Walk --> Dash: 2
+  
+  Dash --> Ascending: 3
+  Dash --> SkillEffect: 4
+
+  SkillAscending --> Dash: 5
+  Ascending --> Dash: 5
+  Descending --> Dash: 6
+  SkillDescending --> Dash: 6
+
+  Walk --> SkillDash: 2
+  SkillDash --> SkillWalk: 1
+  SkillDash --> Dash: 7
+
+  SkillWalk --> SkillDash: 2
+  SkillWalk --> Dash: 7
+
+  SkillWalk --> SkillAscending: 3
+  SkillDash --> SkillAscending: 3
+  Walk --> Ascending: 3
+
+  SkillWalk --> SkillDescending: 8
+  SkillDash --> SkillDescending: 8
+  Walk --> Descending: 8
+```
+
+#### パターン一覧
+
+1. スタミナ0または障害物に衝突中
+2. スタミナ回復または障害物との衝突解消
+3. ユーザーが上昇ボタン押下
+4. テンションMaxでユーザーがスキルボタン押下
+5. 上のレーンに到着
+6. 下のレーンに到着
+7. テンション0
+8. ユーザーが下降ボタンを押下
+
+スキル発動後はエフェクトやボイスの再生などがあるため、やや状態遷移とそのための操作が複雑になっている。現状は、`Scene`の実装が、`Player`の`UpdateSkillEffect`と`FinishSpEffect`をUpdateのたびに呼び出し、返り値がtrueになったらrun状態に戻す、という実装。（書き出してみて分かったが、上昇・下降前後での状態遷移に不具合がある。）
+
+すでにサウンドの再生にはチャンネルの仕組みを使っており、こちらも同様にチャンネルによる連携にしたい。
+スキルエフェクトを担う仕組みからチャンネルを渡しておけば実現できそう。
+
+* `StateMachine`内部では`SkillEffect`に遷移する
+* 次回以降の状態遷移では、スキル完了フラグをチェック
+* チャンネルから完了通知があれば、スキル完了フラグをtrueにする
+* スキル完了フラグがtrueになったのを受けて、状態を`SkillDash`に変更
+
+複雑になっている要因として、内部で「前の状態」を保持・更新して次回の状態遷移に用いている点が挙げられる。
+もっとシンプルに、上昇や下降が終了したらまずは`Dash`または`SkillDash`に遷移するようにした方がよいのではないだろうか。
+
+これから作る理想の形としては以下。
+
+```mermaid
+stateDiagram-v2
+  [*] --> Dash
+
+  Dash --> Walk: 1
+  Walk --> Dash: 2
+  
+  Dash --> Ascending: 3
+  Walk --> Ascending: 3
+  Ascending --> Dash: 5
+  Dash --> Descending: 8
+  Walk --> Descending: 8
+  Descending --> Dash: 6
+
+  Dash --> SkillEffect: 4
+  Walk --> SkillEffect: 4
+
+  SkillEffect --> SkillDash: スキルエフェクト完了
+  SkillDash --> SkillWalk: 1
+  SkillWalk --> SkillDash: スタミナ回復、障害物除去
+  
+  SkillDash --> SkillAscending: 3
+  SkillWalk --> SkillAscending: 3
+  SkillAscending --> SkillDash: 5
+  SkillDash --> SkillDescending: 8
+  SkillWalk --> SkillDescending: 8
+  SkillDescending --> SkillDash: 6
+
+  SkillDash --> Dash: テンション0
+  SkillWalk --> Walk: テンション0
+```
