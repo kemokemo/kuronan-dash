@@ -9,12 +9,11 @@ import (
 	"sync"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/text"
+	"github.com/hajimehoshi/ebiten/v2/text/v2"
 
 	vpad "github.com/kemokemo/ebiten-virtualpad"
 	"github.com/kemokemo/kuronan-dash/assets/fonts"
 	"github.com/kemokemo/kuronan-dash/assets/images"
-	"github.com/kemokemo/kuronan-dash/assets/messages"
 	"github.com/kemokemo/kuronan-dash/assets/music"
 	"github.com/kemokemo/kuronan-dash/assets/se"
 	"github.com/kemokemo/kuronan-dash/internal/input"
@@ -126,11 +125,19 @@ func (s *TitleScene) setVolume(flag bool) {
 func (s *TitleScene) Draw(screen *ebiten.Image) {
 	op := &ebiten.DrawImageOptions{}
 	screen.DrawImage(s.bg, op)
-	text.Draw(screen, fmt.Sprintf("FPS: %3.1f", ebiten.ActualFPS()), fonts.GamerFontSS, 10, view.ScreenHeight-15, color.White)
-	text.Draw(screen, versionInfo, fonts.GamerFontSS, view.ScreenWidth-180, view.ScreenHeight-15, color.White)
+
+	fpsTextOp := &text.DrawOptions{}
+	fpsTextOp.GeoM.Translate(10, view.ScreenHeight-15)
+	fpsTextOp.ColorScale.ScaleWithColor(color.White)
+	text.Draw(screen, fmt.Sprintf("FPS: %3.1f", ebiten.ActualFPS()), fonts.GamerFontSS, fpsTextOp)
+
+	versionTextOp := &text.DrawOptions{}
+	versionTextOp.GeoM.Translate(view.ScreenWidth-180, view.ScreenHeight-15)
+	versionTextOp.ColorScale.ScaleWithColor(color.White)
+	text.Draw(screen, versionInfo, fonts.GamerFontSS, versionTextOp)
+
 	s.startTitleBtn.Draw(screen)
 	s.volumeBtn.Draw(screen)
-	text.Draw(screen, messages.TitleStart, fonts.GamerFontM, view.ScreenWidth/2-220, view.ScreenHeight/2-30, color.Black)
 
 	if s.isStarting || s.isClosing {
 		s.curtain.Draw(screen)

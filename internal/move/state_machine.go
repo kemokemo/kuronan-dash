@@ -15,22 +15,21 @@ import (
 
 // StateMachine manages the player's state.
 type StateMachine struct {
-	pos               *view.Vector
-	current           State
-	isBlocked         bool
-	lanes             *field.Lanes
-	offset            *view.Vector
-	iChecker          input.InputChecker
-	attacked          bool
-	drawing           bool
-	atkDuration       int
-	atkMaxDuration    int
-	spDuration        int
-	spMaxDuration     int
-	soundTypeCh       chan<- se.SoundType
-	effectCompletedCh <-chan any
-	xOffset           displayOffset
-	collisionCounter  int
+	pos              *view.Vector
+	current          State
+	isBlocked        bool
+	lanes            *field.Lanes
+	offset           *view.Vector
+	iChecker         input.InputChecker
+	attacked         bool
+	drawing          bool
+	atkDuration      int
+	atkMaxDuration   int
+	spDuration       int
+	spMaxDuration    int
+	soundTypeCh      chan<- se.SoundType
+	xOffset          displayOffset
+	collisionCounter int
 }
 
 func NewStateMachine(lanes *field.Lanes, atkMaxDuration int, spMaxDuration int) (*StateMachine, error) {
@@ -139,7 +138,7 @@ func (sm *StateMachine) updateWithStaminaAndMove(stamina int, tension int, chara
 }
 
 func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
-	if !(sm.current == Dash) && !(sm.current == Walk) && !(sm.current == SkillDash) && !(sm.current == SkillEffect) {
+	if sm.current == Dash || sm.current == Walk || sm.current == SkillDash || sm.current == SkillEffect {
 		return
 	}
 

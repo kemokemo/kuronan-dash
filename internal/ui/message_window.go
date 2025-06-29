@@ -6,9 +6,8 @@ import (
 	"strings"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/text"
+	"github.com/hajimehoshi/ebiten/v2/text/v2"
 	"github.com/kemokemo/kuronan-dash/assets/fonts"
-	"golang.org/x/image/font"
 )
 
 // MessageWindow is a struct to draw a window with frame.
@@ -21,7 +20,7 @@ type MessageWindow struct {
 	rect         image.Rectangle
 	counter      int
 	enableBlink  bool
-	font         font.Face
+	font         *text.GoTextFace
 	fontSize     int
 	lineSpacing  int
 }
@@ -114,7 +113,10 @@ func (mw *MessageWindow) drawMessage(screen *ebiten.Image, msg string) {
 			} else {
 				rowMsg = string(runes[i:])
 			}
-			text.Draw(screen, rowMsg, mw.font, x, y, color.White)
+			tOp := &text.DrawOptions{}
+			tOp.GeoM.Translate(float64(x), float64(y))
+			tOp.ColorScale.ScaleWithColor(color.White)
+			text.Draw(screen, rowMsg, mw.font, tOp)
 
 			lineNum++
 		}
