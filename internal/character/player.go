@@ -39,6 +39,7 @@ type Player struct {
 	spVoice            *se.Player
 	atkMaxDuration     int
 	spMaxDuration      int
+	spDuration         int
 
 	// Update each time based on the internal status and other information
 	op         *ebiten.DrawImageOptions
@@ -56,8 +57,8 @@ type Player struct {
 
 	// Initialization is required before starting the stage.
 	stateMachine *move.StateMachine
-	previous     move.State
 	current      move.State
+	isPaused     bool
 	stamina      *Stamina
 	sumTicks     float64
 	power        float64
@@ -69,17 +70,18 @@ type Player struct {
 // InitializeWithLanesInfo sets the lanes information.
 // The player can run on the lane or move between lanes based on the lane drawing height information received in the argument.
 func (p *Player) InitializeWithLanes(lanes *field.Lanes) error {
-	p.previous = move.Wait
 	p.current = move.Wait
+	p.isPaused = false
 	p.stamina.Initialize()
 	p.tension.Initialize()
 
 	var err error
-	p.soundTypeCh = make(chan se.SoundType)
 	p.stateMachine, err = move.NewStateMachine(lanes, p.atkMaxDuration, p.spMaxDuration)
 	if err != nil {
 		return err
 	}
+
+	p.soundTypeCh = make(chan se.SoundType)
 	p.stateMachine.SetSeChan(p.soundTypeCh)
 
 	// set the player at the top lane.
@@ -145,6 +147,8 @@ func (p *Player) playSounds() {
 			p.attackSe.Play()
 		case se.Blocked:
 			p.collisionSe.Play()
+		case se.SpVoice:
+			p.spVoice.Play()
 		default:
 			log.Println("unknown sound type, ", s)
 		}
@@ -153,34 +157,45 @@ func (p *Player) playSounds() {
 
 // Pause pauses this character.
 func (p *Player) Pause() {
-	if p.current == move.Pause {
-		return
-	}
-	p.previous = p.current
-	p.current = move.Pause
+	p.isPaused = true
 }
 
 // ReStart starts again this character.
 func (p *Player) ReStart() {
-	p.current = p.previous
+	p.isPaused = false
 }
 
 // Update updates the character regarding the user input.
-func (p *Player) Update() {
+func (p *Player) Update() move.State {
+	if p.isPaused {
+		return p.current
+	}
+
+	// スキルエフェクト実行中は、専用の内部状態更新処理を実行した上で
+	if p.current == move.SkillEffect {
+		p.spDuration++
+		if p.spDuration >= p.spMaxDuration && !p.spVoice.IsPlaying() {
+			p.spDuration = 0
+			p.current = p.stateMachine.FinishSkillEffect()
+		}
+		return p.current
+	}
+
 	// ひとつ前に更新したStateをもとに、次に動くべき速度を入手
 	p.vc.SetState(p.current)
 	p.scrollV, p.tempPosV, p.tempDrawV = p.vc.GetVelocity()
 
 	// 次に動くべき速度から次のStateを決定
 	// State更新処理で判明した、レーンにめり込まないようにするためのオフセットを入手
-	p.current = p.stateMachine.Update(
+	current := p.stateMachine.Update(
 		p.stamina.GetStamina(),
 		p.tension.Get(),
 		p.tension.IsMax(),
 		p.charaPosV)
-	if p.current == move.SkillEffect || p.current == move.Pause {
-		return
+	if p.current != current && current == move.SkillEffect {
+		p.spVoice.Play()
 	}
+	p.current = current
 
 	p.sumTicks += 1.0 / ebiten.ActualTPS()
 	if p.sumTicks >= 0.05 {
@@ -210,6 +225,8 @@ func (p *Player) Update() {
 	p.atkOp.GeoM.Translate(p.charaDrawV.X, p.charaDrawV.Y)
 	p.rect.Add(p.charaDrawV)
 	p.atkRect.Add(p.charaDrawV)
+
+	return p.current
 }
 
 func (p *Player) updateVelWithOffset(offsetV *view.Vector) {
@@ -224,6 +241,11 @@ func (p *Player) updateVelWithOffset(offsetV *view.Vector) {
 func (p *Player) Draw(screen *ebiten.Image) {
 	if p.current == move.Wait {
 		screen.DrawImage(p.StandingImage, p.op)
+		return
+	}
+
+	if p.current == move.SkillEffect {
+		screen.DrawImage(p.skillImage, p.spOp)
 		return
 	}
 
@@ -246,10 +268,6 @@ func (p *Player) Draw(screen *ebiten.Image) {
 	if p.stamina.GetStamina() <= 0 {
 		screen.DrawImage(p.staminaEmptyIcon, p.staminaEmptyIconOp.Op)
 	}
-}
-
-func (p *Player) DrawSkillEffect(screen *ebiten.Image) {
-	screen.DrawImage(p.skillImage, p.spOp)
 }
 
 // GetPosition return the current position of this player.
@@ -317,22 +335,6 @@ func (p *Player) GetTension() int {
 
 func (p *Player) GetMaxTension() float64 {
 	return p.tension.GetMax()
-}
-
-func (p *Player) StartSpEffect() bool {
-	if p.stateMachine.StartSpEffect() {
-		p.spVoice.Play()
-		return true
-	}
-	return false
-}
-
-func (p *Player) UpdateSkillEffect() {
-	p.stateMachine.UpdateSkillEffect(p.spVoice.IsPlaying())
-}
-
-func (p *Player) FinishSpEffect() bool {
-	return p.stateMachine.FinishSpEffect()
 }
 
 func (p *Player) SetVolumeFlag(isVolumeOn bool) {

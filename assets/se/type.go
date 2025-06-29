@@ -8,4 +8,5 @@ const (
 	Drop
 	Attack
 	Blocked
+	SpVoice
 )

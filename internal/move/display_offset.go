@@ -27,7 +27,7 @@ type displayOffset struct {
 
 func (d *displayOffset) Update(s State) {
 	if s == d.currentState ||
-		s == SkillEffect || s == Wait || s == Pause {
+		s == SkillEffect || s == Wait {
 		return
 	}
 

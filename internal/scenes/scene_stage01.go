@@ -23,6 +23,7 @@ import (
 	chara "github.com/kemokemo/kuronan-dash/internal/character"
 	"github.com/kemokemo/kuronan-dash/internal/field"
 	"github.com/kemokemo/kuronan-dash/internal/input"
+	"github.com/kemokemo/kuronan-dash/internal/move"
 	"github.com/kemokemo/kuronan-dash/internal/ui"
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
@@ -216,21 +217,19 @@ func (s *Stage01Scene) Update(state *GameState) {
 			s.state = pause
 			s.player.Pause()
 			s.disc.Pause()
-		} else if s.player.StartSpEffect() {
-			s.state = skillEffect
 		} else {
 			s.run()
+		}
+	case skillEffect:
+		pState := s.player.Update()
+		if pState != move.SkillEffect {
+			s.state = run
 		}
 	case pause:
 		if s.iChecker.TriggeredStart() {
 			s.state = run
 			s.player.ReStart()
 			s.disc.Play()
-		}
-	case skillEffect:
-		s.player.UpdateSkillEffect()
-		if s.player.FinishSpEffect() {
-			s.state = run
 		}
 	case stageClear:
 		s.resultEffects.Update()
@@ -300,7 +299,7 @@ func (s *Stage01Scene) run() {
 		s.player.Pause()
 		s.disc.Pause()
 	} else {
-		s.player.Update()
+		pState := s.player.Update()
 		s.field.Update(s.player.GetScrollVelocity())
 
 		isAtk, aRect, power := s.player.IsAttacked()
@@ -322,6 +321,10 @@ func (s *Stage01Scene) run() {
 		s.tensionGauge.Update(float64(s.player.GetTension()))
 		s.progPercent = int((s.player.GetPosition().X - view.DrawPosition) * 100 / s.goalX)
 		s.progMap.SetPercent(s.progPercent)
+
+		if pState == move.SkillEffect {
+			s.state = skillEffect
+		}
 	}
 }
 
@@ -386,8 +389,6 @@ func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 	case run:
 		s.pauseBtn.Draw(screen)
 		text.Draw(screen, fmt.Sprintf("Music: %s", s.disc.Name), fonts.GamerFontS, 10, 20, color.White)
-	case skillEffect:
-		s.player.DrawSkillEffect(screen)
 	case stageClear:
 		text.Draw(screen, fmt.Sprintf("Music: %s", s.disc.Name), fonts.GamerFontS, 10, 20, color.White)
 		screen.DrawImage(s.pauseBg, s.pauseBgOp)
