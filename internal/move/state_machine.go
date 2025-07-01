@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"log"
+	"slices"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	vpad "github.com/kemokemo/ebiten-virtualpad"
@@ -12,6 +13,8 @@ import (
 	"github.com/kemokemo/kuronan-dash/internal/input"
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
+
+var ignoreKeyStateList = []State{Wait, Ascending, Descending, SkillAscending, SkillDescending}
 
 // StateMachine manages the player's state.
 type StateMachine struct {
@@ -138,7 +141,8 @@ func (sm *StateMachine) updateWithStaminaAndMove(stamina int, tension int, chara
 }
 
 func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
-	if sm.current == Dash || sm.current == Walk || sm.current == SkillDash || sm.current == SkillEffect {
+	if slices.Contains(ignoreKeyStateList, sm.current) {
+		// 待ち状態、上昇中、下降中の場合にここに来る想定。それらの状態ではキー操作による上下や攻撃などのアクションを無効化する。
 		return
 	}
 
