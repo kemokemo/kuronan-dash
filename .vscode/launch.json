@@ -10,7 +10,7 @@
 			"type": "go",
 			"request": "launch",
 			"mode": "auto",
-			"program": "${fileDirname}",
+			"program": "./",
 			"env": {},
 			"args": []
 		}
