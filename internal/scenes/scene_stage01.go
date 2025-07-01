@@ -356,31 +356,31 @@ func (s *Stage01Scene) drawUI(screen *ebiten.Image) {
 	s.msgWindow.DrawWindow(screen, "")
 
 	startTextOp := &text.DrawOptions{}
-	startTextOp.GeoM.Translate(330, float64(s.msgWindowTopY+37))
+	startTextOp.GeoM.Translate(330, float64(s.msgWindowTopY+20))
 	startTextOp.ColorScale.ScaleWithColor(color.White)
 	text.Draw(screen, "スタート", fonts.GamerFontS, startTextOp)
 	screen.DrawImage(s.progMapBk, s.opMapBk)
 	s.progMap.Draw(screen)
 
 	goalTextOp := &text.DrawOptions{}
-	goalTextOp.GeoM.Translate(910, float64(s.msgWindowTopY+37))
+	goalTextOp.GeoM.Translate(910, float64(s.msgWindowTopY+20))
 	goalTextOp.ColorScale.ScaleWithColor(color.White)
 	text.Draw(screen, "ゴール", fonts.GamerFontS, goalTextOp)
 
 	staminaTextOp := &text.DrawOptions{}
-	staminaTextOp.GeoM.Translate(350, float64(s.msgWindowTopY+82))
+	staminaTextOp.GeoM.Translate(350, float64(s.msgWindowTopY+62))
 	staminaTextOp.ColorScale.ScaleWithColor(color.White)
 	text.Draw(screen, "スタミナ:", fonts.GamerFontM, staminaTextOp)
 	s.staminaGauge.Draw(screen)
 
 	tensionTextOp := &text.DrawOptions{}
-	tensionTextOp.GeoM.Translate(660, float64(s.msgWindowTopY+82))
+	tensionTextOp.GeoM.Translate(660, float64(s.msgWindowTopY+62))
 	tensionTextOp.ColorScale.ScaleWithColor(color.White)
 	text.Draw(screen, "テンション:", fonts.GamerFontM, tensionTextOp)
 	s.tensionGauge.Draw(screen)
 
 	remainTimeTextOp := &text.DrawOptions{}
-	remainTimeTextOp.GeoM.Translate(350, float64(s.msgWindowTopY+125))
+	remainTimeTextOp.GeoM.Translate(350, float64(s.msgWindowTopY+105))
 	remainTimeTextOp.ColorScale.ScaleWithColor(color.White)
 	text.Draw(screen, fmt.Sprintf("のこりタイム: %v", s.time), fonts.GamerFontM, remainTimeTextOp)
 
@@ -396,18 +396,18 @@ func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 	case wait:
 		screen.DrawImage(s.pauseBg, s.pauseBgOp)
 		tOp := &text.DrawOptions{}
-		tOp.GeoM.Translate(view.ScreenWidth/2-280, view.ScreenHeight/2+30)
+		tOp.GeoM.Translate(view.ScreenWidth/2-300, view.ScreenHeight/2)
 		tOp.ColorScale.ScaleWithColor(color.White)
 		text.Draw(screen, messages.GameStart, fonts.GamerFontL, tOp)
 		s.startBtn.Draw(screen)
 	case readyCall:
 		tOp := &text.DrawOptions{}
-		tOp.GeoM.Translate(view.ScreenWidth/2-30, view.ScreenHeight/2+30)
+		tOp.GeoM.Translate(view.ScreenWidth/2-30, view.ScreenHeight/2)
 		tOp.ColorScale.ScaleWithColor(color.White)
 		text.Draw(screen, messages.GameReady, fonts.GamerFontL, tOp)
 	case goCall:
 		tOp := &text.DrawOptions{}
-		tOp.GeoM.Translate(view.ScreenWidth/2-20, view.ScreenHeight/2+30)
+		tOp.GeoM.Translate(view.ScreenWidth/2-20, view.ScreenHeight/2)
 		tOp.ColorScale.ScaleWithColor(color.White)
 		text.Draw(screen, messages.GameGo, fonts.GamerFontL, tOp)
 	case pause:
@@ -419,7 +419,7 @@ func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 		screen.DrawImage(s.pauseBg, s.pauseBgOp)
 
 		tOp := &text.DrawOptions{}
-		tOp.GeoM.Translate(view.ScreenWidth/2-150, view.ScreenHeight/2+30)
+		tOp.GeoM.Translate(view.ScreenWidth/2-150, view.ScreenHeight/2)
 		tOp.ColorScale.ScaleWithColor(color.White)
 		text.Draw(screen, messages.GamePause, fonts.GamerFontL, tOp)
 
@@ -440,12 +440,12 @@ func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 		screen.DrawImage(s.pauseBg, s.pauseBgOp)
 
 		tOp1 := &text.DrawOptions{}
-		tOp1.GeoM.Translate(view.ScreenWidth/2-200, view.ScreenHeight/2-134)
+		tOp1.GeoM.Translate(view.ScreenWidth/2-190, view.ScreenHeight/2-220)
 		tOp1.ColorScale.ScaleWithColor(color.White)
 		text.Draw(screen, messages.GameStageClear, fonts.GamerFontL, tOp1)
 
 		tOp2 := &text.DrawOptions{}
-		tOp2.GeoM.Translate(view.ScreenWidth/2-400, view.ScreenHeight/2+30)
+		tOp2.GeoM.Translate(view.ScreenWidth/2-260, view.ScreenHeight/2+30)
 		tOp2.ColorScale.ScaleWithColor(color.White)
 		text.Draw(screen, messages.GameStageClear2, fonts.GamerFontL, tOp2)
 
@@ -464,7 +464,7 @@ func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 		screen.DrawImage(s.pauseBg, s.pauseBgOp)
 
 		tOp := &text.DrawOptions{}
-		tOp.GeoM.Translate(view.ScreenWidth/2-420, view.ScreenHeight/2+20)
+		tOp.GeoM.Translate(view.ScreenWidth/2-400, view.ScreenHeight/2+20)
 		tOp.ColorScale.ScaleWithColor(color.White)
 		text.Draw(screen, messages.GameOver, fonts.GamerFontL, tOp)
 

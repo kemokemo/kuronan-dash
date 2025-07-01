@@ -141,17 +141,17 @@ func (s *SelectScene) Initialize() error {
 
 	for i := range s.ratingMatrix {
 		speedTextOp := &text.DrawOptions{}
-		speedTextOp.GeoM.Translate(float64(ratingOffsetInitialX+ratingOffsetX*i-85), ratingOffsetY+23)
+		speedTextOp.GeoM.Translate(float64(ratingOffsetInitialX+ratingOffsetX*i-85), ratingOffsetY)
 		speedTextOp.ColorScale.ScaleWithColor(color.White)
 		s.speedTextOpList = append(s.speedTextOpList, speedTextOp)
 
 		staminaTextOp := &text.DrawOptions{}
-		staminaTextOp.GeoM.Translate(float64(ratingOffsetInitialX+ratingOffsetX*i-85), ratingOffsetY+40+23)
+		staminaTextOp.GeoM.Translate(float64(ratingOffsetInitialX+ratingOffsetX*i-85), ratingOffsetY+40)
 		staminaTextOp.ColorScale.ScaleWithColor(color.White)
 		s.staminaTextOpList = append(s.staminaTextOpList, staminaTextOp)
 
 		powerTextOp := &text.DrawOptions{}
-		powerTextOp.GeoM.Translate(float64(ratingOffsetInitialX+ratingOffsetX*i-85), ratingOffsetY+80+23)
+		powerTextOp.GeoM.Translate(float64(ratingOffsetInitialX+ratingOffsetX*i-85), ratingOffsetY+80)
 		powerTextOp.ColorScale.ScaleWithColor(color.White)
 		s.powerTextOpList = append(s.powerTextOpList, powerTextOp)
 	}
@@ -320,7 +320,7 @@ func (s *SelectScene) takeHorizontalCenterPosition(i int) (x, y float64) {
 	rect := s.winRectArray[i]
 	width := s.charaList[i].StandingImage.Bounds().Dx()
 	x = float64((rect.Max.X-rect.Min.X)/2 + rect.Min.X - (width*scale)/2)
-	y = float64(rect.Min.Y + margin)
+	y = float64(rect.Min.Y + margin*1.7)
 	return x, y
 }
 

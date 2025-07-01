@@ -107,7 +107,6 @@ func (mw *MessageWindow) drawMessage(screen *ebiten.Image, msg string) {
 		runes := []rune(row)
 
 		for i := 0; i < len(runes); i += (rowRunesNum - 1) {
-			y = y + mw.fontSize + mw.lineSpacing
 			if i+rowRunesNum < len(runes) {
 				rowMsg = string(runes[i : i+rowRunesNum-1])
 			} else {
@@ -125,7 +124,7 @@ func (mw *MessageWindow) drawMessage(screen *ebiten.Image, msg string) {
 
 func (mw *MessageWindow) takeTextPosition() image.Point {
 	x := mw.rect.Min.X + 15
-	y := mw.rect.Min.Y + 7
+	y := mw.rect.Min.Y + 3
 	return image.Point{X: x, Y: y}
 }
 
