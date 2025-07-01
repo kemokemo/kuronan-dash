@@ -8,8 +8,7 @@ import (
 	"strings"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/text"
-	"golang.org/x/image/font"
+	"github.com/hajimehoshi/ebiten/v2/text/v2"
 
 	rating "github.com/kemokemo/ebiten-rating"
 	vpad "github.com/kemokemo/ebiten-virtualpad"
@@ -39,27 +38,31 @@ const (
 
 // SelectScene is the scene to select the player character.
 type SelectScene struct {
-	bg            *ebiten.Image
-	bgViewPort    *view.Viewport
-	disc          *music.Disc
-	clickSe       *se.Player
-	selectVoice   *se.Player
-	msgWindow     *ui.MessageWindow
-	fontNormal    font.Face
-	iChecker      input.InputChecker
-	vChecker      input.VolumeChecker
-	volumeBtn     vpad.SelectButton
-	goButton      vpad.TriggerButton
-	charaList     []*chara.Player
-	ratingMatrix  [][]*rating.Rating
-	winRectArray  []image.Rectangle
-	selectArray   []vpad.SelectButton
-	selectedIndex int
-	selectChanged bool
-	lenChara      int
-	curtain       *Curtain
-	isStarting    bool
-	isClosing     bool
+	bg                *ebiten.Image
+	bgViewPort        *view.Viewport
+	disc              *music.Disc
+	clickSe           *se.Player
+	selectVoice       *se.Player
+	msgWindow         *ui.MessageWindow
+	fontNormal        *text.GoTextFace
+	iChecker          input.InputChecker
+	vChecker          input.VolumeChecker
+	volumeBtn         vpad.SelectButton
+	goButton          vpad.TriggerButton
+	charaList         []*chara.Player
+	ratingMatrix      [][]*rating.Rating
+	winRectArray      []image.Rectangle
+	selectArray       []vpad.SelectButton
+	selectedIndex     int
+	selectChanged     bool
+	lenChara          int
+	curtain           *Curtain
+	isStarting        bool
+	isClosing         bool
+	fpsTextOp         *text.DrawOptions
+	speedTextOpList   []*text.DrawOptions
+	staminaTextOpList []*text.DrawOptions
+	powerTextOpList   []*text.DrawOptions
 }
 
 // Initialize initializes all resources.
@@ -131,6 +134,27 @@ func (s *SelectScene) Initialize() error {
 	s.curtain = NewCurtain()
 	s.isStarting = false
 	s.isClosing = false
+
+	s.fpsTextOp = &text.DrawOptions{}
+	s.fpsTextOp.GeoM.Translate(10, view.ScreenHeight-15)
+	s.fpsTextOp.ColorScale.ScaleWithColor(color.White)
+
+	for i := range s.ratingMatrix {
+		speedTextOp := &text.DrawOptions{}
+		speedTextOp.GeoM.Translate(float64(ratingOffsetInitialX+ratingOffsetX*i-85), ratingOffsetY)
+		speedTextOp.ColorScale.ScaleWithColor(color.White)
+		s.speedTextOpList = append(s.speedTextOpList, speedTextOp)
+
+		staminaTextOp := &text.DrawOptions{}
+		staminaTextOp.GeoM.Translate(float64(ratingOffsetInitialX+ratingOffsetX*i-85), ratingOffsetY+40)
+		staminaTextOp.ColorScale.ScaleWithColor(color.White)
+		s.staminaTextOpList = append(s.staminaTextOpList, staminaTextOp)
+
+		powerTextOp := &text.DrawOptions{}
+		powerTextOp.GeoM.Translate(float64(ratingOffsetInitialX+ratingOffsetX*i-85), ratingOffsetY+80)
+		powerTextOp.ColorScale.ScaleWithColor(color.White)
+		s.powerTextOpList = append(s.powerTextOpList, powerTextOp)
+	}
 
 	return nil
 }
@@ -236,7 +260,7 @@ func (s *SelectScene) Draw(screen *ebiten.Image) {
 		s.selectArray[i].Draw(screen)
 	}
 	s.drawCharacters(screen)
-	text.Draw(screen, fmt.Sprintf("FPS: %3.1f", ebiten.ActualFPS()), fonts.GamerFontSS, 10, view.ScreenHeight-15, color.White)
+	text.Draw(screen, fmt.Sprintf("FPS: %3.1f", ebiten.ActualFPS()), fonts.GamerFontSS, s.fpsTextOp)
 	s.goButton.Draw(screen)
 	s.volumeBtn.Draw(screen)
 
@@ -275,9 +299,9 @@ func (s *SelectScene) drawCharacters(screen *ebiten.Image) {
 	}
 
 	for i := range s.ratingMatrix {
-		text.Draw(screen, "スピード:", fonts.GamerFontM, ratingOffsetInitialX+ratingOffsetX*i-85, ratingOffsetY+23, color.White)
-		text.Draw(screen, "パワー:", fonts.GamerFontM, ratingOffsetInitialX+ratingOffsetX*i-85, ratingOffsetY+40+23, color.White)
-		text.Draw(screen, "スタミナ:", fonts.GamerFontM, ratingOffsetInitialX+ratingOffsetX*i-85, ratingOffsetY+80+23, color.White)
+		text.Draw(screen, "スピード:", fonts.GamerFontM, s.speedTextOpList[i])
+		text.Draw(screen, "パワー:", fonts.GamerFontM, s.staminaTextOpList[i])
+		text.Draw(screen, "スタミナ:", fonts.GamerFontM, s.powerTextOpList[i])
 
 		for j := range s.ratingMatrix[i] {
 			s.ratingMatrix[i][j].Draw(screen)
@@ -296,7 +320,7 @@ func (s *SelectScene) takeHorizontalCenterPosition(i int) (x, y float64) {
 	rect := s.winRectArray[i]
 	width := s.charaList[i].StandingImage.Bounds().Dx()
 	x = float64((rect.Max.X-rect.Min.X)/2 + rect.Min.X - (width*scale)/2)
-	y = float64(rect.Min.Y + margin)
+	y = float64(rect.Min.Y + margin*1.7)
 	return x, y
 }
 
@@ -314,10 +338,13 @@ func (s *SelectScene) drawMessage(screen *ebiten.Image, i int) {
 
 		for i := 0; i < len(runes); i += splitlen {
 			y = y + fontSize + lineSpacing
+			tOp := &text.DrawOptions{}
+			tOp.GeoM.Translate(float64(x), float64(y))
+			tOp.ColorScale.ScaleWithColor(color.White)
 			if i+splitlen < len(runes) {
-				text.Draw(screen, string(runes[i:(i+splitlen)]), s.fontNormal, x, y, color.White)
+				text.Draw(screen, string(runes[i:(i+splitlen)]), s.fontNormal, tOp)
 			} else {
-				text.Draw(screen, string(runes[i:]), s.fontNormal, x, y, color.White)
+				text.Draw(screen, string(runes[i:]), s.fontNormal, tOp)
 			}
 			lineNum++
 		}

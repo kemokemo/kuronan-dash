@@ -10,7 +10,6 @@ const (
 	Walk
 	Ascending
 	Descending
-	Pause
 	SkillEffect
 	SkillDash
 	SkillWalk
@@ -31,8 +30,6 @@ func (s State) String() string {
 		str = "Ascending"
 	case Descending:
 		str = "Descending"
-	case Pause:
-		str = "Pause"
 	case SkillEffect:
 		str = "SkillEffect"
 	case SkillDash:

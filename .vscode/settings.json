@@ -8,5 +8,10 @@
     },
     "custom": true, // Enable the `custom` dictionary
     "internal-terms": false // Disable the `internal-terms` dictionary
-  }
+  },
+  "cSpell.words": [
+    "gomobile",
+    "miniweb"
+  ],
+  "sarif-viewer.connectToGithubCodeScanning": "off"
 }

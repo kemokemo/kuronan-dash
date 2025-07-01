@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"log"
+	"slices"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	vpad "github.com/kemokemo/ebiten-virtualpad"
@@ -13,11 +14,12 @@ import (
 	"github.com/kemokemo/kuronan-dash/internal/view"
 )
 
+var ignoreKeyStateList = []State{Wait, Ascending, Descending, SkillAscending, SkillDescending}
+
 // StateMachine manages the player's state.
 type StateMachine struct {
 	pos              *view.Vector
 	current          State
-	previous         State
 	isBlocked        bool
 	lanes            *field.Lanes
 	offset           *view.Vector
@@ -26,8 +28,6 @@ type StateMachine struct {
 	drawing          bool
 	atkDuration      int
 	atkMaxDuration   int
-	startSpEffect    bool
-	finishSpEffect   bool
 	spDuration       int
 	spMaxDuration    int
 	soundTypeCh      chan<- se.SoundType
@@ -44,7 +44,6 @@ func NewStateMachine(lanes *field.Lanes, atkMaxDuration int, spMaxDuration int) 
 	sm := StateMachine{
 		pos:              &view.Vector{X: view.DrawPosition, Y: lanes.GetTargetLaneHeight()},
 		current:          Dash,
-		previous:         Pause,
 		isBlocked:        false,
 		lanes:            lanes,
 		offset:           &view.Vector{X: 0.0, Y: 0.0},
@@ -98,44 +97,43 @@ func (sm *StateMachine) checkCollisionAction() {
 
 func (sm *StateMachine) updateWithStaminaAndMove(stamina int, tension int, charaPosV *view.Vector) {
 	switch sm.current {
-	case Ascending, SkillAscending:
+	case Ascending:
 		if sm.IsReachedUpperLane(charaPosV.Y) {
-			sm.current = sm.previous
+			sm.current = Dash
 		}
-	case Descending, SkillDescending:
+	case SkillAscending:
+		if sm.IsReachedUpperLane(charaPosV.Y) {
+			sm.current = SkillDash
+		}
+	case Descending:
 		if sm.isReachedLowerLane(charaPosV.Y) {
-			sm.current = sm.previous
+			sm.current = Dash
+		}
+	case SkillDescending:
+		if sm.isReachedLowerLane(charaPosV.Y) {
+			sm.current = SkillDash
 		}
 	case Dash:
 		if stamina <= 0 || sm.isBlocked {
-			sm.previous = Dash
 			sm.current = Walk
 		}
 	case Walk:
 		if stamina > 0 && !sm.isBlocked {
-			if sm.previous == SkillDash {
-				sm.current = SkillDash
-			} else {
-				sm.current = Dash
-			}
-			sm.previous = Walk
-		}
-	case SkillDash:
-		sm.finishSpEffect = false
-		if stamina <= 0 || sm.isBlocked {
-			sm.previous = SkillDash
-			sm.current = SkillWalk
-		} else if tension <= 0 {
-			sm.previous = SkillDash
 			sm.current = Dash
+		}
+	case SkillEffect:
+		// スキルのエフェクト完了待ち
+	case SkillDash:
+		if tension <= 0 {
+			sm.current = Dash
+		} else if stamina <= 0 || sm.isBlocked {
+			sm.current = SkillWalk
 		}
 	case SkillWalk:
-		if stamina > 0 && !sm.isBlocked {
-			sm.previous = SkillWalk
+		if tension <= 0 {
+			sm.current = Walk
+		} else if stamina > 0 && !sm.isBlocked {
 			sm.current = SkillDash
-		} else if tension <= 0 {
-			sm.previous = SkillWalk
-			sm.current = Dash
 		}
 	default:
 		log.Println("unknown state: ", sm.current)
@@ -143,7 +141,8 @@ func (sm *StateMachine) updateWithStaminaAndMove(stamina int, tension int, chara
 }
 
 func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
-	if !(sm.current == Dash) && !(sm.current == Walk) && !(sm.current == SkillDash) && !(sm.current == SkillEffect) {
+	if slices.Contains(ignoreKeyStateList, sm.current) {
+		// 待ち状態、上昇中、下降中の場合にここに来る想定。それらの状態ではキー操作による上下や攻撃などのアクションを無効化する。
 		return
 	}
 
@@ -151,33 +150,41 @@ func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
 
 	if sm.iChecker.TriggeredUp() {
 		if !sm.lanes.GoToUpperLane() {
+			// レーン移動中はキー入力による状態遷移は行わない
 			return
 		}
 
-		if sm.current == SkillWalk || sm.current == SkillDash {
-			sm.previous = sm.current
+		switch sm.current {
+		case SkillWalk, SkillDash:
 			sm.current = SkillAscending
-		} else {
-			sm.previous = sm.current
+			sm.soundTypeCh <- se.Jump
+		case Walk, Dash:
 			sm.current = Ascending
+			sm.soundTypeCh <- se.Jump
+		default:
+			// 状態遷移しない
 		}
-		sm.soundTypeCh <- se.Jump
 	} else if sm.iChecker.TriggeredDown() {
 		if !sm.lanes.GoToLowerLane() {
+			// レーン移動中はキー入力による状態遷移は行わない
 			return
 		}
 
-		if sm.current == SkillWalk || sm.current == SkillDash {
-			sm.previous = sm.current
+		switch sm.current {
+		case SkillWalk, SkillDash:
 			sm.current = SkillDescending
-		} else {
-			sm.previous = sm.current
+			sm.soundTypeCh <- se.Drop
+		case Walk, Dash:
 			sm.current = Descending
+			sm.soundTypeCh <- se.Drop
+		default:
+			// 状態遷移しない
 		}
-		sm.soundTypeCh <- se.Drop
 	}
 
 	if sm.atkDuration < sm.atkMaxDuration {
+		// 攻撃モーション中は攻撃ボタンの判定を行わない
+		// todo: キャラによって攻撃の連射速度とか変えたいね
 		if sm.drawing {
 			sm.atkDuration++
 		}
@@ -195,25 +202,14 @@ func (sm *StateMachine) updateWithKey(isMaxTension bool, vY float64) {
 	}
 
 	if sm.iChecker.TriggeredSkill() && isMaxTension {
-		sm.previous = sm.current
 		sm.current = SkillEffect
-		sm.startSpEffect = true
+		sm.soundTypeCh <- se.SpVoice
 	}
 }
 
 func (sm *StateMachine) updateXAxisOffset() {
 	sm.xOffset.Update(sm.current)
 	sm.offset.X = sm.xOffset.GetXAxisOffset()
-}
-
-func (sm *StateMachine) UpdateSkillEffect(playingSound bool) {
-	sm.startSpEffect = false
-	sm.spDuration++
-	if sm.spDuration >= sm.spMaxDuration && !playingSound {
-		sm.spDuration = 0
-		sm.finishSpEffect = true
-		sm.current = SkillDash
-	}
 }
 
 // IsReachedUpperLane returns which the player reached to the target upper lane.
@@ -234,7 +230,6 @@ func (sm *StateMachine) isReachedLowerLane(vY float64) bool {
 	nextPosY := sm.pos.Y + vY
 	if nextPosY >= th {
 		sm.offset.Y = th - nextPosY
-		sm.current = sm.previous
 		return true
 	}
 
@@ -266,14 +261,11 @@ func (sm *StateMachine) DrawAttack() bool {
 	return sm.drawing
 }
 
-func (sm *StateMachine) StartSpEffect() bool {
-	return sm.startSpEffect
-}
-
-func (sm *StateMachine) FinishSpEffect() bool {
-	return sm.finishSpEffect
-}
-
 func (sm *StateMachine) SetSeChan(ch chan<- se.SoundType) {
 	sm.soundTypeCh = ch
+}
+
+func (sm *StateMachine) FinishSkillEffect() State {
+	sm.current = SkillDash
+	return sm.current
 }

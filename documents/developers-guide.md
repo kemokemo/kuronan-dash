@@ -2,7 +2,7 @@
 
 ## 前提条件
 
-- golang Ver. 1.9 以降
+- golang Ver. 1.24.4 以降
 
 ## 実行方法
 
@@ -37,6 +37,8 @@ miniweb -p 9000 public
 ```
 
 上記を実行した場合、ブラウザで `http://localhost:9000/` を開きましょう。
+
+`golang`自体の更新によってファイルの置き場所や処理が変わる場合があるので、 [公式のWiki](https://go.dev/wiki/WebAssembly) をチェックしよう。
 
 ### Mobile
 
