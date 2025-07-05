@@ -11,7 +11,7 @@ type Obstacle interface {
 
 	// Attack attacks this obstacle.
 	// The damage value reduces this obstacle's hardness.
-	Attack(damage float64)
+	Attack(damage float64, soundPlayFlag bool)
 
 	// IsBroken returns whether this obstacle was broken.
 	// The broken state means that the hardness is 0 or less.

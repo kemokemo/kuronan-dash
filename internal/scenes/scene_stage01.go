@@ -7,6 +7,7 @@ import (
 	"image"
 	"image/color"
 	"log"
+	"sync"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
@@ -67,6 +68,8 @@ type Stage01Scene struct {
 	resultEffects           *ResultEffect
 	gameSoundControlCh      <-chan assets.GameSoundControl
 	gameSoundCancellationCh chan struct{}
+	soundPlayFlag           bool
+	soundPlayFlagMu         sync.RWMutex
 }
 
 // Initialize initializes all resources.
@@ -278,9 +281,14 @@ func (s *Stage01Scene) run() {
 		pState := s.player.Update()
 		s.field.Update(s.player.GetScrollVelocity())
 
+		var soundPlayFlag bool
+		s.soundPlayFlagMu.RLock()
+		soundPlayFlag = s.soundPlayFlag
+		s.soundPlayFlagMu.RUnlock()
+
 		isAtk, aRect, power := s.player.IsAttacked()
 		if isAtk {
-			collided, broken := s.field.AttackObstacles(aRect, power)
+			collided, broken := s.field.AttackObstacles(aRect, power, soundPlayFlag)
 			if collided > 0 {
 				s.player.ConsumeStaminaByAttack(collided)
 			}
@@ -291,7 +299,7 @@ func (s *Stage01Scene) run() {
 
 		pRect := s.player.GetRectangle()
 		s.player.BeBlocked(s.field.IsCollidedWithObstacles(pRect))
-		s.player.Eat(s.field.EatFoods(pRect))
+		s.player.Eat(s.field.EatFoods(pRect, soundPlayFlag))
 
 		s.staminaGauge.Update(float64(s.player.GetStamina()))
 		s.tensionGauge.Update(float64(s.player.GetTension()))
@@ -486,8 +494,14 @@ func (s *Stage01Scene) playSounds() {
 				if s.state != pause {
 					s.disc.Play()
 				}
+				s.soundPlayFlagMu.Lock()
+				s.soundPlayFlag = true
+				s.soundPlayFlagMu.Unlock()
 			case assets.SoundOff:
 				s.setVolume(false)
+				s.soundPlayFlagMu.Lock()
+				s.soundPlayFlag = false
+				s.soundPlayFlagMu.Unlock()
 			default:
 				log.Println("unknown game sound control type, ", s)
 			}

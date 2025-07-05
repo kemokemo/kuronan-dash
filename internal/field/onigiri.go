@@ -75,8 +75,10 @@ func (o *Onigiri) IsCollided(hr *view.HitRectangle) bool {
 }
 
 // Eat eats this food. This func returns the value to restore character's stamina and tension.
-func (o *Onigiri) Eat() (int, int) {
+func (o *Onigiri) Eat(soundPlayFlag bool) (int, int) {
 	o.eaten = true
-	o.sound.Play()
+	if soundPlayFlag {
+		o.sound.Play()
+	}
 	return o.stamina, o.tension
 }

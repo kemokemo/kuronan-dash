@@ -75,8 +75,10 @@ func (y *YakiManjuu) IsCollided(hr *view.HitRectangle) bool {
 }
 
 // Eat eats this food. This func returns the value to restore character's stamina and tension.
-func (y *YakiManjuu) Eat() (int, int) {
+func (y *YakiManjuu) Eat(soundPlayFlag bool) (int, int) {
 	y.eaten = true
-	y.sound.Play()
+	if soundPlayFlag {
+		y.sound.Play()
+	}
 	return y.stamina, y.tension
 }
