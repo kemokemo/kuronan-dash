@@ -1,6 +1,8 @@
 package music
 
 import (
+	"log"
+
 	"github.com/hajimehoshi/ebiten/v2/audio"
 )
 
@@ -37,9 +39,12 @@ func (d *Disc) Pause() {
 }
 
 // Stop stops music. (pause and rewind)
-func (d *Disc) Stop() error {
+func (d *Disc) Stop() {
 	d.player.Pause()
-	return d.player.Rewind()
+	err := d.player.Rewind()
+	if err != nil {
+		log.Println("failed to stop disc, disc name is ", d.Name)
+	}
 }
 
 func (d *Disc) SetVolumeFlag(isVolumeOn bool) {

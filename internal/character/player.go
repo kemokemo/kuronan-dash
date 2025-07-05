@@ -307,7 +307,8 @@ func (p *Player) Eat(stamina, tension int) {
 
 // Close closes the inner resources.
 func (p *Player) Close() error {
-	// assets側でcloseするので、ここではcloseしない
+	// 画像やサウンドはassets側でcloseするので、ここではcloseしない
+
 	close(p.soundTypeCh)
 	return nil
 }
