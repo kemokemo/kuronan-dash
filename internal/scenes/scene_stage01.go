@@ -483,7 +483,9 @@ func (s *Stage01Scene) playSounds() {
 				s.disc.Stop()
 			case assets.SoundOn:
 				s.setVolume(true)
-				s.disc.Play()
+				if s.state != pause {
+					s.disc.Play()
+				}
 			case assets.SoundOff:
 				s.setVolume(false)
 			default:
