@@ -30,3 +30,7 @@ public/wasm_exec.js
 # macOS
 *DS_Store
 ._*
+
+# node
+node_modules/
+package-lock.json
