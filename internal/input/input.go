@@ -16,6 +16,4 @@ type InputChecker interface {
 type VolumeChecker interface {
 	Update()
 	IsVolumeOn() bool
-	JustVolumeOn() bool
-	JustVolumeOff() bool
 }

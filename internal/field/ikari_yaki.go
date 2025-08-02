@@ -75,8 +75,10 @@ func (i *IkariYaki) IsCollided(hr *view.HitRectangle) bool {
 }
 
 // Eat eats this food. This func returns the value to restore character's stamina.
-func (i *IkariYaki) Eat() (int, int) {
+func (i *IkariYaki) Eat(soundPlayFlag bool) (int, int) {
 	i.eaten = true
-	i.sound.Play()
+	if soundPlayFlag {
+		i.sound.Play()
+	}
 	return i.stamina, i.tension
 }

@@ -7,12 +7,15 @@ import (
 	"image"
 	"image/color"
 	"log"
+	"sync"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
 
 	gauge "github.com/kemokemo/ebiten-gauge"
 	progress "github.com/kemokemo/ebiten-progress"
+
+	"github.com/kemokemo/kuronan-dash/assets"
 	"github.com/kemokemo/kuronan-dash/assets/fonts"
 	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/assets/messages"
@@ -30,45 +33,50 @@ import (
 
 // Stage01Scene is the scene for the 1st stage game.
 type Stage01Scene struct {
-	state           gameState
-	player          *chara.Player
-	disc            *music.Disc
-	clickSe         *se.Player
-	readyVoice      *se.Player
-	goVoice         *se.Player
-	stageClearVoice *se.Player
-	field           field.Field
-	goalX           float64
-	timeLimit       int // second
-	time            int // second
-	sumTicks        float64
-	msgWindow       *ui.MessageWindow
-	msgWindowTopY   int
-	staminaGauge    *gauge.Gauge
-	tensionGauge    *gauge.Gauge
-	progMap         *progress.Progress
-	progPercent     int
-	progMapBk       *ebiten.Image
-	opMapBk         *ebiten.DrawImageOptions
-	iChecker        input.InputChecker
-	vChecker        input.VolumeChecker
-	startBtn        vpad.TriggerButton
-	pauseBtn        vpad.TriggerButton
-	volumeBtn       vpad.SelectButton
-	upBtn           vpad.TriggerButton
-	downBtn         vpad.TriggerButton
-	atkBtn          vpad.TriggerButton
-	spBtn           vpad.TriggerButton
-	pauseBg         *ebiten.Image
-	pauseBgOp       *ebiten.DrawImageOptions
-	curtain         *Curtain
-	isStarting      bool
-	isClosing       bool
-	resultEffects   *ResultEffect
+	state                   gameState
+	player                  *chara.Player
+	disc                    *music.Disc
+	clickSe                 *se.Player
+	readyVoice              *se.Player
+	goVoice                 *se.Player
+	stageClearVoice         *se.Player
+	field                   field.Field
+	goalX                   float64
+	timeLimit               int // second
+	time                    int // second
+	sumTicks                float64
+	msgWindow               *ui.MessageWindow
+	msgWindowTopY           int
+	staminaGauge            *gauge.Gauge
+	tensionGauge            *gauge.Gauge
+	progMap                 *progress.Progress
+	progPercent             int
+	progMapBk               *ebiten.Image
+	opMapBk                 *ebiten.DrawImageOptions
+	iChecker                input.InputChecker
+	startBtn                vpad.TriggerButton
+	pauseBtn                vpad.TriggerButton
+	upBtn                   vpad.TriggerButton
+	downBtn                 vpad.TriggerButton
+	atkBtn                  vpad.TriggerButton
+	spBtn                   vpad.TriggerButton
+	pauseBg                 *ebiten.Image
+	pauseBgOp               *ebiten.DrawImageOptions
+	curtain                 *Curtain
+	isStarting              bool
+	isClosing               bool
+	resultEffects           *ResultEffect
+	gameSoundControlCh      <-chan assets.GameSoundControl
+	gameSoundCancellationCh chan struct{}
+	soundPlayFlag           bool
+	soundPlayFlagMu         sync.RWMutex
 }
 
 // Initialize initializes all resources.
-func (s *Stage01Scene) Initialize() error {
+func (s *Stage01Scene) Initialize(gameSoundControlCh <-chan assets.GameSoundControl) error {
+	s.gameSoundControlCh = gameSoundControlCh
+	s.gameSoundCancellationCh = make(chan struct{})
+
 	s.goalX = 4100.0
 	s.timeLimit = 40
 	s.time = s.timeLimit
@@ -143,15 +151,10 @@ func (s *Stage01Scene) Initialize() error {
 	s.startBtn = vpad.NewTriggerButton(images.StartButton, vpad.JustReleased, vpad.SelectColor)
 	s.startBtn.SetLocation(view.ScreenWidth/2-64, view.ScreenHeight/2-128)
 	s.startBtn.SetTriggerButton([]ebiten.Key{ebiten.KeySpace})
-	s.volumeBtn = vpad.NewSelectButton(images.VolumeOffButton, vpad.JustPressed, vpad.SelectColor)
-	s.volumeBtn.SetLocation(view.ScreenWidth-58, 10)
-	s.volumeBtn.SetSelectImage(images.VolumeOnButton)
-	s.volumeBtn.SetSelectKeys([]ebiten.Key{ebiten.KeyV})
 	s.pauseBtn = vpad.NewTriggerButton(images.PauseButton, vpad.JustReleased, vpad.SelectColor)
 	s.pauseBtn.SetLocation(view.ScreenWidth-98, 10)
 	s.pauseBtn.SetTriggerButton([]ebiten.Key{ebiten.KeySpace})
 	s.iChecker = &input.GameInputChecker{StartBtn: s.startBtn, PauseBtn: s.pauseBtn}
-	s.vChecker = input.NewVolumeChecker(s.volumeBtn, true)
 
 	s.pauseBg = images.PauseLayer
 	s.pauseBgOp = &ebiten.DrawImageOptions{}
@@ -186,8 +189,6 @@ func (s *Stage01Scene) Update(state *GameState) {
 		}
 		return
 	}
-
-	s.updateVolume()
 
 	// s.upBtnとs.downBtnは、s.iChecker内でUpdate()されるのでここではしない
 	s.iChecker.Update()
@@ -249,28 +250,6 @@ func (s *Stage01Scene) Update(state *GameState) {
 	}
 }
 
-// updateVolume updates the volume on/off state of music and sounds.
-// If you add some sounds, please add this logic.
-func (s *Stage01Scene) updateVolume() {
-	s.vChecker.Update()
-
-	if s.vChecker.JustVolumeOn() {
-		s.setVolume(true)
-		s.disc.Play()
-	} else if s.vChecker.JustVolumeOff() {
-		s.setVolume(false)
-	}
-}
-
-func (s *Stage01Scene) setVolume(flag bool) {
-	s.disc.SetVolumeFlag(flag)
-	s.clickSe.SetVolumeFlag(flag)
-	s.readyVoice.SetVolumeFlag(flag)
-	s.goVoice.SetVolumeFlag(flag)
-	s.stageClearVoice.SetVolumeFlag(flag)
-	s.player.SetVolumeFlag(flag)
-}
-
 func (s *Stage01Scene) isFullTicks(num float64) bool {
 	s.sumTicks += ebiten.ActualTPS()
 	if s.sumTicks >= 3600*num {
@@ -302,9 +281,14 @@ func (s *Stage01Scene) run() {
 		pState := s.player.Update()
 		s.field.Update(s.player.GetScrollVelocity())
 
+		var soundPlayFlag bool
+		s.soundPlayFlagMu.RLock()
+		soundPlayFlag = s.soundPlayFlag
+		s.soundPlayFlagMu.RUnlock()
+
 		isAtk, aRect, power := s.player.IsAttacked()
 		if isAtk {
-			collided, broken := s.field.AttackObstacles(aRect, power)
+			collided, broken := s.field.AttackObstacles(aRect, power, soundPlayFlag)
 			if collided > 0 {
 				s.player.ConsumeStaminaByAttack(collided)
 			}
@@ -315,7 +299,7 @@ func (s *Stage01Scene) run() {
 
 		pRect := s.player.GetRectangle()
 		s.player.BeBlocked(s.field.IsCollidedWithObstacles(pRect))
-		s.player.Eat(s.field.EatFoods(pRect))
+		s.player.Eat(s.field.EatFoods(pRect, soundPlayFlag))
 
 		s.staminaGauge.Update(float64(s.player.GetStamina()))
 		s.tensionGauge.Update(float64(s.player.GetTension()))
@@ -340,9 +324,6 @@ func (s *Stage01Scene) Draw(screen *ebiten.Image) {
 	tOp.GeoM.Translate(10, view.ScreenHeight-15)
 	tOp.ColorScale.ScaleWithColor(color.White)
 	text.Draw(screen, fmt.Sprintf("FPS: %3.1f", ebiten.ActualFPS()), fonts.GamerFontSS, tOp)
-
-	// Let's make sure that the volume can be changed at any time.
-	s.volumeBtn.Draw(screen)
 
 	if s.isStarting || s.isClosing {
 		s.curtain.Draw(screen)
@@ -402,12 +383,12 @@ func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 		s.startBtn.Draw(screen)
 	case readyCall:
 		tOp := &text.DrawOptions{}
-		tOp.GeoM.Translate(view.ScreenWidth/2-30, view.ScreenHeight/2)
+		tOp.GeoM.Translate(view.ScreenWidth/2-40, view.ScreenHeight/2-80)
 		tOp.ColorScale.ScaleWithColor(color.White)
 		text.Draw(screen, messages.GameReady, fonts.GamerFontL, tOp)
 	case goCall:
 		tOp := &text.DrawOptions{}
-		tOp.GeoM.Translate(view.ScreenWidth/2-20, view.ScreenHeight/2)
+		tOp.GeoM.Translate(view.ScreenWidth/2-30, view.ScreenHeight/2-80)
 		tOp.ColorScale.ScaleWithColor(color.White)
 		text.Draw(screen, messages.GameGo, fonts.GamerFontL, tOp)
 	case pause:
@@ -440,7 +421,7 @@ func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 		screen.DrawImage(s.pauseBg, s.pauseBgOp)
 
 		tOp1 := &text.DrawOptions{}
-		tOp1.GeoM.Translate(view.ScreenWidth/2-190, view.ScreenHeight/2-220)
+		tOp1.GeoM.Translate(view.ScreenWidth/2-220, view.ScreenHeight/2-220)
 		tOp1.ColorScale.ScaleWithColor(color.White)
 		text.Draw(screen, messages.GameStageClear, fonts.GamerFontL, tOp1)
 
@@ -474,41 +455,65 @@ func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 	}
 }
 
-// Close stops music
-func (s *Stage01Scene) Close() error {
-	err := s.disc.Stop()
-	if err != nil {
-		return fmt.Errorf("failed to stop music,%v", err)
-	}
-	return nil
-}
-
-// StartMusic starts playing music
-func (s *Stage01Scene) StartMusic(isVolumeOn bool) {
-	s.volumeBtn.SetSelectState(isVolumeOn)
-
-	s.setVolume(isVolumeOn)
-	// when the game state is changed to 'run', the music starts. not now.
+func (s *Stage01Scene) Start(gameSoundState bool) {
+	s.setVolume(gameSoundState)
 
 	s.isStarting = true
 	s.curtain.Start(false)
+
+	go s.playSounds()
 }
 
-// StopMusic stops playing music and sound effects
-func (s *Stage01Scene) StopMusic() error {
-	var err, e error
-	e = s.stageClearVoice.Close()
-	if e != nil {
-		err = fmt.Errorf("%v, %v", err, e)
-	}
-	e = s.disc.Stop()
-	if e != nil {
-		err = fmt.Errorf("%v, %v", err, e)
-	}
-
-	return err
+func (s *Stage01Scene) setVolume(flag bool) {
+	s.disc.SetVolumeFlag(flag)
+	s.clickSe.SetVolumeFlag(flag)
+	s.readyVoice.SetVolumeFlag(flag)
+	s.goVoice.SetVolumeFlag(flag)
+	s.stageClearVoice.SetVolumeFlag(flag)
+	s.player.SetVolumeFlag(flag)
 }
 
-func (s *Stage01Scene) IsVolumeOn() bool {
-	return s.vChecker.IsVolumeOn()
+func (s *Stage01Scene) playSounds() {
+	for {
+		select {
+		case sControl := <-s.gameSoundControlCh:
+			switch sControl {
+			case assets.PauseGameSound:
+				s.disc.Pause()
+			case assets.StartGameSound:
+				// このSceneでは最初音楽を再生せずに、ユーザーがStartボタンを押すのを待つ。
+				// そのため、gameStateがwaitの時にはSceneManagerからStartGameSound指示が
+				// 来ても無視する。
+				if s.state != wait {
+					s.disc.Play()
+				}
+			case assets.StopGameSound:
+				s.disc.Stop()
+			case assets.SoundOn:
+				s.setVolume(true)
+				if s.state != pause {
+					s.disc.Play()
+				}
+				s.soundPlayFlagMu.Lock()
+				s.soundPlayFlag = true
+				s.soundPlayFlagMu.Unlock()
+			case assets.SoundOff:
+				s.setVolume(false)
+				s.soundPlayFlagMu.Lock()
+				s.soundPlayFlag = false
+				s.soundPlayFlagMu.Unlock()
+			default:
+				log.Println("unknown game sound control type, ", s)
+			}
+		case <-s.gameSoundCancellationCh:
+			return
+		}
+	}
+}
+
+func (s *Stage01Scene) Close() error {
+
+	s.disc.Stop()
+	close(s.gameSoundCancellationCh)
+	return nil
 }

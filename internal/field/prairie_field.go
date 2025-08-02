@@ -173,12 +173,12 @@ func (p *PrairieField) IsCollidedWithObstacles(hr *view.HitRectangle) bool {
 
 // EatFoods determines if there is a conflict between the player and the food.
 // If it hits, it returns the stamina and tension gained.
-func (p *PrairieField) EatFoods(hr *view.HitRectangle) (int, int) {
+func (p *PrairieField) EatFoods(hr *view.HitRectangle, soundPlayFlag bool) (int, int) {
 	var stamina, tension int
 	var s, t int
 	for i := range p.foods {
 		if p.foods[i].IsCollided(hr) {
-			s, t = p.foods[i].Eat()
+			s, t = p.foods[i].Eat(soundPlayFlag)
 			stamina += s
 			tension += t
 		}
@@ -187,14 +187,14 @@ func (p *PrairieField) EatFoods(hr *view.HitRectangle) (int, int) {
 	return stamina, tension
 }
 
-func (p *PrairieField) AttackObstacles(hr *view.HitRectangle, power float64) (int, int) {
+func (p *PrairieField) AttackObstacles(hr *view.HitRectangle, power float64, soundPlayFlag bool) (int, int) {
 	p.collisionCounter = 0
 	p.brokenCounter = 0
 
 	for i := range p.obstacles {
 		if p.obstacles[i].IsCollided(hr) {
 			p.collisionCounter++
-			p.obstacles[i].Attack(power)
+			p.obstacles[i].Attack(power, soundPlayFlag)
 			if p.obstacles[i].IsBroken() {
 				p.brokenCounter++
 			}

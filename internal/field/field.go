@@ -24,11 +24,11 @@ type Field interface {
 
 	// EatFoods determines if there is a conflict between the player and the food.
 	// If it hits, it returns the stamina and tension gained.
-	EatFoods(hr *view.HitRectangle) (stamina int, tension int)
+	EatFoods(hr *view.HitRectangle, soundPlayFlag bool) (stamina int, tension int)
 
 	// AttackObstacles attacks obstacles.
 	// If any obstacle is collided or broken, returns the number of collided or broken obstacles.
-	AttackObstacles(hr *view.HitRectangle, power float64) (int, int)
+	AttackObstacles(hr *view.HitRectangle, power float64, soundPlayFlag bool) (int, int)
 }
 
 const (

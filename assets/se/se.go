@@ -102,67 +102,67 @@ func CloseSE() error {
 	var err, e error
 
 	e = MenuSelect.Close()
-	if err != nil {
+	if e != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
 	e = JumpSe.Close()
-	if err != nil {
+	if e != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
 	e = DropSe.Close()
-	if err != nil {
+	if e != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
 	e = CollisionSe.Close()
-	if err != nil {
+	if e != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
 	e = BreakRock.Close()
-	if err != nil {
+	if e != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
 	e = PickupItem.Close()
-	if err != nil {
+	if e != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
 	e = AttackScratch.Close()
-	if err != nil {
+	if e != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
 	e = AttackPunch.Close()
-	if err != nil {
+	if e != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
 	e = TitleCall.Close()
-	if err != nil {
+	if e != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
 	e = CharacterSelectVoice.Close()
-	if err != nil {
+	if e != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
 	e = ReadyVoice.Close()
-	if err != nil {
+	if e != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
 	e = GoVoice.Close()
-	if err != nil {
+	if e != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
 	e = StageClearVoice.Close()
-	if err != nil {
+	if e != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
 	e = SpVoiceKurona.Close()
-	if err != nil {
+	if e != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
 	e = SpVoiceKoma.Close()
-	if err != nil {
+	if e != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
 	e = SpVoiceShishimaru.Close()
-	if err != nil {
+	if e != nil {
 		err = fmt.Errorf("%v:%v", err, e)
 	}
 

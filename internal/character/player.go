@@ -307,7 +307,8 @@ func (p *Player) Eat(stamina, tension int) {
 
 // Close closes the inner resources.
 func (p *Player) Close() error {
-	// assets側でcloseするので、ここではcloseしない
+	// 画像やサウンドはassets側でcloseするので、ここではcloseしない
+
 	close(p.soundTypeCh)
 	return nil
 }
@@ -338,12 +339,11 @@ func (p *Player) GetMaxTension() float64 {
 }
 
 func (p *Player) SetVolumeFlag(isVolumeOn bool) {
-	p.spVoice.SetVolumeFlag(isVolumeOn)
-
 	p.jumpSe.SetVolumeFlag(isVolumeOn)
 	p.dropSe.SetVolumeFlag(isVolumeOn)
 	p.collisionSe.SetVolumeFlag(isVolumeOn)
 	p.attackSe.SetVolumeFlag(isVolumeOn)
+	p.spVoice.SetVolumeFlag(isVolumeOn)
 }
 
 // GetDisplayParameters returns the speed, power and stamina of this player character.

@@ -61,5 +61,6 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 
 // Close closes inner resources.
 func (g *Game) Close() error {
+	g.scenes.Close()
 	return assets.CloseAssets()
 }

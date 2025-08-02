@@ -1,12 +1,22 @@
 #!/bin/sh
 
-cspell lint '**/*.go' -c ./.cspell/cspell.cjs --gitignore --show-suggestions --no-progress
+verboseFlag=""
+if [ "$1" = "-v" ]; then
+    verboseFlag="-v"
+else
+    echo "If you need more detail information, please set -v flag"
+fi
+
+if [ ! -d "node_modules" ]; then
+    npm i
+fi
+npx cspell lint '**/*.go' -c ./.cspell/cspell.cjs --gitignore --show-suggestions --no-progress
 if [ $? -ne 0 ]; then
     echo "## failed to run 'cspell'. ##"
     exit $?
 fi
 
-go vet -v ./...
+go vet $verboseFlag ./...
 if [ $? -ne 0 ]; then
     echo "## failed to run 'go vet'. ##"
     exit $?
@@ -18,7 +28,7 @@ if [ $? -ne 0 ]; then
     exit $?
 fi
 
-go test -v -covermode=count ./...
+go test $verboseFlag -covermode=count ./...
 if [ $? -ne 0 ]; then
     echo "## failed to run 'go test'. ##"
     exit $?

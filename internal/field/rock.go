@@ -65,11 +65,13 @@ func (r *Rock) SetHardness(hardness float64) {
 
 // Attack attacks this obstacle.
 // The damage value reduces this obstacle's hardness.
-func (r *Rock) Attack(damage float64) {
+func (r *Rock) Attack(damage float64, soundPlayFlag bool) {
 	r.hardness -= damage
 	if r.hardness <= 0 {
 		r.broken = true
-		r.sound.Play()
+		if soundPlayFlag {
+			r.sound.Play()
+		}
 	}
 }
 

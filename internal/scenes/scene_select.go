@@ -12,6 +12,7 @@ import (
 
 	rating "github.com/kemokemo/ebiten-rating"
 	vpad "github.com/kemokemo/ebiten-virtualpad"
+	"github.com/kemokemo/kuronan-dash/assets"
 	"github.com/kemokemo/kuronan-dash/assets/fonts"
 	"github.com/kemokemo/kuronan-dash/assets/images"
 	"github.com/kemokemo/kuronan-dash/assets/messages"
@@ -38,35 +39,38 @@ const (
 
 // SelectScene is the scene to select the player character.
 type SelectScene struct {
-	bg                *ebiten.Image
-	bgViewPort        *view.Viewport
-	disc              *music.Disc
-	clickSe           *se.Player
-	selectVoice       *se.Player
-	msgWindow         *ui.MessageWindow
-	fontNormal        *text.GoTextFace
-	iChecker          input.InputChecker
-	vChecker          input.VolumeChecker
-	volumeBtn         vpad.SelectButton
-	goButton          vpad.TriggerButton
-	charaList         []*chara.Player
-	ratingMatrix      [][]*rating.Rating
-	winRectArray      []image.Rectangle
-	selectArray       []vpad.SelectButton
-	selectedIndex     int
-	selectChanged     bool
-	lenChara          int
-	curtain           *Curtain
-	isStarting        bool
-	isClosing         bool
-	fpsTextOp         *text.DrawOptions
-	speedTextOpList   []*text.DrawOptions
-	staminaTextOpList []*text.DrawOptions
-	powerTextOpList   []*text.DrawOptions
+	bg                      *ebiten.Image
+	bgViewPort              *view.Viewport
+	disc                    *music.Disc
+	clickSe                 *se.Player
+	selectVoice             *se.Player
+	msgWindow               *ui.MessageWindow
+	fontNormal              *text.GoTextFace
+	iChecker                input.InputChecker
+	goButton                vpad.TriggerButton
+	charaList               []*chara.Player
+	ratingMatrix            [][]*rating.Rating
+	winRectArray            []image.Rectangle
+	selectArray             []vpad.SelectButton
+	selectedIndex           int
+	selectChanged           bool
+	lenChara                int
+	curtain                 *Curtain
+	isStarting              bool
+	isClosing               bool
+	fpsTextOp               *text.DrawOptions
+	speedTextOpList         []*text.DrawOptions
+	staminaTextOpList       []*text.DrawOptions
+	powerTextOpList         []*text.DrawOptions
+	gameSoundControlCh      <-chan assets.GameSoundControl
+	gameSoundCancellationCh chan struct{}
 }
 
 // Initialize initializes all resources.
-func (s *SelectScene) Initialize() error {
+func (s *SelectScene) Initialize(gameSoundControlCh <-chan assets.GameSoundControl) error {
+	s.gameSoundControlCh = gameSoundControlCh
+	s.gameSoundCancellationCh = make(chan struct{})
+
 	s.bg = images.SelectBackground
 	s.bgViewPort = &view.Viewport{}
 	s.bgViewPort.SetSize(s.bg.Bounds().Dx(), s.bg.Bounds().Dy())
@@ -116,13 +120,8 @@ func (s *SelectScene) Initialize() error {
 	s.goButton = vpad.NewTriggerButton(images.CharaSelectButton, vpad.JustReleased, vpad.SelectColor)
 	s.goButton.SetLocation(view.ScreenWidth-220, view.ScreenHeight-90)
 	s.goButton.SetTriggerButton([]ebiten.Key{ebiten.KeySpace})
-	s.volumeBtn = vpad.NewSelectButton(images.VolumeOffButton, vpad.JustPressed, vpad.SelectColor)
-	s.volumeBtn.SetLocation(view.ScreenWidth-58, 10)
-	s.volumeBtn.SetSelectImage(images.VolumeOnButton)
-	s.volumeBtn.SetSelectKeys([]ebiten.Key{ebiten.KeyV})
 
 	s.iChecker = &input.SelectInputChecker{GoBtn: s.goButton}
-	s.vChecker = &input.VolumeInputChecker{VolumeBtn: s.volumeBtn}
 
 	s.fontNormal = fonts.GamerFontM
 	s.msgWindow = ui.NewMessageWindow(windowMargin+5, windowMargin+13, view.ScreenWidth-windowMargin*2-80, 42, frameWidth)
@@ -176,8 +175,6 @@ func (s *SelectScene) Update(state *GameState) {
 		}
 		return
 	}
-
-	s.updateVolume()
 
 	if !s.selectVoice.IsPlaying() {
 		s.disc.SetVolume(0.5)
@@ -233,25 +230,6 @@ func (s *SelectScene) Update(state *GameState) {
 	s.bgViewPort.Move(view.UpperRight)
 }
 
-// updateVolume updates the volume on/off state of music and sounds.
-// If you add some sounds, please add this logic.
-func (s *SelectScene) updateVolume() {
-	s.vChecker.Update()
-
-	if s.vChecker.JustVolumeOn() {
-		s.setVolume(true)
-		s.disc.Play()
-	} else if s.vChecker.JustVolumeOff() {
-		s.setVolume(false)
-	}
-}
-
-func (s *SelectScene) setVolume(flag bool) {
-	s.disc.SetVolumeFlag(flag)
-	s.clickSe.SetVolumeFlag(flag)
-	s.selectVoice.SetVolumeFlag(flag)
-}
-
 // Draw draws background and characters.
 func (s *SelectScene) Draw(screen *ebiten.Image) {
 	s.drawBackground(screen)
@@ -262,7 +240,6 @@ func (s *SelectScene) Draw(screen *ebiten.Image) {
 	s.drawCharacters(screen)
 	text.Draw(screen, fmt.Sprintf("FPS: %3.1f", ebiten.ActualFPS()), fonts.GamerFontSS, s.fpsTextOp)
 	s.goButton.Draw(screen)
-	s.volumeBtn.Draw(screen)
 
 	if s.isStarting || s.isClosing {
 		s.curtain.Draw(screen)
@@ -359,33 +336,50 @@ func (s *SelectScene) takeTextPosition(i int) image.Point {
 	return image.Point{X: x, Y: y}
 }
 
-// StartMusic starts playing music
-func (s *SelectScene) StartMusic(isVolumeOn bool) {
-	s.volumeBtn.SetSelectState(isVolumeOn)
-	if isVolumeOn {
-		s.disc.SetVolume(0.3)
-		s.disc.Play()
-		s.selectVoice.Play()
-	}
+func (s *SelectScene) Start(gameSoundState bool) {
+	s.setVolume(gameSoundState)
+
 	s.isStarting = true
 	s.curtain.Start(false)
+
+	go s.playSounds()
 }
 
-// StopMusic stops playing music and sound effects
-func (s *SelectScene) StopMusic() error {
-	var err, e error
-	e = s.selectVoice.Close()
-	if e != nil {
-		err = fmt.Errorf("%v, %v", err, e)
-	}
-	e = s.disc.Stop()
-	if e != nil {
-		err = fmt.Errorf("%v, %v", err, e)
-	}
-
-	return err
+func (s *SelectScene) setVolume(flag bool) {
+	s.disc.SetVolumeFlag(flag)
+	s.clickSe.SetVolumeFlag(flag)
+	s.selectVoice.SetVolumeFlag(flag)
 }
 
-func (s *SelectScene) IsVolumeOn() bool {
-	return s.vChecker.IsVolumeOn()
+func (s *SelectScene) playSounds() {
+	for {
+		select {
+		case sControl := <-s.gameSoundControlCh:
+			switch sControl {
+			case assets.PauseGameSound:
+				s.disc.Pause()
+			case assets.StartGameSound:
+				s.disc.SetVolume(0.3)
+				s.disc.Play()
+				s.selectVoice.Play()
+			case assets.StopGameSound:
+				s.disc.Stop()
+			case assets.SoundOn:
+				s.setVolume(true)
+				s.disc.Play()
+			case assets.SoundOff:
+				s.setVolume(false)
+			default:
+				log.Println("unknown game sound control type, ", s)
+			}
+		case <-s.gameSoundCancellationCh:
+			return
+		}
+	}
+}
+
+func (s *SelectScene) Close() error {
+	s.disc.Stop()
+	close(s.gameSoundCancellationCh)
+	return nil
 }
