@@ -132,12 +132,12 @@ func (s *Stage01Scene) Initialize(gameSoundControlCh <-chan assets.GameSoundCont
 		previousHeight = int(heights[index])
 	}
 
-	s.upBtn = vpad.NewTriggerButton(images.UpButton, vpad.JustPressed, vpad.SelectColor)
+	s.upBtn = vpad.NewTriggerButton(images.UpButton, vpad.JustReleased, vpad.SelectColor)
 	bW := images.UpButton.Bounds().Dx()
 	bH := images.UpButton.Bounds().Dy()
 	s.upBtn.SetLocation(20, view.ScreenHeight-bH-45)
 	s.upBtn.SetTriggerButton([]ebiten.Key{ebiten.KeyArrowUp})
-	s.downBtn = vpad.NewTriggerButton(images.DownButton, vpad.JustPressed, vpad.SelectColor)
+	s.downBtn = vpad.NewTriggerButton(images.DownButton, vpad.JustReleased, vpad.SelectColor)
 	s.downBtn.SetLocation(20+bW+10, view.ScreenHeight-bH-45)
 	s.downBtn.SetTriggerButton([]ebiten.Key{ebiten.KeyArrowDown})
 	s.atkBtn = vpad.NewTriggerButton(images.AttackButton, vpad.JustPressed, vpad.SelectColor)
@@ -148,10 +148,10 @@ func (s *Stage01Scene) Initialize(gameSoundControlCh <-chan assets.GameSoundCont
 	s.spBtn.SetTriggerButton([]ebiten.Key{ebiten.KeyS})
 	s.player.SetInputChecker(laneRectArray, s.upBtn, s.downBtn, s.atkBtn, s.spBtn)
 
-	s.startBtn = vpad.NewTriggerButton(images.StartButton, vpad.JustReleased, vpad.SelectColor)
+	s.startBtn = vpad.NewTriggerButton(images.StartButton, vpad.JustPressed, vpad.SelectColor)
 	s.startBtn.SetLocation(view.ScreenWidth/2-64, view.ScreenHeight/2-128)
 	s.startBtn.SetTriggerButton([]ebiten.Key{ebiten.KeySpace})
-	s.pauseBtn = vpad.NewTriggerButton(images.PauseButton, vpad.JustReleased, vpad.SelectColor)
+	s.pauseBtn = vpad.NewTriggerButton(images.PauseButton, vpad.JustPressed, vpad.SelectColor)
 	s.pauseBtn.SetLocation(view.ScreenWidth-98, 10)
 	s.pauseBtn.SetTriggerButton([]ebiten.Key{ebiten.KeySpace})
 	s.iChecker = &input.GameInputChecker{StartBtn: s.startBtn, PauseBtn: s.pauseBtn}

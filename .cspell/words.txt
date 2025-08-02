@@ -4,6 +4,7 @@ calcurate
 Chara
 chara
 ebiten
+Ebitengine
 freetype
 frimg
 hajimehoshi
