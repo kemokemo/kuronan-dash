@@ -244,11 +244,6 @@ func (p *Player) Draw(screen *ebiten.Image) {
 		return
 	}
 
-	if p.current == move.SkillEffect {
-		screen.DrawImage(p.skillImage, p.spOp)
-		return
-	}
-
 	if p.current == move.SkillDash || p.current == move.SkillWalk || p.current == move.SkillAscending || p.current == move.SkillDescending {
 		screen.DrawImage(p.skillEffect, p.spEffectOp)
 	}
@@ -267,6 +262,14 @@ func (p *Player) Draw(screen *ebiten.Image) {
 
 	if p.stamina.GetStamina() <= 0 {
 		screen.DrawImage(p.staminaEmptyIcon, p.staminaEmptyIconOp.Op)
+	}
+}
+
+// DrawSpEffect draws the character's special skill effect.
+func (p *Player) DrawSpEffect(screen *ebiten.Image) {
+	if p.current == move.SkillEffect {
+		screen.DrawImage(p.skillImage, p.spOp)
+		return
 	}
 }
 

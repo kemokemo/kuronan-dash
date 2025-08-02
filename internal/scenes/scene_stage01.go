@@ -314,17 +314,22 @@ func (s *Stage01Scene) run() {
 
 // Draw draws background and characters.
 func (s *Stage01Scene) Draw(screen *ebiten.Image) {
+	// 遠くの背景や奥側のオブジェクト、プレイヤー、プレイヤーよりも手前のオブジェクトの順に描画する
 	s.field.DrawFarther(screen)
 	s.player.Draw(screen)
 	s.field.DrawCloser(screen)
+
+	// UI部品やユーザーに向けたメッセージ、SPエフェクトなどを描画する
 	s.drawUI(screen)
 	s.drawWithState(screen)
 
+	// FPSを表示する
 	tOp := &text.DrawOptions{}
 	tOp.GeoM.Translate(10, view.ScreenHeight-15)
 	tOp.ColorScale.ScaleWithColor(color.White)
 	text.Draw(screen, fmt.Sprintf("FPS: %3.1f", ebiten.ActualFPS()), fonts.GamerFontSS, tOp)
 
+	// 画面遷移時のカーテン描画や、ステージクリアのエフェクトを描画する
 	if s.isStarting || s.isClosing {
 		s.curtain.Draw(screen)
 	} else if s.state == stageClear {
@@ -412,6 +417,8 @@ func (s *Stage01Scene) drawWithState(screen *ebiten.Image) {
 		tOp.GeoM.Translate(10, 20)
 		tOp.ColorScale.ScaleWithColor(color.White)
 		text.Draw(screen, fmt.Sprintf("Music: %s", s.disc.Name), fonts.GamerFontS, tOp)
+	case skillEffect:
+		s.player.DrawSpEffect(screen)
 	case stageClear:
 		musicTextOp := &text.DrawOptions{}
 		musicTextOp.GeoM.Translate(10, 20)
